@@ -114,7 +114,7 @@ class FlowModel(AbstractModel):
     def GetCurrentZ(self):
         """get current Z group if it exists"""
         try:
-            print self.current_group
+            # print self.current_group
             return self.current_group.z
         except AttributeError:
             return None
@@ -258,6 +258,7 @@ class FlowModel(AbstractModel):
         self.close()
         name = NamedTemporaryFile().name
         src = tables.openFile(hdf5File,'r')
+
         src.copyFile(name)
         src.close()
         self.hdf5 = tables.openFile(name,'a')
