@@ -1,0 +1,4 @@
+python-networkx
+python-tables
+python-wxgtk2.8 or python-wxgtk2.6
+pycluster
