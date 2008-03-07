@@ -1,4 +1,3 @@
-"""Need type, Plot() and ModelUpdate()."""
 import wx
 
 from plots import PlotPanel
@@ -130,15 +129,6 @@ class TwoDDensity(VizFrame):
         panel = wx.ScrolledWindow(self, -1, style=wx.VSCROLL)
         color_names = self.model.GetZLabels(self.model.GetCurrentZ())
         self.cbs = [wx.CheckBox(panel, -1, name) for name in color_names]
-#         # unset gated out component checkboxes
-#         for i in range(len(self.cbs)):
-#             try:
-#                 if i in self.checked:
-#                     self.cbs[i].SetValue(True)
-#                 else:
-#                     self.cbs[i].SetValue(False)
-#             except AttributeError:
-#                 break                
 
         if self.model.IsZ():
             z = array(self.model.GetCurrentZ()[:], 'i')
