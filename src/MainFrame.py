@@ -93,6 +93,7 @@ class MainFrame(VizFrame):
         self.zPopMenuItem = None
         self.Bind(wx.EVT_CONTEXT_MENU, self.OnShowPopup)
         self.Bind(wx.EVT_TREE_ITEM_RIGHT_CLICK, self.OnShowPopup, self.tree)
+        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnDisplayItem, self.tree)
 
         # default dir for OBO files
         self.defaultOBOdir = "."
@@ -425,6 +426,11 @@ class MainFrame(VizFrame):
             self.popupItems['Paste'].Enable(False)
             return menu
 
+    def OnDisplayItem(self, event):
+        if self.tree.GetItemPyData(event.GetItem())._c_classId != 'GROUP':
+            table = EditFrame(self.tree.GetItemPyData(self.tree.GetSelection()))
+            table.Show()
+
     def CreatePopup(self):
         menu = self.CreateEdit()
         self.io = Io(self.model, self)
@@ -435,7 +441,7 @@ class MainFrame(VizFrame):
                                          self.io.BuildOpenMenu())
         
         return menu
-        
+    
     def OnShowPopup(self, event):
         if self.tree.GetItemPyData(event.GetItem())._c_classId == "GROUP":
             self.popupItems['Edit'].Enable(False)
