@@ -201,6 +201,11 @@ class FlowModel(AbstractModel):
     def GetMax(self):
         """Returns the max value in the data... may be depreciated"""
         return max(self.GetCurrentData())
+
+    def GetRange(self):
+        """Returns max - min of data."""
+        data = self.GetCurrentData()[:]
+        return max(max(data, 0) - min(data, 0))
     
     def close(self):
         """Close the open hdf5 temp file and remove it"""
