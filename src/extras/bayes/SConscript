@@ -17,7 +17,7 @@ if platform=='darwin':
         CPPPATH=['/usr/local/include/boost-1_34', '/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.5/Resources/include', pyinc],
         RPATH=[],
         LINKFLAGS = '-framework Python -framework Accelerate', 
-        CXXFLAGS='-bundle -Wall -Wno-long-long -march=%s' % arch,
+        CXXFLAGS='-bundle -Wall -Wno-long-long -mtune=%s' % arch,
         )
 
     bp = Environment(
@@ -27,7 +27,7 @@ if platform=='darwin':
         CPPPATH=['/usr/local/include/boost-1_34', '/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.5/Resources/include', pyinc],
         RPATH=[],
         LINKFLAGS = '-framework Python -framework Accelerate', 
-        CXXFLAGS='-bundle -Wall -Wno-long-long -march=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
+        CXXFLAGS='-bundle -Wall -Wno-long-long -mtune=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
         SHLIBPREFIX='', #gets rid of lib prefix
         SHLIBSUFFIX=sysconfig.get_config_vars('SO')
         )
@@ -35,7 +35,7 @@ else: # works for Debian and Ubuntu
     env = Environment(
         CPPDEFINES=['RMATH_RAND', 'NDEBUG'],        
         CPPPATH=[pyinc],
-        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -march=%s' % arch,
+        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -mtune=%s' % arch,
         LIBPATH=[pylib],
         LIBS=['Rmath', 'lapack', 'boost_unit_test_framework', pyver],
         )
@@ -43,7 +43,7 @@ else: # works for Debian and Ubuntu
     bp = Environment(
         CPPDEFINES=['RMATH_RAND', 'NDEBUG', 'BOOST_PYTHON_DYNAMIC_LIB'],
         CPPPATH=[pyinc],
-        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -march=%s -fPIC' % arch,
+        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -mtune=%s -fPIC' % arch,
         LIBPATH=[pylib],
         LIBS=['Rmath', 'lapack', 'boost_python', pyver],
         SHLIBPREFIX='', #gets rid of lib prefix
