@@ -10,19 +10,9 @@ print platform
 ## For Python interface only
 pif_conv = Split("cppvec_conv_pif.cpp cpppointer_conv_pif.cpp cppmap_conv_pif.cpp ")
 pif = Split("flow_pif.cpp analyzer_pif.cpp label_pif.cpp")
-# files = ['flow_bandwidth_01.cpp']
-# files = ['flow_nearest_nbrs.cpp']
-# files = ['flow_variable_kernel.cpp']
-# files = ['flow.cpp']
-# files = ['flow_simple.cpp']
-# files = ['flow_rank.cpp']
-# files = ['bootstrap.cpp']
-# files = ['mode.cpp']
-# files = ['bootstrap.cpp', 'analyzer.cpp', 'label.cpp']
 filenames = ['analyzer', 'label']
 files = [filename + '.cpp' for filename in filenames]
 test_files = ['test_seg_fault.cpp']
-# files = ['analyzer.cpp', 'label.cpp']
 
 if os.path.isfile('/etc/debian_version') and not 'x86_64' in os.popen('uname -a').readline():
     env = Environment(
@@ -31,18 +21,15 @@ if os.path.isfile('/etc/debian_version') and not 'x86_64' in os.popen('uname -a'
         CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN'],
         RPATH=[],
         CXXFLAGS=test_env_cxxflags(),
-        # CXXFLAGS="-ftemplate-depth-100 -Wall -pedantic -march=pentium-m -pipe -ffast-math -ansi -m32 -w -DANSI",
         )
 
 if os.path.isfile('/etc/debian_version') and 'x86_64' in os.popen('uname -a').readline():
     env = Environment(
         LIBS=['ANN', 'm', 'pthread'],
-        # LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
         LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
         CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN'],
         RPATH=[],
         CXXFLAGS=test_env_cxxflags(),
-        # CXXFLAGS="-ftemplate-depth-100 -Wall -pedantic -march=opteron -pipe -ffast-math -ansi -m64 -w -DCOMPUTER_LOPT64 -DANSI ",
         )
 
 if platform=='win32':
@@ -70,41 +57,12 @@ if platform =='posix' and 'FreeBSD' in os.popen('uname -a').readline():
         LIBPATH=['/home/jolly/work/libann/ann_1.1.1/lib', '/usr/local/lib', '/usr/local/lib/python2.5'],
         CPPPATH=['/home/jolly/work/libann/ann_1.1.1/include/ANN', '/usr/local/include/', '/usr/local/include/python2.5'],
         RPATH=[],
-        #CXXFLAGS=test_env_cxxflags(),
         CXXFLAGS='-Wall -Wno-long-long',
-        # CXXFLAGS="-ftemplate-depth-100 -Wall -pedantic -march=pentium-m -pipe -ffast-math -ansi -m32 -w -DANSI",
         )
-
-
-
-# pasteur_rtest_env = pasteur_bp.Copy()
-# pasteur_rtest_env.Replace(LIBPATH=[],
-#                           CPPPATH= ["/usr/lib/R/include/", "/usr/share/R/include/"],
-#                           LIBS=["Rmath"])
-
-
-# koch_rtest_env = koch_bp.Copy()
-# koch_rtest_env.Replace(CPPDEFINES=[],
-#                        CPPPATH=['/usr/lib/R/include/', '/usr/share/R/include/'],
-#                        LIBPATH=['/usr/share/R/lib'],
-#                        LIBS=['Rmath'])
-
-# if platform == 'posix':
-#     hostname = os.uname()[1]
-#     env = globals()[hostname]
-#     rtest_env = pasteur_bp.Copy()
 
 # Test program(s)
 program = env.Program(files + test_files)
 env.Install('bin', program)
-
-# rtest_env.Replace(LIBPATH=[], CPPPATH= ["/usr/lib/R/include/", "/usr/share/R/include/"], LIBS=["Rmath"])
-# rtest_env = Environment(CPPPATH= ["/usr/lib/R/include/", "/usr/share/R/include/"],
-#                         LIBPATH=["/usr/lib/R/lib"], LIBS=["R"], CXXFLAGS="-fPIC  -g -O2")
-
-# test_files = ['test_flow.cpp', 'modes.cpp', 'kernel.cpp', 'reader.cpp']
-# program = test64.Program(test_files)
-# test64.Install('bin', program)
 
 if os.path.isfile('/etc/debian_version') and not 'x86_64' in os.popen('uname -a').readline():
     bp = env.Copy()
@@ -113,7 +71,6 @@ if os.path.isfile('/etc/debian_version') and not 'x86_64' in os.popen('uname -a'
               LIBS=["python2.4", "boost_python"],
               CXXFLAGS=boost_python_env_cxxflags()
               )
-              # CXXFLAGS="-fPIC -pg") #gets rid of lib prefix
     bp.Replace(LIBPATH=['/usr/local/src/ann_1.1.1/lib', '/usr/lib/python2.4/config', '/usr/local/lib'], SHLIBPREFIX="")
 
 if os.path.isfile('/etc/debian_version') and 'x86_64' in os.popen('uname -a').readline():
@@ -121,9 +78,7 @@ if os.path.isfile('/etc/debian_version') and 'x86_64' in os.popen('uname -a').re
     bp.Append(CPPPATH="/usr/include/python2.4",
               CPPDEFINES=['BOOST_PYTHON_DYNAMIC_LIB '],
               LIBS=["python2.4", "boost_python"],
-              CXXFLAGS=boost_python_env_cxxflags(),
-              # CXXFLAGS="-fPIC"
-              ) #gets rid of lib prefix
+              CXXFLAGS=boost_python_env_cxxflags())
     bp.Replace(LIBPATH=["/usr/lib/python2.4/config", '/usr/local/lib'], SHLIBPREFIX="")
 
 if platform=='win32':
@@ -158,12 +113,10 @@ if platform =='posix' and 'FreeBSD' in os.popen('uname -a').readline():
               ) #gets rid of lib prefix
     bp.Replace(LIBPATH=["/usr/local/lib/python2.5/config", '/usr/local/lib', '/home/jolly/work/libann/ann_1.1.1/lib'], SHLIBPREFIX="")
 
-# if platform=="win32":
-#         CCFLAGS=["/EHsc", "/GR"] # ,"/Zi", "/Yd", "/P"]
-#         LIBPATH=["C:/boost/lib", ".."]
-#         CPPPATH=["C:/Python24/include", "..", "C:/boost/include/boost-1_32"]
-#         SharedLibrary("_pySVM.dll", "pythonAdapter.cpp", CCFLAGS=CCFLAGS,
-#                       LIBS=["pcsvm", "boost_python-vc71-mt-1_32"], CPPPATH=CPPPATH, LIBPATH=LIBPATH)
-    
 # Boost python shared library.
 bp.SharedLibrary(target='flow', source = files + pif_conv + pif)
+
+# hack to put shared library in correct path
+os.system('mv libflow.dylib ../../src/plugins/statistics/Kde/')
+os.system('cd ../src/plugins/statistics')
+os.system('ln -sf libflow.dylib flow.so')
