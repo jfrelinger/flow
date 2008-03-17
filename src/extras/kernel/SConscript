@@ -47,15 +47,15 @@ else: # works for Debian and Ubuntu
 
     bp = Environment(
         CPPDEFINES=['BOOST_PYTHON_DYNAMIC_LIB '],
-        CPPPATH=[pyinc],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', pyinc],
         LIBS=['ANN', 'boost_python', pyver],
-        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -march=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
-        LIBPATH=['/usr/local/src/ann_1.1.1/lib', '/usr/local/lib', pylib], 
+        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -march=%s -fno-strict-aliasing -fPIC -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
+        LIBPATH=['/usr/local/src/ann_1.1.1/lib', pylib], 
         SHLIBPREFIX=''
         )
 
 # Boost python shared library.
 flow = bp.SharedLibrary(target='flow', source = files + pif_conv + pif)
-bp.Install('../../src/plugins/statistics/Kde/', flow)
-bp.Alias('install', '../../src/plugins/statistics/Kde')
+bp.Install('../../plugins/statistics/Kde/', flow)
+bp.Alias('install', '../../plugins/statistics/Kde')
 

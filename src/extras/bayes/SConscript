@@ -65,5 +65,5 @@ common = "distributions.cpp utils.cpp ublas_utils.cpp math_utils.cpp bayes.cpp m
 
 bayes = bp.SharedLibrary(target='bayes', 
                  source = bayes_files + pif_conv + bayes_pif + common)
-bp.Install('../../src/plugins/statistics/Bayes', bayes)
-bp.Alias('install', '../../src/plugins/statistics/Bayes')
+bp.Install('../../plugins/statistics/Bayes', bayes)
+bp.Alias('install', '../../plugins/statistics/Bayes')
