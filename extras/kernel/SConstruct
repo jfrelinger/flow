@@ -114,7 +114,7 @@ if platform =='posix' and 'FreeBSD' in os.popen('uname -a').readline():
     bp.Replace(LIBPATH=["/usr/local/lib/python2.5/config", '/usr/local/lib', '/home/jolly/work/libann/ann_1.1.1/lib'], SHLIBPREFIX="")
 
 # Boost python shared library.
-bp.SharedLibrary(target='flow', source = files + pif_conv + pif)
+flow = bp.SharedLibrary(target='flow', source = files + pif_conv + pif)
+bp.Install('../../src/plugins/statistics/Kde/', flow)
+bp.Alias('install', '../../src/plugins/statistics/Kde')
 
-# hack to put shared library in correct path
-os.system('mv flow.so ../../src/plugins/statistics/Kde/')

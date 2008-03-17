@@ -19,13 +19,13 @@ class KDE(Statistics):
         
 class KDEFrame(wx.Frame):
     def __init__(self, model):
-        wx.Frame.__init__(self,None,-1, "KDE progress", size=(200,100))
+        wx.Frame.__init__(self,None,-1, "KDE calculations in progress", size=(200,100))
         self.panel = wx.Panel(self)
         data = model.GetCurrentData()[:]
         self.group = model.GetCurrentGroup()
         self.model = model
         inputs = {'h': 0.05*(model.GetRange()),
-                  'seeds': 10,
+                  'seeds': 20,
                   'dip': 0.85}
         self.log = wx.TextCtrl(self.panel, -1, "",
                                        style=wx.TE_RICH|wx.TE_MULTILINE|wx.TE_READONLY, size=(200,100))
@@ -122,7 +122,8 @@ class KDEThread(threading.Thread):
         else:
             wx.CallAfter(self.window.ThreadFinish, (z,mm))
         
-        
+        wx.CallAfter(self.window.Destroy)
+
 class KDEDialog(wx.Dialog):
     def __init__(self,data):
         wx.Dialog.__init__(self,None,-1, "KDE parameters")

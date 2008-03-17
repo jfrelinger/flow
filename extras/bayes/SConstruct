@@ -1,0 +1,65 @@
+import distutils.sysconfig as sysconfig
+
+platform = Environment()['PLATFORM']
+
+pylib = sysconfig.get_config_var('DESTLIB') + '/config'
+pyinc = sysconfig.get_python_inc()
+
+if platform=='darwin':
+    env = Environment(
+        CPPDEFINES=['RMATH_RAND', 'NDEBUG'],
+        LIBS=['Rmath', 'lapack', 'boost_unit_test_framework'],
+        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.5/Resources/lib'],
+        CPPPATH=['/usr/local/include/boost-1_34', '/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.5/Resources/include', pyinc],
+        RPATH=[],
+        LINKFLAGS = '-framework Python -framework Accelerate', 
+        CXXFLAGS='-bundle -Wall -Wno-long-long -march=prescott -msse3',
+        )
+
+    bp = Environment(
+        CPPDEFINES=['RMATH_RAND', 'NDEBUG'],
+        LIBS=['Rmath', 'lapack', 'python2.5', 'boost_python-1_34'],
+        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.5/Resources/lib', pylib],
+        CPPPATH=['/usr/local/include/boost-1_34', '/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.5/Resources/include', pyinc],
+        RPATH=[],
+        LINKFLAGS = '-framework Python -framework Accelerate', 
+        CXXFLAGS='-bundle -Wall -Wno-long-long -march=prescott -msse3 -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS',
+        SHLIBPREFIX='', #gets rid of lib prefix
+        SHLIBSUFFIX=sysconfig.get_config_vars('SO')
+        )
+else: # Debian laptop first
+    env = Environment(
+        CPPDEFINES=['RMATH_RAND', 'NDEBUG'],        
+        CPPPATH=['/usr/include/python2.4'],
+        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -march=opteron',
+        LIBPATH=['/usr/lib/python2.4/config'],
+        LIBS=['Rmath', 'lapack', 'boost_unit_test_framework', 'python2.4'],
+        )
+
+    bp = Environment(
+        CPPDEFINES=['RMATH_RAND', 'NDEBUG', 'BOOST_PYTHON_DYNAMIC_LIB'],
+        CPPPATH=['/usr/include/python2.4'],
+        CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -march=opteron -fPIC',
+        LIBPATH=['/usr/lib/python2.4/config'],
+        LIBS=['Rmath', 'lapack', 'python2.4', 'boost_python'],
+        SHLIBPREFIX='', #gets rid of lib prefix
+        SHLIBSUFFIX=sysconfig.get_config_vars('SO')
+        )
+
+
+pif_conv = Split("boost_function cppvec_conv cpplist_conv "
+                 + "cpparr_conv "
+                 + "cpptinyvec_conv cpppair_conv cppnumblitzarr_conv " 
+                 + "cppnumublasvec_conv cppnumublasmat_conv "
+                 + "cppmap_conv cpppointer_conv cppset_conv")
+pif_conv = [t + "_pif.cpp" for t in pif_conv]
+
+bayes_pif = Split('bayes_pif.cpp')
+bayes_files = Split('')
+
+common = "distributions.cpp utils.cpp ublas_utils.cpp math_utils.cpp bayes.cpp mcmc.cpp kmeans.cpp cluster.c".split()
+
+bayes = bp.SharedLibrary(target='bayes', 
+                 source = bayes_files + pif_conv + bayes_pif + common)
+bp.Install('../../src/plugins/statistics/Bayes', bayes)
+bp.Alias('install', '../../src/plugins/statistics/Bayes')
