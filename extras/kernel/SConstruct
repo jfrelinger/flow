@@ -16,16 +16,17 @@ test_files = ['test_seg_fault.cpp']
 
 if os.path.isfile('/etc/debian_version') and not 'x86_64' in os.popen('uname -a').readline():
     env = Environment(
-        LIBS=['ANN', 'm', 'pthread'],
-        LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
-        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN'],
-        RPATH=[],
+        CPPDEFINES=[],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/include/python2.4'],
         CXXFLAGS=test_env_cxxflags(),
+        LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
+        LIBS=['ANN', 'm', 'python2.4'],
+        # RPATH=[],
         )
 
 if os.path.isfile('/etc/debian_version') and 'x86_64' in os.popen('uname -a').readline():
     env = Environment(
-        LIBS=['ANN', 'm', 'pthread'],
+        LIBS=['ANN', 'm'],
         LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
         CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN'],
         RPATH=[],

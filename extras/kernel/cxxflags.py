@@ -21,10 +21,10 @@ test_env_dict = {'koch':test_env_core_duo, 'pasteur':test_env_opteron,
 
 def test_env_cxxflags():
     try:
-        return '-Wall -pedantic -pipe -O3 -ffast-math ' + test_env_dict[hostname()]()
+        return '-Wall -pipe -O3 -ffast-math ' + test_env_dict[hostname()]()
     except KeyError:
         print "Using generic optimization flags..."
-        return '-Wall -pedantic -pipe -O3 -ffast-math '
+        return '-Wall -pipe -O3 -ffast-math '
     
 def boost_python_env_cxxflags():
     return '-ftemplate-depth-100 -fPIC ' + test_env_cxxflags()
