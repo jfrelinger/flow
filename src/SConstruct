@@ -1,0 +1,2 @@
+SConscript(['extras/kernel/SConscript',
+            'extras/bayes/SConscript'])
