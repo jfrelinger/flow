@@ -2,27 +2,27 @@
 
 ////////////// CONVERT C++ VECTOR TO AND FROM PYTHON LIST ///////////////////////////////
 
-// Convert (C++) vector to (Python) list as PyObject*.
+// Convert (C++) vector to (Python) tuple as PyObject*.
 template<typename T> PyObject* cppvec2pylst(const vector<T>& vec)
 {
   unsigned int i;
   boost::python::list lst;
   for(i=0; i<vec.size(); i++)
     lst.append(vec[i]);
-  return boost::python::incref(boost::python::object(lst).ptr());
+  return boost::python::incref(boost::python::object(boost::python::tuple(lst)).ptr());
 }
 
-// Convert (Python) list to (C++) vector.
+// Convert (Python) tuple to (C++) vector.
 template<typename T> vector<T> pylst2cppvec(PyObject* obj)
 {
   unsigned int i;
   vector<T> vec;
-  boost::python::list lst(boost::python::borrowed(obj));
-  unsigned int lstlen = extract<int>(lst.attr("__len__")());
-  for(i=0; i<lstlen; i++)
+  boost::python::tuple tup(boost::python::borrowed(obj));
+  unsigned int tuplen = extract<int>(tup.attr("__len__")());
+  for(i=0; i<tuplen; i++)
     {
-      T lstelem = extract<T>(lst[i]);
-      vec.push_back(lstelem);
+      T tupelem = extract<T>(tup[i]);
+      vec.push_back(tupelem);
     }  
   return vec;
 }

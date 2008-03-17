@@ -269,10 +269,12 @@ map<vector<double>, vector<int> > Analyzer::merge_modes(map<int, vector<double> 
 // merge modes that are separated by < min_sep in each dimension
 {
   // Py_BEGIN_ALLOW_THREADS
+
   map<vector<double>, vector<int> > modes;
   map<int, vector<double> >::iterator map_it;
   for (map_it=m.begin(); map_it!=m.end(); ++map_it) {
     vector<double> v = map_it->second;
+
     for (unsigned i=0; i<v.size(); ++i) {
       v[i] = min_sep*round(v[i]/min_sep);
     }

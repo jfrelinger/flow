@@ -1,2 +1,1 @@
-SConscript(['extras/kernel/SConscript',
-            'extras/bayes/SConscript'])
+SConscript(['extras/bayes/SConscript','extras/kernel/SConscript'])

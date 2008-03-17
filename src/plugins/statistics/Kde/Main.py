@@ -90,11 +90,14 @@ class KDEThread(threading.Thread):
         wx.CallAfter(self.window.Log, "Test find modes")
         modes = ap.find_modes(seeds, 1e-4)
         wx.CallAfter(self.window.Log, "num modes:" + str(len(modes)))
-    
         wx.CallAfter(self.window.Log, "Test merge modes")
         min_merge_sep = 1.0
+
+        print "Entering merge modes"
+        print ap.merge_modes(modes, min_merge_sep)
         mmodes = ap.merge_modes(modes, min_merge_sep)
-        
+        print "Exiting merge modes"
+
         wx.CallAfter(self.window.Log, "Test dip")
         dip_ratio = self.inputs['dip']
         mmodes = ap.check_modes(mmodes, dip_ratio)
@@ -122,8 +125,6 @@ class KDEThread(threading.Thread):
         else:
             wx.CallAfter(self.window.ThreadFinish, (z,mm))
         
-        wx.CallAfter(self.window.Destroy)
-
 class KDEDialog(wx.Dialog):
     def __init__(self,data):
         wx.Dialog.__init__(self,None,-1, "KDE parameters")
