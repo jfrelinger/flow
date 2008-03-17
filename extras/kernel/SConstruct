@@ -99,8 +99,8 @@ if platform=='darwin':
         RPATH=[],
         LINKFLAGS = '-framework Python', 
         CXXFLAGS='-bundle -Wall -Wno-long-long -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS',
-        SHLIBSUFFIX = '.dylib',
-        EXTENSION_MODULE_SUFFIX='.so',
+        SHLIBPREFIX = '', # gets rid of lib prefix
+        SHLIBSUFFIX = sysconfig.get_config_vars('SO'), # '.dylib',
         )
 
 if platform =='posix' and 'FreeBSD' in os.popen('uname -a').readline():
@@ -117,6 +117,4 @@ if platform =='posix' and 'FreeBSD' in os.popen('uname -a').readline():
 bp.SharedLibrary(target='flow', source = files + pif_conv + pif)
 
 # hack to put shared library in correct path
-os.system('mv libflow.dylib ../../src/plugins/statistics/Kde/')
-os.system('cd ../src/plugins/statistics')
-os.system('ln -sf libflow.dylib flow.so')
+os.system('mv flow.so ../../src/plugins/statistics/Kde/')

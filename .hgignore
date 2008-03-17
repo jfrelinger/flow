@@ -1,5 +1,7 @@
 .*\.dblite
 .*\.so
+.*\.o
+.*\.os
 .*\.dylib
 .*\.pyc
 .*~
