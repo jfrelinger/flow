@@ -1,4 +1,38 @@
-python-networkx
-python-tables
-python-wxgtk2.8 or python-wxgtk2.6
-pycluster
+Debian installation
+
+Base system
+sudo apt-get install python-wxgtk2.6 python-numpy python-tables python-scipy python-matplotlib python-networkx
+
+Plugins
+
+Graphics/ThreeDFrame
+sudo apt-get install python-vtk
+
+Statistics/kmeans
+sudo apt-get install python-biopython
+
+Statistics/Kde and Statistics/bayes
+sudo apt-get install scons libboost-dev r-mathlib blitz++ lapack3-dev
+
+# install the ANN library (for kde)
+cd /tmp
+wget http://www.cs.umd.edu/~mount/ANN/Files/1.1/ann_1.1_patch_02.tar.gz
+tar -xzf ann_1.1.1.tar.gz
+cd ann_1.1.1/
+make linux-g++
+sudo mv ann_1.1.1 /usr/local/src
+
+# install the boost numeric binding headers (for bayes)
+cd /tmp
+wget http://news.tiker.net/news.tiker.net/download/software/boost-bindings/boost-bindings-20070826.tar.gz
+tar -xzf boost-bindings-20070826.tar.gz
+sudo cp -R boost-bindings/boost/numeric/bindings/ /usr/include/boost/numeric/
+
+# build the python shared librarie
+cd $FLOW/src
+scons install
+
+Projections/ica
+sudo apt-get install python-rpy r-base
+sudo R
+> install.packages("fastICA")

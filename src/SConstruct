@@ -1,1 +1,2 @@
-SConscript(['extras/bayes/SConscript','extras/kernel/SConscript'])
+kde=SConscript('extras/kernel/SConscript', install_dir='plugins/statistics/Kde')
+bayes=SConscript('extras/bayes/SConscript', install_dir='plugins/statistics/Bayes')
