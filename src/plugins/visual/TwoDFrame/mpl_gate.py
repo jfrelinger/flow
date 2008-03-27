@@ -4,8 +4,15 @@ matplotlib event handling to interact with objects on the canvas
 
 Adpated from http://matplotlib.sourceforge.net/examples/poly_editor.py
 """
+import matplotlib
+matplotlib.use('WX')
+
 from matplotlib.artist import Artist
-from matplotlib.patches import Polygon, Rectangle, Line2D
+try:
+    from matplotlib.patches import Line2D
+except ImportError:
+    from matplotlib.lines import Line2D
+from matplotlib.patches import Polygon, Rectangle #, Line2D
 from matplotlib.numerix import sqrt, nonzero, equal, array, dot, Float, take
 from matplotlib.numerix.mlab import amin
 from matplotlib.mlab import dist_point_to_segment

@@ -13,21 +13,21 @@ if platform=='darwin':
     env = Environment(
         CPPDEFINES=['RMATH_RAND', 'NDEBUG'],
         LIBS=['Rmath', 'lapack', 'boost_unit_test_framework'],
-        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.5/Resources/lib'],
-        CPPPATH=['/usr/local/include/boost-1_34', '/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.5/Resources/include', pyinc],
+        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.6/Resources/lib'],
+        CPPPATH=['/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.6/Resources/include', pyinc],
         RPATH=[],
         LINKFLAGS = '-framework Python -framework Accelerate', 
-        CXXFLAGS='-bundle -Wall -Wno-long-long -mtune=%s' % arch,
+        CXXFLAGS='-bundle -Wall -Wno-long-long -pipe -mtune=%s' % arch,
         )
 
     bp = Environment(
         CPPDEFINES=['RMATH_RAND', 'NDEBUG'],
-        LIBS=['Rmath', 'lapack', 'boost_python-1_34', pyver],
-        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.5/Resources/lib', pylib],
-        CPPPATH=['/usr/local/include/boost-1_34', '/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.5/Resources/include', pyinc],
+        LIBS=['Rmath', 'lapack', 'boost_python', pyver],
+        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.6/Resources/lib', pylib],
+        CPPPATH=['/opt/local/inlude', '/Library/Frameworks/R.framework/Versions/2.6/Resources/include', pyinc],
         RPATH=[],
         LINKFLAGS = '-framework Python -framework Accelerate', 
-        CXXFLAGS='-bundle -Wall -Wno-long-long -mtune=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
+        CXXFLAGS='-bundle -Wall -Wno-long-long -pipe -mtune=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
         SHLIBPREFIX='', #gets rid of lib prefix
         SHLIBSUFFIX=sysconfig.get_config_vars('SO')
         )
