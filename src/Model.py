@@ -321,7 +321,7 @@ class FlowModel(AbstractModel):
         except AttributeError:
             spillover = self.hdf5.createArray(group, 'spillover', matrix)
         spillover.setAttr('markers', headers)
-
+        
     def compensate(self):
         spill = self.getSpill()
         data = self.GetCurrentGroup().data

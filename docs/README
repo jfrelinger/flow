@@ -29,6 +29,11 @@ wget http://news.tiker.net/news.tiker.net/download/software/boost-bindings/boost
 tar -xzf boost-bindings-20070826.tar.gz
 sudo cp -R boost-bindings/boost/numeric/bindings/ /usr/include/boost/numeric/
 
+# alternatively, check out svn repository of boost-sandbox
+svn co http://svn.boost.org/svn/boost/sandbox/boost/numeric/bindings ublas_extensions/boost/numeric/bindings
+
+and add path $SVNHOME/ublas_extensions to compiler flags
+
 # build the python shared librarie
 cd $FLOW/src
 scons install
