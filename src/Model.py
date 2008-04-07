@@ -46,7 +46,7 @@ class FlowModel(AbstractModel):
         self.showMode = False
 
         # obo file
-        self.obofile = 'python/obo/cell.obo'
+        self.obofile = 'obo/cell.obo'
 
     def LoadData(self, headers, data, datastr):
         """Create a new array with headers and data."""
