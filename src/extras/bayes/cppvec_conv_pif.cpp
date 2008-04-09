@@ -72,47 +72,9 @@ void export_cppvec_conv()
   boost::python::to_python_converter<vector<int>, cppvec_to_python_list<int> >();
   cppvec_from_python_list<int>();
 
-  boost::python::to_python_converter<vector<string>, cppvec_to_python_list<string> >();
-  cppvec_from_python_list<string>();
+  boost::python::to_python_converter<vector<vector<double> >, cppvec_to_python_list<vector<double> > >();
+  cppvec_from_python_list<vector<double> >();
 
-  boost::python::to_python_converter<vector<blitz::TinyVector<int, 2> >, 
-    cppvec_to_python_list<blitz::TinyVector<int, 2> > >();
-  cppvec_from_python_list<blitz::TinyVector<int, 2> >();
-
-  boost::python::to_python_converter<vector<blitz::TinyVector<int, 3> >, 
-    cppvec_to_python_list<blitz::TinyVector<int, 3> > >();
-  cppvec_from_python_list<blitz::TinyVector<int, 3> >();
-
-  boost::python::to_python_converter<vector<blitz::TinyVector<double, 2> >, 
-    cppvec_to_python_list<blitz::TinyVector<double, 2> > >();
-  cppvec_from_python_list<blitz::TinyVector<double, 2> >();
-
-  boost::python::to_python_converter<vector<blitz::TinyVector<double, 3> >, 
-    cppvec_to_python_list<blitz::TinyVector<double, 3> > >();
-  cppvec_from_python_list<blitz::TinyVector<double, 3> >();
-
-  boost::python::to_python_converter<vector<ublas::vector<int> >, 
-    cppvec_to_python_list<ublas::vector<int> > >();
-  cppvec_from_python_list<ublas::vector<int> >();
-
-  boost::python::to_python_converter<vector<ublas::vector<double> >, 
-    cppvec_to_python_list<ublas::vector<double> > >();
-  cppvec_from_python_list<ublas::vector<double> >();
-
-  boost::python::to_python_converter<vector<ublas::vector<ublas::vector<int> > >, 
-    cppvec_to_python_list<ublas::vector<ublas::vector<int> > > >();
-  cppvec_from_python_list<ublas::vector<ublas::vector<int> > >();
-
-  boost::python::to_python_converter<vector<ublas::vector<ublas::vector<double> > >, 
-    cppvec_to_python_list<ublas::vector<ublas::vector<double> > > >();
-  cppvec_from_python_list<ublas::vector<ublas::vector<double> > >();
-
-  boost::python::to_python_converter<vector<ublas::vector<ublas::matrix<int> > >, 
-    cppvec_to_python_list<ublas::vector<ublas::matrix<int> > > >();
-  cppvec_from_python_list<ublas::vector<ublas::matrix<int> > >();
-
-  boost::python::to_python_converter<vector<ublas::vector<ublas::matrix<double> > >, 
-    cppvec_to_python_list<ublas::vector<ublas::matrix<double> > > >();
-  cppvec_from_python_list<ublas::vector<ublas::matrix<double> > >();
-
+  boost::python::to_python_converter<vector<vector<int> >, cppvec_to_python_list<vector<int> > >();
+  cppvec_from_python_list<vector<int> >();
 }
