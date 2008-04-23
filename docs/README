@@ -1,18 +1,25 @@
+These are installation instructions for a Debian/Ubuntu Linux
+system and Mac OS X. A Windows installation can also be done by
+following the Mac instructions if a suitable C++ compilation
+environment is available. 
+
+See also https://galen.dulci.duhs.duke.edu/flow/wiki/Software
+
 Debian installation
 ===================
 
-Base system
+[[ Base system ]] 
 sudo apt-get install python-wxgtk2.6 python-numpy python-tables python-scipy python-matplotlib python-networkx
 
-Plugins
+[[ Plugins ]]
 
-Graphics/ThreeDFrame
+[ Graphics/ThreeDFrame ]
 sudo apt-get install python-vtk
 
-Statistics/kmeans
+[ Statistics/kmeans ]
 sudo apt-get install python-biopython
 
-Statistics/Kde and Statistics/bayes
+[ Statistics/Kde and Statistics/bayes ]
 sudo apt-get install scons libboost-dev r-mathlib blitz++ lapack3-dev
 
 # install the ANN library (for kde)
@@ -34,17 +41,19 @@ svn co http://svn.boost.org/svn/boost/sandbox/boost/numeric/bindings ublas_exten
 
 and add path $SVNHOME/ublas_extensions to compiler flags
 
-# build the python shared librarie
+# build the python shared libraries for kde and Bayes where $FLOW is the base directory
 cd $FLOW/src
 scons install
 
-Projections/ica
+[ Projections/ica ]
 sudo apt-get install python-rpy r-base
 sudo R
 > install.packages("fastICA")
 
-Mac OS X installation
+Mac OS X 10.5  installation
 =====================
+
+[[ Base system ]]
 
 Download and install setuptools from http://pypi.python.org/pypi/setuptools
 tar -xzf setuptools-0.6c8.tar.gz 
@@ -74,48 +83,19 @@ sudo python setup.py install
 Install the Scipy superpack from 
 http://idisk.mac.com/fonnesbeck-Public/ScipySuperpackInstaller.zip
 
-Alternatively, individual packages can be downloaded and installed from
+Alternatively, individual packages for scipy, numpy and matplotlib can
+be downloaded and installed from
 http://pythonmac.org/packages/py25-fat/index.html
 
-Install R from source
-wget http://cran.r-project.org/src/base/R-2/R-2.6.2.tar.gz
-tar -xzf R-2.6.2.tar.gz
-cd R-2.6.2.tar.gz
-./configure --enable-BLAS-shlib --with-blas='-framework vecLib'
-make
-sudo make install
-cd src/nmath/standalone
-make
-sudo ln -s /Library/Frameworks/R.framework/Resources/R /usr/local/bin/R
+[[ Plugins ]]
 
-Statistics/kmeans
-wget http://downloads.sourceforge.net/numpy/Numeric-24.2.tar.gz
-
-* Installing Qt
-wget http://ftp.ntua.gr/pub/X11/Qt/qt/source/qt-mac-opensource-src-4.3.4.tar.gz
-tar -xzf qt-mac-opensource-src-4.3.4.tar.gz
-cd qt-mac-opensource-src-4.3.4
-./configure
-make
-sudo make install
+[ Graphics/ThreeDFrame ]
 
 * Installing cmake
 wget http://www.cmake.org/files/v2.4/cmake-2.4.8.tar.gz
 tar -xzf cmake-2.4.8.tar.gz
 cd cmake-2.4.8
 ./bootstrap
-make
-sudo make install
-
-* Installing Paraview
-export PATH=$PATH:/usr/local/Trolltech/Qt-4.3.4/
-cvs -d :pserver:anoncvs@www.paraview.org:/cvsroot/ParaView3 login
-cvs -d :pserver:anoncvs@www.paraview.org:/cvsroot/ParaView3 co ParaView3
-mkdir ParaViewBuild
-cd ParaViewBuild/
-ccmake ../ParaView3
-options (PARAVIEW_ENABLE_PYTHON ON)
-Hit 'c' to configure and 'g' to generate Makefiles
 make
 sudo make install
 
@@ -134,3 +114,62 @@ cd Wrapping/Python
 python setup.py build
 sudo python setup.py install
 export PYTHONPATH=/Library/Python/2.5/site-packages/VTK-5.1.0-py2.5.egg/vtk
+
+[ Statistics/kmeans ]
+wget http://downloads.sourceforge.net/numpy/Numeric-24.2.tar.gz
+
+[ Statistics/Kde and Statistics/bayes ]
+
+# install the ANN library (for kde)
+cd /tmp
+wget http://www.cs.umd.edu/~mount/ANN/Files/1.1.1/ann_1.1.1.tar.gz
+tar -xzf ann_1.1.1.tar.gz
+cd ann_1.1.1/
+make linux-g++
+sudo mv ann_1.1.1 /usr/local/src
+
+# install the blitz++ library
+wget http://internap.dl.sourceforge.net/sourceforge/blitz/blitz-0.9.tar.gz
+tar -xzf blitz-0.9.tar.gz
+cd blitz-0.9
+./configure
+make
+make install
+
+# install the C++ boost library
+wget http://superb-west.dl.sourceforge.net/sourceforge/boost/boost_1_35_0.tar.gz
+tar -xzf boost_1_35_0.tar.gz
+cd boost_1_35_0
+./configure
+make
+sudo make install
+
+# install the boost numeric binding headers (for bayes)
+cd /tmp
+wget http://news.tiker.net/news.tiker.net/download/software/boost-bindings/boost-bindings-20070826.tar.gz
+tar -xzf boost-bindings-20070826.tar.gz
+sudo cp -R boost-bindings/boost/numeric/bindings/ /usr/include/boost/numeric/
+
+# alternatively, check out svn repository of boost-sandbox
+svn co http://svn.boost.org/svn/boost/sandbox/boost/numeric/bindings ublas_extensions/boost/numeric/bindings
+
+# build the python shared libraries for kde and Bayes where $FLOW is the base directory
+cd $FLOW/src
+scons install
+
+[ Projections/ica ]
+
+# Install R from source
+wget http://cran.r-project.org/src/base/R-2/R-2.6.2.tar.gz
+tar -xzf R-2.6.2.tar.gz
+cd R-2.6.2.tar.gz
+./configure --enable-BLAS-shlib --with-blas='-framework vecLib'
+make
+sudo make install
+cd src/nmath/standalone
+make
+sudo ln -s /Library/Frameworks/R.framework/Resources/R /usr/local/bin/R
+
+# Install fastICA
+sudo R
+> install.packages("fastICA")
