@@ -1,14 +1,17 @@
 These are installation instructions for a Debian/Ubuntu Linux
 system and Mac OS X. A Windows installation can also be done by
 following the Mac instructions if a suitable C++ compilation
-environment is available. 
+environment is available.
 
 See also https://galen.dulci.duhs.duke.edu/flow/wiki/Software
 
+Downloading Flow software
+=========================
 
+Download by clicking on the bz2, zip or gz links at the top of http://hg/dulci.org/flow
 
-Debian installation
-===================
+Debian/Ubuntu installation
+==========================
 
 [[ Base system ]] 
 sudo apt-get install python-wxgtk2.6 python-numpy python-tables python-scipy python-matplotlib python-networkx
@@ -41,8 +44,7 @@ sudo cp -R boost-bindings/boost/numeric/bindings/ /usr/include/boost/numeric/
 
 # alternatively, check out svn repository of boost-sandbox
 svn co http://svn.boost.org/svn/boost/sandbox/boost/numeric/bindings ublas_extensions/boost/numeric/bindings
-
-and add path $SVNHOME/ublas_extensions to compiler flags
+sudo cp -R ublas_extensions/boost/numeric/bindings/ /usr/include/boost/numeric/
 
 # build the python shared libraries for kde and Bayes where $FLOW is the base directory
 sudo apt-get install libboost-python-dev
@@ -56,8 +58,9 @@ sudo R
 > q()
 
 # python-rpy binaries are tied to specific R versions
-# if the version from the package manager fails
+# if the version from the package manager fails (e.g. on Ubuntu 8.02)
 # uninstall and install from source
+sudo apt-get remove python-rpy
 cd /tmp
 wget superb-west.dl.sourceforge.net/sourceforge/rpy/rpy-1.02.tar.gz
 tar -xzf rpy-1.0.2.tar.gz
@@ -65,48 +68,41 @@ cd rpy-1.0.2
 python setup.py build
 python setup.py install
 
+# Flow should now be ready to run
+cd $FLOW/src
+python App.py
+
 Mac OS X 10.5  installation
 =====================
 
 [[ Base system ]]
 
-Download and install setuptools from http://pypi.python.org/pypi/setuptools
-tar -xzf setuptools-0.6c8.tar.gz 
-cd setuptools-0.6c8
-sudo python setup.py install
+Download and install the wxPython binary from http://www.wxpython.org/
 
-Download and install wxPython from http://www.wxpython.org/
-Here's a slightly nutty way to do it all from the command line
+Install the binaries for scipy, numpy and matplotlib from
+http://pythonmac.org/packages/py25-fat/index.html
+
 cd /tmp
-wget http://superb-east.dl.sourceforge.net/sourceforge/wxpython/wxPython2.8-osx-unicode-2.8.7.1-universal-py2.5.dmg
-hdid wxPython2.8-osx-unicode-2.8.7.1-universal-py2.5.dmg 
-cd /Volumes/wxPython2.8-osx-unicode-2.8.7.1-universal-py2.5/
-sudo installer -package wxPython2.8-osx-unicode-universal-py2.5.pkg -target /Volumes/Macintosh\ HD
-
 wget http://pypi.python.org/packages/source/n/networkx/networkx-0.36.tar.gz
 tar -xzf networkx-0.36.tar.gz 
 cd networkx-0.36
 python setup.py build
 sudo python setup.py install
 
+cd /tmp
 wget http://www.pytables.org/download/stable/pytables-2.0.3.tar.gz
 tar -xzf pytables-2.0.3.tar.gz 
 cd pytables-2.0.3
 python setup.py build
 sudo python setup.py install
 
-Install the Scipy superpack from 
-http://idisk.mac.com/fonnesbeck-Public/ScipySuperpackInstaller.zip
-
-Alternatively, individual packages for scipy, numpy and matplotlib can
-be downloaded and installed from
-http://pythonmac.org/packages/py25-fat/index.html
 
 [[ Plugins ]]
 
 [ Graphics/ThreeDFrame ]
 
 * Installing cmake
+cd /tmp
 wget http://www.cmake.org/files/v2.4/cmake-2.4.8.tar.gz
 tar -xzf cmake-2.4.8.tar.gz
 cd cmake-2.4.8
@@ -115,6 +111,7 @@ make
 sudo make install
 
 * Installing VTK
+cd /tmp
 cvs -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK login
 (respond with password vtk)
 cvs -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK checkout VTK
@@ -140,18 +137,21 @@ cd /tmp
 wget http://www.cs.umd.edu/~mount/ANN/Files/1.1.1/ann_1.1.1.tar.gz
 tar -xzf ann_1.1.1.tar.gz
 cd ann_1.1.1/
-make linux-g++
+make macosx-g++
+cd ..
 sudo mv ann_1.1.1 /usr/local/src
 
 # install the blitz++ library
+cd /tmp
 wget http://internap.dl.sourceforge.net/sourceforge/blitz/blitz-0.9.tar.gz
 tar -xzf blitz-0.9.tar.gz
 cd blitz-0.9
 ./configure
 make
-make install
+sudo make install
 
 # install the C++ boost library
+cd /tmp
 wget http://superb-west.dl.sourceforge.net/sourceforge/boost/boost_1_35_0.tar.gz
 tar -xzf boost_1_35_0.tar.gz
 cd boost_1_35_0
@@ -166,7 +166,9 @@ tar -xzf boost-bindings-20070826.tar.gz
 sudo cp -R boost-bindings/boost/numeric/bindings/ /usr/include/boost/numeric/
 
 # alternatively, check out svn repository of boost-sandbox
+cd /tmp
 svn co http://svn.boost.org/svn/boost/sandbox/boost/numeric/bindings ublas_extensions/boost/numeric/bindings
+sudo cp -R ublas_extensions/boost/numeric/bindings/ /usr/include/boost/numeric/
 
 # build the python shared libraries for kde and Bayes where $FLOW is the base directory
 cd $FLOW/src
@@ -175,6 +177,7 @@ scons install
 [ Projections/ica ]
 
 # Install R from source
+cd /tmp
 wget http://cran.r-project.org/src/base/R-2/R-2.6.2.tar.gz
 tar -xzf R-2.6.2.tar.gz
 cd R-2.6.2.tar.gz
@@ -188,3 +191,11 @@ sudo ln -s /Library/Frameworks/R.framework/Resources/R /usr/local/bin/R
 # Install fastICA
 sudo R
 > install.packages("fastICA")
+
+# Install rpy
+cd /tmp
+wget superb-west.dl.sourceforge.net/sourceforge/rpy/rpy-1.02.tar.gz
+tar -xzf rpy-1.0.2.tar.gz
+cd rpy-1.0.2
+python setup.py build
+python setup.py install
