@@ -30,6 +30,7 @@ wget http://www.cs.umd.edu/~mount/ANN/Files/1.1.1/ann_1.1.1.tar.gz
 tar -xzf ann_1.1.1.tar.gz
 cd ann_1.1.1/
 make linux-g++
+cd ..
 sudo mv ann_1.1.1 /usr/local/src
 
 # install the boost numeric binding headers (for bayes)
@@ -44,13 +45,25 @@ svn co http://svn.boost.org/svn/boost/sandbox/boost/numeric/bindings ublas_exten
 and add path $SVNHOME/ublas_extensions to compiler flags
 
 # build the python shared libraries for kde and Bayes where $FLOW is the base directory
+sudo apt-get install libboost-python-dev
 cd $FLOW/src
 scons install
 
 [ Projections/ica ]
-sudo apt-get install python-rpy r-base
+sudo apt-get install python-rpy r-base gfortran
 sudo R
 > install.packages("fastICA")
+> q()
+
+# python-rpy binaries are tied to specific R versions
+# if the version from the package manager fails
+# uninstall and install from source
+cd /tmp
+wget superb-west.dl.sourceforge.net/sourceforge/rpy/rpy-1.02.tar.gz
+tar -xzf rpy-1.0.2.tar.gz
+cd rpy-1.0.2
+python setup.py build
+python setup.py install
 
 Mac OS X 10.5  installation
 =====================
