@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 """Main Aplication"""
+import matplotlib
+matplotlib.use('WXAgg')
+
 import wx
 import sys
 import os

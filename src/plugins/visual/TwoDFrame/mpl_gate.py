@@ -5,7 +5,7 @@ matplotlib event handling to interact with objects on the canvas
 Adpated from http://matplotlib.sourceforge.net/examples/poly_editor.py
 """
 import matplotlib
-matplotlib.use('WX')
+# matplotlib.use('WX')
 
 from matplotlib.artist import Artist
 try:
