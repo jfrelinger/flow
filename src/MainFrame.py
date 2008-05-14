@@ -9,6 +9,8 @@ from numpy import array, where, greater, log10, log, clip, take, argsort, arcsin
 from numpy.random import shuffle, randint, get_state
 import transforms
 from OboFrame import OboTreeFrame
+from AnnotateFrame import annotateFrame
+
 # from dbio import DBDialog
 
 class MainFrame(VizFrame):
@@ -31,19 +33,7 @@ class MainFrame(VizFrame):
                                        style=wx.TE_RICH|wx.TE_MULTILINE|wx.TE_READONLY, size=(200,100))
 
         menubar = wx.MenuBar()
-        # help menu
-        self.helpMenu = wx.Menu()
-        self.about = self.helpMenu.Append(wx.ID_ABOUT, "&About FlowDevo")
-        self.help = self.helpMenu.Append(-1, "FlowDevo Help")
-        self.tutorial = self.helpMenu.Append(-1, "FlowDevo Tutorial")
-        self.helpMenu.AppendSeparator()
-        self.homepage = self.helpMenu.Append(-1, "FlowDevo homepage")
-        self.bugs = self.helpMenu.Append(-1, "Report bugs")
-        self.helpMenu.AppendSeparator()
-        self.update = self.helpMenu.Append(-1, "Check for updates")
-
-        # bind help menuitems
-        self.Bind(wx.EVT_MENU, self.OnAbout, self.about)
+        
 
         transforms = {}
         transforms['clip'] = (self.OnClip, "Clip transform")
@@ -82,6 +72,19 @@ class MainFrame(VizFrame):
         loadOntology = self.ontologyMenu.Append(-1, "Load OBO file")
         self.Bind(wx.EVT_MENU, self.OnLoadOntology, loadOntology)
 
+        # help menu
+        self.helpMenu = wx.Menu()
+        self.about = self.helpMenu.Append(wx.ID_ABOUT, "&About FlowDevo")
+        self.help = self.helpMenu.Append(-1, "FlowDevo Help")
+        self.tutorial = self.helpMenu.Append(-1, "FlowDevo Tutorial")
+        self.helpMenu.AppendSeparator()
+        self.homepage = self.helpMenu.Append(-1, "FlowDevo homepage")
+        self.bugs = self.helpMenu.Append(-1, "Report bugs")
+        self.helpMenu.AppendSeparator()
+        self.update = self.helpMenu.Append(-1, "Check for updates")
+
+        # bind help menuitems
+        self.Bind(wx.EVT_MENU, self.OnAbout, self.about)
         menubar.Append(self.helpMenu, "&Help")
 
         self.SetMenuBar(menubar)
@@ -419,7 +422,7 @@ class MainFrame(VizFrame):
             menu = wx.Menu()
             self.popupItems = {}
             self.pasteItem = None
-            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database']:
+            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate']:
                 self.popupItems[str] = menu.Append(-1, str)
                 self.Bind(wx.EVT_MENU, self.OnPopupSelected, self.popupItems[str])
             
@@ -445,8 +448,10 @@ class MainFrame(VizFrame):
     def OnShowPopup(self, event):
         if self.tree.GetItemPyData(event.GetItem())._c_classId == "GROUP":
             self.popupItems['Edit'].Enable(False)
+            self.popupItems['Annotate'].Enable(False)
         else:
             self.popupItems['Edit'].Enable(True)
+            self.popupItems['Annotate'].Enable(True)
             
         self.tree.PopupMenu(self.popup)
         
@@ -473,9 +478,22 @@ class MainFrame(VizFrame):
             self.OnDelete()
         elif text == 'Export To Database':
             self.OnExport()
+        elif text == 'Annotate':
+            self.OnAnnotate()
         else:
             wx.MessageBox(text)
             
+    def OnAnnotate(self):
+        selection = self.tree.GetSelection()
+        item = self.tree.GetItemPyData(selection)
+        txt = self.tree.GetItemText(selection)
+        try:
+            current = item.getAttr('annotation')
+        except AttributeError:
+            current = ''
+        annotate = annotateFrame(item, txt, current)
+        annotate.Show()
+        
     def OnRename(self):
         selection = self.tree.GetSelection()
         if selection != self.root:
