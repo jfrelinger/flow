@@ -94,6 +94,7 @@ class TwoDDensity(VizFrame):
                 # fields = map(str,range(1, self.model.current_array.shape[1]+1))
                 print "debug this!"
             self.widget.model = self.model
+            self.widget.Zs = self.colors
             self.RadioButtons(fields)
             self.BuildColors()
         
@@ -311,6 +312,7 @@ class TwoDPanel(PlotPanel):
         self.y = y
         self.parent = parent
         self.colors = None
+        self.Zs = None
 
     def update_attributes(self, inputs):
         if not hasattr(self, 'subplot'):
@@ -363,8 +365,8 @@ class TwoDPanel(PlotPanel):
             except AttributeError:
                 # PUT COLOR CODE HERE
                 # ONLY WORKS IF NOT GATING
-                if hasattr(self, 'model') and self.model.IsZ():
-                    z = array(self.model.GetCurrentZ()[:], 'i')
+                if hasattr(self, 'model') and self.Zs is not None:
+                    z = array(self.Zs[:], 'i')
                     maxz = max(z)
                     self.colors = [colormap.floatRgb(i, 0, maxz+1, i/(maxz+1)) for i in range(maxz+1)]
                     for i in range(maxz+1):
