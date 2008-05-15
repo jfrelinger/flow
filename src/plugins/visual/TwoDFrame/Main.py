@@ -77,7 +77,26 @@ class TwoDDensity(VizFrame):
         self.Bind(wx.EVT_MENU, self.OnMenuSwitch, self.widget.ellipse)
         self.Show()
         self.SendSizeEvent()
-
+        self.model = None
+        
+    def AttachModel(self, model):
+        if self.model == None:
+            self.model = model
+            self.data = self.model.GetCurrentData()[:]
+            if self.model.IsZ():
+                self.colors = array(self.model.GetCurrentZ()[:],'i')
+                self.colorGate.Enable(True)
+            else:
+                self.colors = None
+            try:
+                fields = self.model.current_array.getAttr('fields')
+            except AttributeError:
+                # fields = map(str,range(1, self.model.current_array.shape[1]+1))
+                print "debug this!"
+            self.widget.model = self.model
+            self.RadioButtons(fields)
+            self.BuildColors()
+        
     def OnCopyGate(self, event):
         """Store current gate vertex locations."""
         try:
@@ -229,8 +248,8 @@ class TwoDDensity(VizFrame):
         self.widget.xlab = xlab
         self.widget.ylab = ylab
         self.widget.title = title
-        self.widget.x = self.model.current_array[:,x]
-        self.widget.y = self.model.current_array[:,y]
+        self.widget.x = self.data[:,x]
+        self.widget.y = self.data[:,y]
 
         if min(self.widget.x) <= 0:
             self.widget.minx = min(self.widget.x)
@@ -245,22 +264,8 @@ class TwoDDensity(VizFrame):
         self.widget.draw()
         
     def Plot(self):
-        if self.model.ready:
-            self.data = self.model.GetCurrentData()[:]
-            if self.model.IsZ():
-                self.colors = array(self.model.GetCurrentZ()[:],'i')
-                self.colorGate.Enable(True)
-            else:
-                self.colors = None
-            try:
-                fields = self.model.current_array.getAttr('fields')
-            except AttributeError:
-                # fields = map(str,range(1, self.model.current_array.shape[1]+1))
-                print "debug this!"
-            self.RadioButtons(fields)
-            self.BuildColors()
-            self.UpdateSimple(self.radioX.GetSelection(),self.radioY.GetSelection(), self.radioX.GetStringSelection(), self.radioY.GetStringSelection())
-            self.widget.model = self.model
+        self.UpdateSimple(self.radioX.GetSelection(),self.radioY.GetSelection(), self.radioX.GetStringSelection(), self.radioY.GetStringSelection())
+            
 
     def OnControlSwitch(self,event):
         self.UpdateSimple(self.radioX.GetSelection(),self.radioY.GetSelection(),self.radioX.GetStringSelection(), self.radioY.GetStringSelection())
@@ -269,7 +274,7 @@ class TwoDDensity(VizFrame):
         self.widget.draw()
     
     def GateByColor(self, event):
-        fields = self.model.GetCurrentData().getAttr('fields')
+        fields = self.data.getAttr('fields')
         results = []
         z = []
         # self.checked = [i for i, cb in enumerate(self.cbs) if cb.IsChecked()]
@@ -297,7 +302,7 @@ class TwoDDensity(VizFrame):
         for i, d in enumerate(self.data):
             if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
                 results.append(d)
-        self.model.updateHDF('GatedData', array(results), self.model.GetCurrentData())
+        self.model.updateHDF('GatedData', array(results), self.data)
 
 class TwoDPanel(PlotPanel):
     def __init__(self, x, y, parent, *args):
