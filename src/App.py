@@ -20,6 +20,8 @@ from Model import FlowModel
 from io import Io
 from dialogs import SaveDialog
 from EditTable import SpillFrame
+import about
+
 
 class MainApp(wx.App): #IGNORE:R0902
     """main app class, used to start the whole program """
@@ -89,6 +91,21 @@ class MainApp(wx.App): #IGNORE:R0902
                      (self.controlFrame.ontologyMenu, 'Ontology')]
         for item in menuItems:
             self.controlFrame.GetMenuBar().Append(*item)
+        
+        # help menu
+        self.helpMenu = wx.Menu()
+        self.about = self.helpMenu.Append(wx.ID_ABOUT, "&About FlowDevo")
+        self.help = self.helpMenu.Append(-1, "FlowDevo Help")
+        self.tutorial = self.helpMenu.Append(-1, "FlowDevo Tutorial")
+        self.helpMenu.AppendSeparator()
+        self.homepage = self.helpMenu.Append(-1, "FlowDevo homepage")
+        self.bugs = self.helpMenu.Append(-1, "Report bugs")
+        self.helpMenu.AppendSeparator()
+        self.update = self.helpMenu.Append(-1, "Check for updates")
+        
+        self.controlFrame.GetMenuBar().Append(self.helpMenu, "&Help")
+        self.Bind(wx.EVT_MENU, self.OnAbout, self.about)
+
         self.controlFrame.DoLayout()
         self.SetTopWindow(self.controlFrame)
         
@@ -253,6 +270,11 @@ class MainApp(wx.App): #IGNORE:R0902
         projections = self.projections[Name]()
         projections.Main(self.model)
         
+    def OnAbout(self, event):
+        """About screen."""
+        dlg = about.FlowDevoAbout(self.controlFrame)
+        dlg.ShowModal()
+        dlg.Destroy()
 if __name__ == '__main__':
     App = MainApp(redirect=False) #IGNORE:C0103
     App.MainLoop()

@@ -4,7 +4,6 @@ from io import Io
 from VizFrame import VizFrame
 from EditTable import EditFrame, Table
 from dialogs import ParameterDialog, ChoiceDialog
-import about
 from numpy import array, where, greater, log10, log, clip, take, argsort, arcsinh, min, max
 from numpy.random import shuffle, randint, get_state
 import transforms
@@ -72,21 +71,8 @@ class MainFrame(VizFrame):
         loadOntology = self.ontologyMenu.Append(-1, "Load OBO file")
         self.Bind(wx.EVT_MENU, self.OnLoadOntology, loadOntology)
 
-        # help menu
-        self.helpMenu = wx.Menu()
-        self.about = self.helpMenu.Append(wx.ID_ABOUT, "&About FlowDevo")
-        self.help = self.helpMenu.Append(-1, "FlowDevo Help")
-        self.tutorial = self.helpMenu.Append(-1, "FlowDevo Tutorial")
-        self.helpMenu.AppendSeparator()
-        self.homepage = self.helpMenu.Append(-1, "FlowDevo homepage")
-        self.bugs = self.helpMenu.Append(-1, "Report bugs")
-        self.helpMenu.AppendSeparator()
-        self.update = self.helpMenu.Append(-1, "Check for updates")
 
-        # bind help menuitems
-        self.Bind(wx.EVT_MENU, self.OnAbout, self.about)
-        menubar.Append(self.helpMenu, "&Help")
-
+        
         self.SetMenuBar(menubar)
         #statusbar = self.CreateStatusBar()
         # createEdit needs to be called before CreatePopup 
@@ -328,11 +314,6 @@ class MainFrame(VizFrame):
         indices = self.GetIndices(dlg2)
         self.model.ArcsinhTransform(indices, inputs)
 
-    def OnAbout(self, event):
-        """About screen."""
-        dlg = about.FlowDevoAbout(self)
-        dlg.ShowModal()
-        dlg.Destroy()
 
     def ModelUpdate(self, model):
         VizFrame.ModelUpdate(self, model)
@@ -367,15 +348,21 @@ class MainFrame(VizFrame):
             item, cookie = self.tree.GetNextChild(parent, cookie)
        
     
-    def UpdateTree(self, newH5Group, curTreeGroup):
+    def UpdateTree(self, newH5Group, curTreeGroup, data = None):
+        self.curData = data
         newTreeGroup = self.tree.AppendItem(curTreeGroup, newH5Group._v_name)
         self.treeItems.append(newTreeGroup)
         self.tree.SetItemPyData(newTreeGroup,newH5Group)
+#        if self.curData is not None and 'data' not in newH5Group._v_leaves.keys():
+#            item = self.tree.AppendItem(newTreeGroup, 'data')
+#            self.tree.SetItemPyData(item,self.curData)
         for leaf in newH5Group._v_leaves.keys():
+            if leaf is 'data':
+                self.curData = newH5Group._v_leaves[leaf]
             item = self.tree.AppendItem(newTreeGroup,leaf)
             self.tree.SetItemPyData(item,newH5Group._v_leaves[leaf])
         for subGroup in newH5Group._v_groups.keys():
-            self.UpdateTree(newH5Group._v_groups[subGroup],newTreeGroup)
+            self.UpdateTree(newH5Group._v_groups[subGroup],newTreeGroup, self.curData)
             
     def OnTreeActivated(self,event):
         self.log.Clear()
@@ -409,7 +396,7 @@ class MainFrame(VizFrame):
             item = self.tree.GetItemPyData(event.GetItem())
             label = event.GetLabel()
             if label:
-                item._f_rename(label)  # TODO: add rename method to model that actually calls _f_rename()
+                item._f_rename(label)
         
     def OnZEdit(self, event):
         self.obo = OboTreeFrame(self.model, self)
