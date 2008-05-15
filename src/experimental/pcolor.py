@@ -21,6 +21,7 @@ ypts = numpy.random.uniform(-2, 2, 10000)
 xint = map(int, (xpts + 3)/delta)
 yint = map(int, (ypts + 2)/delta)
 zvals = [Z[_y, _x] for _x, _y in zip(xint, yint)]
+
 ax.scatter(xpts, ypts, s=1, c=zvals, faceted=False)
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
