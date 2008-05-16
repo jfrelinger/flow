@@ -4,7 +4,7 @@ import vtk
 import numpy
 import os
 
-#from vtk.wx.wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
+# from vtk.wx.wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
 # use Enthought version copied from svn/enthought/src/lib/enthought/pyface/tvtk/wxVTKRenderWindowInteractor.py
 # which fixes bug crashing wxVTKRenderWindowInteractor on GTK2
 from wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
@@ -341,7 +341,6 @@ class ThreeDFrameGating(VizFrame):
         pntactor.SetMapper(pntmapper)
         pntactor.VisibilityOn()
 
-
         # create axes
         axes = vtk.vtkAxes()
         axes.SetOrigin(0,0,0)
@@ -388,7 +387,15 @@ class ThreeDFrameGating(VizFrame):
         
     def Plot(self):
         if self.model.ready:
-            self.data = self.model.GetCurrentData()[:]
+            # scale data since vtkAxes do not appear 
+            # to be independently scaleable
+            data = self.model.GetCurrentData()[:]
+            for i in range(data.shape[1]):
+                top = numpy.max(data[:, i])
+                bot = numpy.min(data[:, i])
+                data[:, i] = (data[:, i] - bot)/(top - bot)
+            self.data = data
+
             if self.model.IsZ():
                 self.colors = numpy.array(self.model.GetCurrentZ()[:], 'i')
                 self.colorGate.Enable(True)

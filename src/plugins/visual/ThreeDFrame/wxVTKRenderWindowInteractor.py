@@ -297,7 +297,7 @@ class wxVTKRenderWindowInteractor(baseClass):
         dc = wxPaintDC(self)
 
         # make sure the RenderWindow is sized correctly
-        self._Iren.GetRenderWindow().SetSize(self.GetSizeTuple())
+        self._Iren.GetRenderWindow().SetSize(*self.GetSizeTuple())
         
         # Tell the RenderWindow to render inside the wxWindow.
         if not self.__handle:
