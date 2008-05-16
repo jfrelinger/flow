@@ -19,6 +19,7 @@ z, xedge, yedge = numpy.histogram2d(y, x, bins=[bins, bins],
                                            (numpy.min(x), numpy.max(x))])
 
 # interpolate to get rid of blocky effect
+# from http://en.wikipedia.org/wiki/Bilinear_interpolation
 xfrac, xint = numpy.modf((x - numpy.min(x))/
                          (numpy.max(x)-numpy.min(x))*(bins-1))
 yfrac, yint = numpy.modf((y - numpy.min(y))/
