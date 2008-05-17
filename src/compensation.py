@@ -3,6 +3,7 @@ import wx.grid
 from plots import PlotPanel
 import pylab
 import numpy
+from numpy.linalg import solve
 
 
 
@@ -23,24 +24,27 @@ class CompensationFrame(wx.Frame):
         except AttributeError:
             self.headers = None
             
-        print self.headers
-        size = len(self.headers)
-        self.grid.CreateGrid(size,size)
+        #print self.headers
+        self.gridSize = len(self.headers)
+        self.grid.CreateGrid(self.gridSize,self.gridSize)
         #self.grid.CreateGrid(4,4)
         rgbtuple = wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE).Get()
         self.gridDefaultColor = self.grid.GetCellBackgroundColour(0,0)
+        self.grid.SetDefaultEditor(wx.grid.GridCellFloatEditor())
         self.pos = None
-        for i in range(size):
+        for i in range(self.gridSize):
             self.grid.SetRowLabelValue(i,self.headers[i])
             self.grid.SetColLabelValue(i,self.headers[i])
-            for j in range(size):
+            for j in range(self.gridSize):
                 if i == j :
                     self.grid.SetCellBackgroundColour(i,j, wx.Colour(*rgbtuple))
-                else:
-                    self.grid.SetCellValue(i,j, '0')
+                    self.grid.SetReadOnly(i,j, isReadOnly=True)
+                self.grid.SetCellValue(i,j, '1')
+                
         self.grid.AutoSize()
         self.grid.Bind(wx.EVT_SIZE, self.OnGridSize)
         self.Bind(wx.grid.EVT_GRID_SELECT_CELL, self.OnCellSelect, self.grid)
+        self.Bind(wx.grid.EVT_GRID_CELL_CHANGE, self.OnEdit)
         
         self.okBtn = wx.Button(self.panel, id=wx.ID_OK)
         self.cancelBtn = wx.Button(self.panel, id=wx.ID_CANCEL)
@@ -109,7 +113,22 @@ class CompensationFrame(wx.Frame):
 
             
         event.Skip()
-       
+        
+    def OnEdit(self, event):
+        self.Compensate()
+        event.Skip()
+    
+    def Compensate(self):
+        comp = numpy.zeros((self.gridSize, self.gridSize))
+        for i in range(self.gridSize):
+            for j in range(self.gridSize):
+                comp[i,j] = float(self.grid.GetCellValue(i,j))
+#        indices = [data.attrs.fields.index(data.attrs.NtoS[m])
+#                       for m in self.headers]
+#        observed = array([data[:,i] for i in indices])
+        self.data = solve(comp.T, self.data[:])  ## todo fix matix sizes.
+        
+
 class GraphingPanel(PlotPanel):
     def __init__(self,parent, id, x,y,*args):
          super(GraphingPanel, self).__init__(parent=parent, id=id)
@@ -132,6 +151,7 @@ class GraphingPanel(PlotPanel):
          
          
          self.subplot.scatter(self.x,self.y,s=1, c=zvals, faceted=False )
+         self.Refresh()
          
       
 if __name__ == '__main__':
