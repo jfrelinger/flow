@@ -122,7 +122,12 @@ class CompensationFrame(wx.Frame):
         event.Skip()
         
     def OnEdit(self, event):
+#        print "Setting Grid Cursor"
+#        self.grid.SetGridCursor(event.GetRow(), event.GetCol())
         self.Compensate()
+        #pos = [event.GetRow(), event.GetCol()]
+        #self.grid.SelectBlock(pos[0],pos[1],pos[0],pos[1])
+        #self.grid.SetGridCursor(pos[0],pos[1])
         event.Skip()
     
     def Compensate(self):
@@ -141,6 +146,16 @@ class GraphingPanel(PlotPanel):
          super(GraphingPanel, self).__init__(parent=parent, id=id)
          self.x = x
          self.y = y
+         
+         # this really doesn't seem to speed things up much...
+#         speed = 10000
+#         if len(self.x) > speed:
+#             stride = len(self.x)/speed
+#         else:
+#             stride = 1
+#        
+#         self.x = self.x[:speed*stride:stride]
+#         self.y = self.y[:speed*stride:stride]
          
     def draw(self):
          if not hasattr(self, 'subplot'):
