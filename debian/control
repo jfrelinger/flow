@@ -1,0 +1,12 @@
+Source: flow
+Section: science
+Priority: extra
+Maintainer: Cliburn Chan <cliburn.chan@duke.edu>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: flow
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Flow cytometry package
+ Flow cytometry software package.

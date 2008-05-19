@@ -6,6 +6,16 @@ pylib = sysconfig.get_config_var('LIBPL')
 pyinc = sysconfig.get_config_var('INCLUDEPY')
 pyver = 'python' + sysconfig.get_config_var('VERSION')
 
+def pyversion():
+    pystr = commands.getoutput('python -V')
+    version = pystr.split(' ')[1]
+    major, minor = version.split('.')[:2]
+    return major + '.' + minor
+
+#Import('install_env')
+
+
+
 # change architecture if necessary
 arch = 'prescott -msse3'
 
@@ -67,3 +77,5 @@ bayes = bp.SharedLibrary(target='bayes',
                  source = bayes_files + pif_conv + bayes_pif + common)
 bp.Install('../../plugins/statistics/Bayes', bayes)
 bp.Alias('install', '../../plugins/statistics/Bayes')
+#install_env.Alias('install', '/usr/lib/' + pyversion() + '/site-packages/bayes', source=['bayes.so'])
+
