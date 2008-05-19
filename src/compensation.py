@@ -10,6 +10,8 @@ from numpy.linalg import solve
 class CompensationFrame(wx.Frame):
     def __init__(self, data, matrix=None):
         self.data = data
+        self.points = self.data[:,:]
+        self.OrigPoints = self.points[:,:]
         self.matrix = matrix
         wx.Frame.__init__(self, None, -1, "Compensating", style = wx.DEFAULT_FRAME_STYLE | wx.RESIZE_BORDER )
         self.panel = wx.Panel(self, -1, size = self.GetSize() )
@@ -39,7 +41,9 @@ class CompensationFrame(wx.Frame):
                 if i == j :
                     self.grid.SetCellBackgroundColour(i,j, wx.Colour(*rgbtuple))
                     self.grid.SetReadOnly(i,j, isReadOnly=True)
-                self.grid.SetCellValue(i,j, '1')
+                    self.grid.SetCellValue(i,j, '1')
+                else:
+                    self.grid.SetCellValue(i,j, '0')
                 
         self.grid.AutoSize()
         self.grid.Bind(wx.EVT_SIZE, self.OnGridSize)
@@ -107,8 +111,8 @@ class CompensationFrame(wx.Frame):
             if self.pos[0] != self.pos[1]:
                 self.grid.SetCellBackgroundColour(self.pos[1], self.pos[0], wx.Colour(*(255,128,128)))
             self.grid.Refresh()
-            self.graphs.x = self.data[:,self.pos[0]]
-            self.graphs.y = self.data[:,self.pos[1]]
+            self.graphs.x = self.points[:,self.pos[0]]
+            self.graphs.y = self.points[:,self.pos[1]]
             self.graphs.draw()
 
             
@@ -126,7 +130,7 @@ class CompensationFrame(wx.Frame):
 #        indices = [data.attrs.fields.index(data.attrs.NtoS[m])
 #                       for m in self.headers]
 #        observed = array([data[:,i] for i in indices])
-        self.data = solve(comp.T, self.data[:])  ## todo fix matix sizes.
+        self.points = solve(comp, self.OrigPoints.T).T  ## todo fix matix sizes.
         
 
 class GraphingPanel(PlotPanel):
