@@ -4,12 +4,14 @@ from plots import PlotPanel
 import pylab
 import numpy
 from numpy.linalg import solve
+from Model import FlowModel
 
 
 
 class CompensationFrame(wx.Frame):
-    def __init__(self, data, matrix=None):
-        self.data = data
+    def __init__(self, model, matrix=None):
+        self.model=model
+        self.data = model.GetCurrentData()
         self.points = self.data[:,:]
         self.OrigPoints = self.points[:,:]
         self.matrix = matrix
@@ -88,6 +90,7 @@ class CompensationFrame(wx.Frame):
         do aproprate action on okay button press
         """
         # need to do stuff here
+        self.model.updateHDF("Compensated Data", self.points, self.data)
                           
         self.Destroy()
         
@@ -148,11 +151,31 @@ class GraphingPanel(PlotPanel):
          z, xedge, yedge = numpy.histogram2d(self.y, self.x, bins=[bins, bins], 
                                     range=[(numpy.min(self.y), numpy.max(self.y)),
                                            (numpy.min(self.x), numpy.max(self.x))])
-         xint = map(int, (self.x - numpy.min(self.x))/(numpy.max(self.x)-numpy.min(self.x))*(bins-1))
-         yint = map(int, (self.y - numpy.min(self.y))/(numpy.max(self.y)-numpy.min(self.y))*(bins-1))
+         #xint = map(int, (self.x - numpy.min(self.x))/(numpy.max(self.x)-numpy.min(self.x))*(bins-1))
+         #yint = map(int, (self.y - numpy.min(self.y))/(numpy.max(self.y)-numpy.min(self.y))*(bins-1))
+         xfrac, xint = numpy.modf((self.x - numpy.min(self.x))/
+                         (numpy.max(self.x)-numpy.min(self.x))*(bins-1))
+         yfrac, yint = numpy.modf((self.y - numpy.min(self.y))/
+                         (numpy.max(self.y)-numpy.min(self.y))*(bins-1))
+         #zvals = numpy.array([z[_y, _x] for _x, _y in zip(xint, yint)])
+         zvals = numpy.zeros(len(xint), 'd')
+         for i, (_x, _y, _xf, _yf) in enumerate(zip(xint, yint, xfrac, yfrac)):
+            q11 = z[_y, _x]
+            if _xf:
+                q12 = z[_y, _x+1]
+            else:
+                q12 = 0
+            if _yf:
+                q21 = z[_y+1, _x]
+            else:
+                q21 = 0
+            if _xf and _yf:
+                q22 = z[_y+1, _x+1]
+            else:
+                q22 = 0
 
-         zvals = numpy.array([z[_y, _x] for _x, _y in zip(xint, yint)])
-         
+            zvals[i] = q11*(1-_xf)*(1-_yf) + q21*(1-_xf)*(_yf) + \
+                       q12*(_xf)*(1-_yf) + q22*(_xf)*(_yf)
          
          self.subplot.scatter(self.x,self.y,s=1, c=zvals, faceted=False )
          self.Refresh()

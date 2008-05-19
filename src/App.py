@@ -19,6 +19,7 @@ from MainFrame import MainFrame
 from Model import FlowModel
 from io import Io
 from dialogs import SaveDialog
+from compensation import CompensationFrame
 from EditTable import SpillFrame
 import about
 
@@ -114,7 +115,8 @@ class MainApp(wx.App): #IGNORE:R0902
     def OnCompensate(self, event): #IGNORE:W0613
         """Apply compensation matrix to data."""
         try:
-            self.model.compensate()
+            comp = CompensationFrame(self.model)
+            comp.Show()
         except ValueError:
             dlg = wx.MessageDialog(None, 'Check that ALL columns listed in spillover matrix are present in the data', 'Compensation Error', style=wx.OK)
             if dlg.ShowModal() == wx.ID_OK:
