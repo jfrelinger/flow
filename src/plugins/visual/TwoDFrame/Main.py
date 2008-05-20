@@ -82,7 +82,7 @@ class TwoDDensity(VizFrame):
     def AttachModel(self, model):
         if self.model == None:
             self.model = model
-            self.data = self.model.GetCurrentData()[:]
+            self.data = self.model.GetCurrentData()
             if self.model.IsZ():
                 self.colors = array(self.model.GetCurrentZ()[:],'i')
                 self.colorGate.Enable(True)
@@ -304,6 +304,7 @@ class TwoDDensity(VizFrame):
             if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
                 results.append(d)
         self.model.updateHDF('GatedData', array(results), self.data)
+        self.model.GetCurrentData().attrs.batch=['gate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), self.widget.p.poly.verts]
 
 class TwoDPanel(PlotPanel):
     def __init__(self, x, y, parent, *args):

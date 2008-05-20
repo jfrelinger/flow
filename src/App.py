@@ -64,6 +64,7 @@ class MainApp(wx.App): #IGNORE:R0902
 
         self.graphicsMenu = wx.Menu()
         self.visuals = loadFrames("plugins/visual")
+        self.controlFrame.Visuals = self.visuals
         for key in self.visuals:
             menuid = self.graphicsMenu.Append(-1, key)
             self.controlFrame.Bind(wx.EVT_MENU, self.OnAddWindow, menuid)
@@ -107,6 +108,8 @@ class MainApp(wx.App): #IGNORE:R0902
         self.controlFrame.GetMenuBar().Append(self.helpMenu, "&Help")
         self.Bind(wx.EVT_MENU, self.OnAbout, self.about)
 
+        
+        global Visual
         self.controlFrame.DoLayout()
         self.SetTopWindow(self.controlFrame)
         
@@ -218,7 +221,7 @@ class MainApp(wx.App): #IGNORE:R0902
     def OnAddWindow(self, event):
         """add a new window frame"""
         newWindowType = self.controlFrame.GetMenuBar().FindItemById(event.GetId()).GetLabel() #IGNORE:C0301
-        newWindow = loadFrames('plugins/visual')[newWindowType]()
+        newWindow = self.visuals[newWindowType]()
         title = newWindow.GetTitle()
         title = title + " of " + str(self.model.current_array)
         newWindow.SetTitle(title)

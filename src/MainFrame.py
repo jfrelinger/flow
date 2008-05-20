@@ -9,6 +9,8 @@ from numpy.random import shuffle, randint, get_state
 import transforms
 from OboFrame import OboTreeFrame
 from AnnotateFrame import annotateFrame
+import sys
+
 
 # from dbio import DBDialog
 
@@ -409,7 +411,7 @@ class MainFrame(VizFrame):
             menu = wx.Menu()
             self.popupItems = {}
             self.pasteItem = None
-            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate']:
+            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate', 'Batch']:
                 self.popupItems[str] = menu.Append(-1, str)
                 self.Bind(wx.EVT_MENU, self.OnPopupSelected, self.popupItems[str])
             
@@ -439,7 +441,10 @@ class MainFrame(VizFrame):
         else:
             self.popupItems['Edit'].Enable(True)
             self.popupItems['Annotate'].Enable(True)
-            
+        if 'batch' in self.tree.GetItemPyData(event.GetItem())._v_attrs:
+            self.popupItems['Batch'].Enable(True)
+        else:
+            self.popupItems['Batch'].Enable(False)
         self.tree.PopupMenu(self.popup)
         
     def OnPopupSelected(self, event):
@@ -467,9 +472,28 @@ class MainFrame(VizFrame):
             self.OnExport()
         elif text == 'Annotate':
             self.OnAnnotate()
+        elif text == 'Batch':
+            self.OnBatch()
         else:
             wx.MessageBox(text)
             
+    def OnBatch(self):
+        data = self.model.GetCurrentData()
+        x,y = data.getAttr('batch')[1]
+        test = self.model.hdf5.root.old_cmv1
+        self.model.SelectGroup(test)
+        window = self.Visuals['2D Density'](self)
+        window.AttachModel(self.model)
+        window.radioX.SetStringSelection(x)
+        window.radioY.SetStringSelection(y)
+        #window.data=test
+        window.OnControlSwitch(-1)
+        window.OnAddPolyGate(-1)
+        window.widget.p.poly.verts = list(data.getAttr('batch')[2])
+        window.widget.p.poly_changed(window.widget.p.poly)
+        window.Gate(-1)
+        #window.Destroy()
+        
     def OnAnnotate(self):
         selection = self.tree.GetSelection()
         item = self.tree.GetItemPyData(selection)
