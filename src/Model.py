@@ -94,6 +94,10 @@ class FlowModel(AbstractModel):
             self.current_array = group
         self.isChanged = True
 
+    def SelectGroupByPath(self, group):
+        """ selecta group via it's path"""
+        self.SelectGroup(self.hdf5.getNode(group))
+    
     def SelectRoot(self):
         """Reset current selection to root."""
         self.current_group = self.hdf5.root
@@ -410,3 +414,12 @@ class FlowModel(AbstractModel):
 
     def ArcsinhTransform(self, indices, inputs, target=None):
         self.Transform(ArcsinhOp, 'ArcsinhTransform', indices, inputs, target)
+
+    def GetDataGroups(self):
+        results = []
+        groups = self.hdf5.walkGroups()
+        for i in groups:
+            if hasattr(i, 'data'):
+                results.append(i._v_pathname)
+        
+        return results

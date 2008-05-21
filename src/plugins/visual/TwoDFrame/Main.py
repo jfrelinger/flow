@@ -19,7 +19,7 @@ class TwoDDensity(VizFrame):
     type='2D Density'
     def __init__(self, parent=None, id=-1,
                  pos=wx.DefaultPosition,
-                 title="2D Density"):
+                 title="2D Density", show=True):
         VizFrame.__init__(self, parent, id, pos, title)
         self.widget = TwoDPanel(None, 1, 1, self)
         self.widget.draw()
@@ -75,8 +75,9 @@ class TwoDDensity(VizFrame):
         self.Bind(wx.EVT_MENU, self.OnMenuSwitch, self.widget.scatter)
         self.Bind(wx.EVT_MENU, self.OnMenuSwitch, self.widget.contour)
         self.Bind(wx.EVT_MENU, self.OnMenuSwitch, self.widget.ellipse)
-        self.Show()
-        self.SendSizeEvent()
+        if show:
+            self.Show()
+            self.SendSizeEvent()
         self.model = None
         
     def AttachModel(self, model):

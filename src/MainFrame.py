@@ -478,21 +478,33 @@ class MainFrame(VizFrame):
             wx.MessageBox(text)
             
     def OnBatch(self):
-        data = self.model.GetCurrentData()
-        x,y = data.getAttr('batch')[1]
-        test = self.model.hdf5.root.old_cmv1
-        self.model.SelectGroup(test)
-        window = self.Visuals['2D Density'](self)
-        window.AttachModel(self.model)
-        window.radioX.SetStringSelection(x)
-        window.radioY.SetStringSelection(y)
-        #window.data=test
-        window.OnControlSwitch(-1)
-        window.OnAddPolyGate(-1)
-        window.widget.p.poly.verts = list(data.getAttr('batch')[2])
-        window.widget.p.poly_changed(window.widget.p.poly)
-        window.Gate(-1)
-        #window.Destroy()
+        
+        source = self.model.GetCurrentData()
+        choices = self.model.GetDataGroups()
+        dialog = wx.MultiChoiceDialog(None, "Chose groups to apply " +source.getAttr('batch')[0] + " to",
+                                       "choices", choices)
+        if dialog.ShowModal() == wx.ID_OK:
+            print [choices[i] for i in dialog.GetSelections()]
+            if source.getAttr('batch')[0] == 'gate':
+                self.OnBatchGate(source, [choices[i] for i in dialog.GetSelections()])
+            else:
+                print source.getAttr('batch')[0]
+            
+    def OnBatchGate(self, source, dest):
+        x,y = source.getAttr('batch')[1]
+        for group in dest:
+            print group
+            self.model.SelectGroupByPath(group)
+            window = self.Visuals['2D Density'](self, show=False)
+            window.AttachModel(self.model)
+            window.radioX.SetStringSelection(x)
+            window.radioY.SetStringSelection(y)
+            window.OnControlSwitch(-1)
+            window.OnAddPolyGate(-1)
+            window.widget.p.poly.verts = list(source.getAttr('batch')[2])
+            window.widget.p.poly_changed(window.widget.p.poly)
+            window.Gate(-1)
+            window.Destroy()
         
     def OnAnnotate(self):
         selection = self.tree.GetSelection()
