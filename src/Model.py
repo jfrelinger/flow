@@ -381,39 +381,51 @@ class FlowModel(AbstractModel):
         self.updateHDF(group, data, self.GetCurrentData())
         hist.append((group, [indices, inputs]))
         self.AddHistory(hist)
+        
 
     def ScaleTransform(self, indices, inputs, target=None):
         self.Transform(ScaleOp, 'ScaleTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['scale', indices, inputs]
 
     def NormalScaleTransform(self, indices, inputs, target=None):
         self.Transform(NormalScaleOp, 'NormalScaleTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['normal scale', indices, inputs]
 
     def ClipTransform(self, indices, inputs, target=None):
         self.Transform(ClipOp, 'ClipTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['clip', indices, inputs]
 
     def LinearTransform(self, indices, inputs, target=None):
         self.Transform(LinearOp, 'LinearTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['linear', indices, inputs]
     
     def QuadraticTransform(self, indices, inputs, target=None):
         self.Transform(QuadraticOp, 'QuadraticTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['quadratic', indices, inputs]
 
     def LogTransform(self, indices, inputs, target=None):
         self.Transform(LogOp, 'LogTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['log', indices, inputs]
 
     def LognTransform(self, indices, inputs, target=None):
         self.Transform(LognOp, 'LognTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['logn', indices, inputs]
 
     def BiexponentialTransform(self, indices, inputs, target=None):
         self.Transform(BiexponentialOp, 'BiexponentialTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['biexponential', indices, inputs]
 
     def LogicleTransform(self, indices, inputs, target=None):
         self.Transform(LogicleOp, 'LogicleTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['logicle', indices, inputs]
 
     def HyperlogTransform(self, indices, inputs, target=None):
         self.Transform(HyperlogOp, 'HyperlogTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['hyperlog', indices, inputs]
 
     def ArcsinhTransform(self, indices, inputs, target=None):
         self.Transform(ArcsinhOp, 'ArcsinhTransform', indices, inputs, target)
+        self.GetCurrentData().attrs.batch=['arcsin', indices, inputs]
 
     def GetDataGroups(self):
         results = []
