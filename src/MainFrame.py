@@ -483,29 +483,50 @@ class MainFrame(VizFrame):
         choices = self.model.GetDataGroups()
         dialog = wx.MultiChoiceDialog(None, "Chose groups to apply " +source.getAttr('batch')[0] + " to",
                                        "choices", choices)
+        batchOp = source.getAttr('batch')
+        transforms = { 'scale' : self.model.ScaleTransform,
+                      'normal scale' : self.model.NormalScaleTransform,
+                      'clip' : self.model.ClipTransform,
+                      'linear' : self.model.LinearTransform,
+                      'quadradic' : self.model.QuadraticTransform,
+                      'log' : self.model.LogTransform,
+                      'logn': self.model.LognTransform,
+                      'biexponential':self.model.BiexponentialTransform,
+                      'logicle': self.model.LogicleTransform,
+                      'heyerlog': self.model.HyperlogTransform,
+                      'arcsin': self.model.ArcsinhTransform }
+                      
+                      
         if dialog.ShowModal() == wx.ID_OK:
             print [choices[i] for i in dialog.GetSelections()]
-            if source.getAttr('batch')[0] == 'gate':
+            if batchOp[0] == 'gate':
                 self.OnBatchGate(source, [choices[i] for i in dialog.GetSelections()])
+            elif batchOp[0] in transforms.keys():
+                for i in dialog.GetSelections():
+                    self.model.SelectGroupByPath(choices[i])
+                    transforms[batchOp[0]](batchOp[1], batchOp[2])
             else:
                 print source.getAttr('batch')[0]
             
     def OnBatchGate(self, source, dest):
         x,y = source.getAttr('batch')[1]
         for group in dest:
-            print group
             self.model.SelectGroupByPath(group)
-            window = self.Visuals['2D Density'](self, show=False)
-            window.AttachModel(self.model)
-            window.radioX.SetStringSelection(x)
-            window.radioY.SetStringSelection(y)
-            window.OnControlSwitch(-1)
-            window.OnAddPolyGate(-1)
-            window.widget.p.poly.verts = list(source.getAttr('batch')[2])
-            window.widget.p.poly_changed(window.widget.p.poly)
-            window.Gate(-1)
-            window.Destroy()
-        
+            if x and y in self.model.GetCurrentData.getAttr('fields'):
+                window = self.Visuals['2D Density'](self, show=False)
+                window.AttachModel(self.model)
+                window.radioX.SetStringSelection(x)
+                window.radioY.SetStringSelection(y)
+                window.OnControlSwitch(-1)
+                window.OnAddPolyGate(-1)
+                window.widget.p.poly.verts = list(source.getAttr('batch')[2])
+                window.widget.p.poly_changed(window.widget.p.poly)
+                window.Gate(-1)
+                window.Destroy()
+            else:
+                dialog = wx.MessageDialog(self, "Unable to find matching fields for " + group, style=wx.OK)
+                if dialog.ShowModal() == wx.ID_OK:
+                    pass
     def OnAnnotate(self):
         selection = self.tree.GetSelection()
         item = self.tree.GetItemPyData(selection)
