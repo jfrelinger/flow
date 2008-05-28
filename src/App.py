@@ -9,6 +9,7 @@ import sys
 import os
 import glob
 
+# added a comment
 # import plugin directories
 sys.path.append('plugins/visual'.replace("/", os.path.sep))
 sys.path.append('plugins/io'.replace("/", os.path.sep))
