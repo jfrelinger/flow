@@ -512,7 +512,7 @@ class MainFrame(VizFrame):
         x,y = source.getAttr('batch')[1]
         for group in dest:
             self.model.SelectGroupByPath(group)
-            if x and y in self.model.GetCurrentData.getAttr('fields'):
+            if x and y in self.model.GetCurrentData().getAttr('fields'):
                 window = self.Visuals['2D Density'](self, show=False)
                 window.AttachModel(self.model)
                 window.radioX.SetStringSelection(x)
