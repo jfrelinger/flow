@@ -5,7 +5,7 @@ import densities2 as dens
 from numpy import array, arange, mgrid, isnan, sqrt, histogram2d, min, max, take, modf
 from numpy.linalg import inv
 from numpy.random import randn, rand
-from pylab import cm, hist, zeros
+from pylab import cm, hist, zeros, connect
 import pylab
 import os
 import mpl_gate
@@ -53,6 +53,7 @@ class TwoDDensity(VizFrame):
 
         self.colorGate = self.GateMenu.Append(-1, "Gate on visible colors only")
         polyGate = self.GateMenu.Append(-1, "Add 4-polygon gate")
+        quadGate = self.GateMenu.Append(-1, "Add quadrant gate")
         gate = self.GateMenu.Append(-1, "Capture gated events")
         ellipses = self.GateMenu.Append(-1, "Specify ellipse confidence")
 
@@ -64,6 +65,7 @@ class TwoDDensity(VizFrame):
         self.colorGate.Enable(False)
         self.Bind(wx.EVT_MENU, self.OnEllipses, ellipses)
         self.Bind(wx.EVT_MENU, self.OnAddPolyGate, polyGate)
+        self.Bind(wx.EVT_MENU, self.OnAddQuadGate, quadGate)
         self.Bind(wx.EVT_MENU, self.Gate, gate)
         self.Bind(wx.EVT_MENU, self.OnCopyGate, copyGate)
         self.Bind(wx.EVT_MENU, self.OnPasteGate, pasteGate)
@@ -225,6 +227,11 @@ class TwoDDensity(VizFrame):
         self.widget.subplot.add_line(self.widget.p.line)
         self.widget.draw()
 
+    def OnAddQuadGate(self, event):
+        print "adding quad gate"
+        self.widget.quad=True
+        self.widget.draw()
+        
     def RadioButtons(self, list):
         panel = wx.Panel(self, -1)
         try:
@@ -301,11 +308,36 @@ class TwoDDensity(VizFrame):
     def Gate(self, event):
         """Capture events inside drawn gates."""
         results = []
-        for i, d in enumerate(self.data):
-            if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
-                results.append(d)
-        self.model.updateHDF('GatedData', array(results), self.data)
-        self.model.GetCurrentData().attrs.batch=['gate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), self.widget.p.poly.verts]
+        if hasattr(self.widget, 'p'):
+            for i, d in enumerate(self.data):
+                if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
+                    results.append(d)
+            self.model.updateHDF('GatedData', array(results), self.data)
+            self.model.GetCurrentData().attrs.batch=['gate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), self.widget.p.poly.verts]
+        else:
+            if self.widget.quad is True:
+                x = self.widget.vline._x[0]
+                y = self.widget.hline._y[0]
+                q1 = []
+                q2 = []
+                q3 = []
+                q4 = []
+                for i,d in enumerate(self.data):
+                    if self.widget.x[i] < x:
+                        if self.widget.y[i] < y:
+                            q3.append(d)
+                        else:
+                            q2.append(d)
+                    else:
+                        if self.widget.y[i] < y:
+                            q4.append(d)
+                        else:
+                            q1.append(d)
+                self.model.updateHDF('Q1', array(q1), self.data)
+                self.model.updateHDF('Q2', array(q2), self.data)
+                self.model.updateHDF('Q3', array(q3), self.data)
+                self.model.updateHDF('Q4', array(q4), self.data)
+                    
 
 class TwoDPanel(PlotPanel):
     def __init__(self, x, y, parent, *args):
@@ -315,6 +347,7 @@ class TwoDPanel(PlotPanel):
         self.parent = parent
         self.colors = None
         self.Zs = None
+        self.quad = False
 
     def update_attributes(self, inputs):
         if not hasattr(self, 'subplot'):
@@ -324,7 +357,13 @@ class TwoDPanel(PlotPanel):
         self.ylab = inputs['ylab']
         self.title = inputs['title']
         self.ms = inputs['ms']
-
+    def onClick(self, event):
+        if event.inaxes and event.button==1:
+            print 'data coords', event.xdata, event.ydata
+            self.hline._y = [event.ydata, event.ydata ]
+            self.vline._x = [event.xdata, event.xdata ]
+            self.draw()
+    
     def draw(self):
       alpha = 1
       if not hasattr(self, 'ms'):
@@ -411,6 +450,19 @@ class TwoDPanel(PlotPanel):
 
                     s = self.subplot.scatter(x, y, alpha=alpha, s=1, c=zvals, faceted=False )
             alpha = alpha - .25
+        if self.quad:
+            if hasattr(self, 'hline'):
+                self.subplot.add_line(self.hline)
+                self.subplot.add_line(self.vline)
+            else:
+                xavg = (max(self.x)-min(self.x))/2 + min(self.x)
+                yavg = (max(self.y)-min(self.y))/2 + min(self.y)
+                print xavg,yavg
+                self.hline = self.subplot.axhline(yavg, c='r')
+                self.vline = self.subplot.axvline(xavg, c='r')
+                self.canvas.mpl_connect('button_press_event', self.onClick)
+            
+            
         if self.contour.IsChecked() :
             bins = int(0.25*sqrt(len(self.x)))
             z, xedge, yedge = histogram2d(self.y, self.x, bins=[bins, bins], range=[(self.miny, max(self.y)),(self.minx, max(self.x))])
