@@ -333,10 +333,15 @@ class TwoDDensity(VizFrame):
                             q4.append(d)
                         else:
                             q1.append(d)
+                curGroup = self.model.GetCurrentGroup()
                 self.model.updateHDF('Q1', array(q1), self.data)
+                self.model.SelectGroup(curGroup)
                 self.model.updateHDF('Q2', array(q2), self.data)
+                self.model.SelectGroup(curGroup)
                 self.model.updateHDF('Q3', array(q3), self.data)
+                self.model.SelectGroup(curGroup)
                 self.model.updateHDF('Q4', array(q4), self.data)
+                
                     
 
 class TwoDPanel(PlotPanel):
