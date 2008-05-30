@@ -119,7 +119,7 @@ class FlowModel(AbstractModel):
         """get current Z group if it exists"""
         try:
             # print self.current_group
-            return self.current_group.z
+            return self._loopForZ(self.current_group)
         except AttributeError:
             return None
 
@@ -192,7 +192,16 @@ class FlowModel(AbstractModel):
                 raise AttributeError
             else:
                 return self._loopForData(group._v_parent) #IGNORE:W0212 #IGNORE:W0702
-
+    def _loopForZ(self, group):
+        """Walk up tree looking for Z values"""
+        try:
+            return group.z
+        except AttributeError:
+            if group == self.hdf5.root:
+                raise AttributeError
+            else:
+                return self._loopForZ(group._v_parent)
+            
     def _loopForSpillover(self, group):
         try:
             return group.spillover

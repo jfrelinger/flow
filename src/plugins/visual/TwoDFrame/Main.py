@@ -55,7 +55,7 @@ class TwoDDensity(VizFrame):
         polyGate = self.GateMenu.Append(-1, "Add 4-polygon gate")
         quadGate = self.GateMenu.Append(-1, "Add quadrant gate")
         gate = self.GateMenu.Append(-1, "Capture gated events")
-        ellipses = self.GateMenu.Append(-1, "Specify ellipse confidence")
+        self.ellipses = self.GateMenu.Append(-1, "Specify ellipse confidence")
 
         self.GateMenu.AppendSeparator()
         copyGate = self.GateMenu.Append(-1, "Copy 4-polygon gate")
@@ -63,7 +63,7 @@ class TwoDDensity(VizFrame):
 
         self.Bind(wx.EVT_MENU, self.GateByColor, self.colorGate)
         self.colorGate.Enable(False)
-        self.Bind(wx.EVT_MENU, self.OnEllipses, ellipses)
+        self.Bind(wx.EVT_MENU, self.OnEllipses, self.ellipses)
         self.Bind(wx.EVT_MENU, self.OnAddPolyGate, polyGate)
         self.Bind(wx.EVT_MENU, self.OnAddQuadGate, quadGate)
         self.Bind(wx.EVT_MENU, self.Gate, gate)
@@ -100,6 +100,9 @@ class TwoDDensity(VizFrame):
             self.widget.Zs = self.colors
             self.RadioButtons(fields)
             self.BuildColors()
+            if not hasattr(self.model.GetCurrentGroup(), 'mu_end'):
+                self.ellipses.Enable(False)
+                self.widget.ellipse.Enable(False)
         
     def OnCopyGate(self, event):
         """Store current gate vertex locations."""
