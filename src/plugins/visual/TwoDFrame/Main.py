@@ -370,6 +370,9 @@ class TwoDPanel(PlotPanel):
             print 'data coords', event.xdata, event.ydata
             self.hline._y = [event.ydata, event.ydata ]
             self.vline._x = [event.xdata, event.xdata ]
+            (q1, q2, q3, q4) = reduce(lambda x,y: (x[0]+y[0], x[1]+y[1], x[2]+y[2], x[3]+y[3]), map(lambda x,y : (x>=event.xdata and y>=event.ydata and 1 or 0, x<event.xdata and y>=event.ydata and 1 or 0, x<event.xdata and y<event.ydata and 1 or 0, x>=event.xdata and y<event.ydata and 1 or 0), self.x, self.y))
+            self.title = ('bottom left=%d, top left=%d, top right=%d, bottom right=%d' % (q1, q2, q3, q4))
+            print 'bottom left=%d, top left=%d, top right=%d, bottom right=%d' % (q1, q2, q3, q4)
             self.draw()
     
     def draw(self):
