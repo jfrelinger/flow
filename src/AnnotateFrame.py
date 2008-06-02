@@ -3,7 +3,7 @@ from numpy import array
 
 class annotateFrame(wx.Frame):
     def __init__(self, group, model, group_name = 'default', annotations = None):
-        wx.Frame.__init__(self, None, -1, "Annotations for " + group_name,style = wx.DEFAULT_FRAME_STYLE | wx.RESIZE_BORDER )
+        wx.Frame.__init__(self, None, -1, "Annotations for " + group_name,style = wx.DEFAULT_FRAME_STYLE | wx.RESIZE_BORDER | wx.SCR)
         self.panel = wx.Panel(self, -1, size = self.GetSize() )
         #self.textBox = wx.TextCtrl(self.panel, -1, txt, style= wx.TE_MULTILINE)
         self.okBtn = wx.Button(self.panel, id=wx.ID_OK)
@@ -41,18 +41,18 @@ class annotateFrame(wx.Frame):
             
             
         #layout
-        mainsizer = wx.BoxSizer(wx.VERTICAL)
+        self.mainsizer = wx.BoxSizer(wx.VERTICAL)
         #mainsizer.Add(self.textBox,1,wx.EXPAND)
-        mainsizer.Add(self.notebox)
+        self.mainsizer.Add(self.notebox)
         btnsizer = wx.BoxSizer(wx.HORIZONTAL)
         btnsizer.Add((10,10),1)
         btnsizer.Add(self.cancelBtn)
         btnsizer.Add((10,10))
         btnsizer.Add(self.okBtn)
         btnsizer.Add((10,10))
-        mainsizer.Add(btnsizer, 0, wx.EXPAND)
-        self.panel.SetSizer(mainsizer)
-        mainsizer.Fit(self)
+        self.mainsizer.Add(btnsizer, 0, wx.EXPAND)
+        self.panel.SetSizer(self.mainsizer)
+        self.mainsizer.Fit(self)
         
     def OnNotes(self, event):
         full = True
@@ -70,8 +70,9 @@ class annotateFrame(wx.Frame):
             self.annotations.append((name,value))
             self.Bind(wx.EVT_TEXT, self.OnNotes, name)
             self.Bind(wx.EVT_TEXT, self.OnNotes, value)
-            self.SendSizeEvent()
-            self.Update()
+            self.notebox.Layout()
+            self.mainsizer.Layout()
+            
     def OnOkay(self, event):
         """
         do aproprate action on okay button press
@@ -80,7 +81,7 @@ class annotateFrame(wx.Frame):
         new = []
         for note in self.annotations:
             new.append(( note[0].GetValue(), note[1].GetValue()))
-        print new
+        #print new
         annote = array(filter(lambda x: x != ('',''), new))
         self.model.NewArray('annotation', annote, parent=self.group, overwrite=True)
         #self.model.hdf5.createArray(self.group, 'annotation', annote)
