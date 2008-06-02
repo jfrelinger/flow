@@ -123,7 +123,7 @@ class FlowModel(AbstractModel):
         except AttributeError:
             return None
         
-    def GetCurrentAnnotaion(self):
+    def GetCurrentAnnotation(self):
         """Get the current annotation array"""
         try:
             return self._loopForAnnotation(self.current_group)
@@ -215,7 +215,7 @@ class FlowModel(AbstractModel):
             return group.annotation
         except AttributeError:
             if group == self.hdf5.root:
-                raise AttirbuteError
+                raise AttributeError
             else:
                 return self._loopForAnnotation(group._v_parent)
             

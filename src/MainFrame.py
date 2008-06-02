@@ -437,10 +437,10 @@ class MainFrame(VizFrame):
     def OnShowPopup(self, event):
         if self.tree.GetItemPyData(event.GetItem())._c_classId == "GROUP":
             self.popupItems['Edit'].Enable(False)
-            self.popupItems['Annotate'].Enable(False)
+            self.popupItems['Annotate'].Enable(True)
         else:
             self.popupItems['Edit'].Enable(True)
-            self.popupItems['Annotate'].Enable(True)
+            self.popupItems['Annotate'].Enable(False)
         if 'batch' in self.tree.GetItemPyData(event.GetItem())._v_attrs:
             self.popupItems['Batch'].Enable(True)
         else:
@@ -531,11 +531,12 @@ class MainFrame(VizFrame):
         selection = self.tree.GetSelection()
         item = self.tree.GetItemPyData(selection)
         txt = self.tree.GetItemText(selection)
-        try:
-            current = item.getAttr('annotation')
-        except AttributeError:
-            current = ''
-        annotate = annotateFrame(item, txt, current)
+        current = self.model.GetCurrentAnnotation()
+        if current is not None:
+            notes = map(lambda x, y: (x,y), current[:,0],current[:,1])
+        else:
+            notes = None
+        annotate = annotateFrame(item, self.model, txt, notes)
         annotate.Show()
         
     def OnRename(self):
