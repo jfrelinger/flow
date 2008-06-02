@@ -3,7 +3,7 @@ from numpy import array
 
 class annotateFrame(wx.Frame):
     def __init__(self, group, model, group_name = 'default', annotations = None):
-        wx.Frame.__init__(self, None, -1, "Annotations for " + group_name,style = wx.DEFAULT_FRAME_STYLE | wx.RESIZE_BORDER | wx.SCR)
+        wx.Frame.__init__(self, None, -1, "Annotations for " + group_name,style = wx.DEFAULT_FRAME_STYLE | wx.RESIZE_BORDER )
         self.panel = wx.Panel(self, -1, size = self.GetSize() )
         #self.textBox = wx.TextCtrl(self.panel, -1, txt, style= wx.TE_MULTILINE)
         self.okBtn = wx.Button(self.panel, id=wx.ID_OK)
