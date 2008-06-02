@@ -72,14 +72,21 @@ class FlowModel(AbstractModel):
         self.current_group = self.hdf5.createGroup(parent, newName) #IGNORE:E1101
         self.isChanged = True
     
-    def NewArray(self, name, array, parent=None):
+    def NewArray(self, name, array, parent=None, overwrite=False):
         """
         create a new array
-        NewArray(name = string, array = numpy.array, <parent = group | current group>)
+        NewArray(name = string, array = numpy.array, <parent = group | current group>, overwrite= bool)
         """
         if parent is None:
             parent = self.current_group
-        newName = self.checkName(name, group=parent)
+        if overwrite:
+            newName = name
+            try:
+                self.hdf5.removeNode(parent, newName) # remove the node if it exists.
+            except tables.NoSuchNodeError:
+                pass
+        else:
+            newName = self.checkName(name, group=parent)
         self.current_array = self.hdf5.createArray(parent, newName, array)
         self.update()
 

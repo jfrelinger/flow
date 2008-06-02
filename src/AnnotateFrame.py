@@ -81,7 +81,8 @@ class annotateFrame(wx.Frame):
             new.append(( note[0].GetValue(), note[1].GetValue()))
         print new
         annote = array(filter(lambda x: x != ('',''), new))
-        self.model.NewArray('annotation', annote, parent=self.group)
+        self.model.NewArray('annotation', annote, parent=self.group, overwrite=True)
+        #self.model.hdf5.createArray(self.group, 'annotation', annote)
                           
         self.Destroy()
         
