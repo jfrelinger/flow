@@ -113,18 +113,23 @@ class HistogramPanel(PlotPanel):
         self.subplot.clear()
         if self.x is not None:
             self.patches = []
+            self.histograms = []
             n, bins, hist = self.subplot.hist(self.x, 1024)
-            self.patches.append(hist)
+            self.patches.extend(hist)
+            self.histograms.append(hist)
             self.subplot.set_xlabel(str(self.name), fontsize = 12)
             for group in self.hists.keys():
                 n, bins, hist = self.subplot.hist(self.hists[group], 1024)
-                self.patches.append(hist)
-            sizes = [len(patch) for patch in self.patches]
+                self.patches.extend(hist)
+                self.histograms.append(hist)
+            sizes = [len(patch) for patch in self.histograms]
             sizes.insert(0,0)
             print sizes
             splits = cumsum(sizes)
-            upper = len(self.patches)
-            self.subplot.patches = self.patches[splits[0]:splits[1]]
+            upper = len(splits)-1
+            print len(self.patches)
+            print splits
+            self.subplot.patches = self.patches[splits[0]:splits[upper]]
         self.Refresh()
         
 
