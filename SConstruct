@@ -7,6 +7,7 @@ def pyversion():
     major, minor = version.split('.')[:2]
     return major + '.' + minor
 
+
 # Install files with "scons DESTDIR=install_dir install".
 opts = Options()
 opts.AddOptions(('DESTDIR', 'Base path for installed files', ''), ('PREFIX', 'The root of the installation tree.', '/usr/local'))
