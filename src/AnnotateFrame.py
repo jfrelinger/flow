@@ -71,6 +71,7 @@ class annotateFrame(wx.Frame):
             self.Bind(wx.EVT_TEXT, self.OnNotes, name)
             self.Bind(wx.EVT_TEXT, self.OnNotes, value)
             self.SendSizeEvent()
+            self.Update()
     def OnOkay(self, event):
         """
         do aproprate action on okay button press
