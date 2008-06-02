@@ -57,9 +57,9 @@ class annotateFrame(wx.Frame):
     def OnNotes(self, event):
         full = True
         for note in self.annotations:
-            if note[0].GetValue() is '':
+            if not note[0].GetValue():
                 full = False
-            if note[1].GetValue() is '':
+            if not note[1].GetValue():
                 full = False
         if full:
             name = wx.TextCtrl(self.panel, -1, '')
