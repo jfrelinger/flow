@@ -122,6 +122,13 @@ class FlowModel(AbstractModel):
             return self._loopForZ(self.current_group)
         except AttributeError:
             return None
+        
+    def GetCurrentAnnotaion(self):
+        """Get the current annotation array"""
+        try:
+            return self._loopForAnnotation(self.current_group)
+        except AttributeError:
+            return None
 
     def GetHistory(self, node = None):
         '''
@@ -201,6 +208,18 @@ class FlowModel(AbstractModel):
                 raise AttributeError
             else:
                 return self._loopForZ(group._v_parent)
+    
+    def _loopForAnnotation(self, group):
+        """Walk up the tree looking for an annotation array"""
+        try:
+            return group.annotation
+        except AttributeError:
+            if group == self.hdf5.root:
+                raise AttirbuteError
+            else:
+                return self._loopForAnnotation(group._v_parent)
+            
+            
             
     def _loopForSpillover(self, group):
         try:
