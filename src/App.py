@@ -119,7 +119,10 @@ class MainApp(wx.App): #IGNORE:R0902
     def OnCompensate(self, event): #IGNORE:W0613
         """Apply compensation matrix to data."""
         try:
-            comp = CompensationFrame(self.model)
+            if hasattr(self.model.GetCurrentGroup(), 'spillover'):
+                comp = CompensationFrame(self.model, matrix = self.model.GetCurrentGroup().spillover)
+            else:
+                comp = CompensationFrame(self.model)
             comp.Show()
         except ValueError:
             dlg = wx.MessageDialog(None, 'Check that ALL columns listed in spillover matrix are present in the data', 'Compensation Error', style=wx.OK)

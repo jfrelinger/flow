@@ -28,10 +28,26 @@ class CompensationFrame(wx.Frame):
         except AttributeError:
             self.headers = None
             
-        #print self.headers
+        print self.headers
+        self.skips = []
+        newheaders = self.headers[:]
+        for a,b in enumerate(self.headers):
+            print a, b
+            if b.startswith('FSC'):
+                print 'throwing out column ' + b
+                self.skips.append(a)
+                newheaders.remove(b)
+            if b.startswith('SSC'):
+                print 'throwing out column ' + b
+                self.skips.append(a)
+                newheaders.remove(b)
+            if b.startswith('Time'):
+                print 'throwing out column ' + b
+                self.skips.append(a)
+                newheaders.remove(b)
+        print self.skips
+        self.headers = newheaders
         
-        self.headers.remove('FSC-H')
-        self.headers.remove('SSC-H')
         self.gridSize = len(self.headers)
         self.grid.CreateGrid(self.gridSize,self.gridSize)
         #self.grid.CreateGrid(4,4)
@@ -49,6 +65,8 @@ class CompensationFrame(wx.Frame):
                     self.grid.SetCellValue(i,j, '1')
                 else:
                     self.grid.SetCellValue(i,j, '0')
+#                if self.matrix is not None:
+#                    self.grid.SetCellValue(i,j, str(self.matrix[i,j]))
                 
         self.grid.AutoSize()
         self.grid.Bind(wx.EVT_SIZE, self.OnGridSize)
@@ -117,8 +135,8 @@ class CompensationFrame(wx.Frame):
             if self.pos[0] != self.pos[1]:
                 self.grid.SetCellBackgroundColour(self.pos[1], self.pos[0], wx.Colour(*(255,128,128)))
             self.grid.Refresh()
-            self.graphs.x = self.points[:,self.pos[0]+2]
-            self.graphs.y = self.points[:,self.pos[1]+2]
+            self.graphs.x = self.points[:,self.pos[0]]
+            self.graphs.y = self.points[:,self.pos[1]]
             self.graphs.draw()
 
             
