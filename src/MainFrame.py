@@ -56,11 +56,11 @@ class MainFrame(VizFrame):
 
         # filter menu
         self.filterMenu = wx.Menu()
-        self.channels = self.filterMenu.Append(-1, "Filter by channel")
+        self.channels = self.filterMenu.Append(-1, "Sub-Sample by channel")
         self.filterMenu.AppendSeparator()
-        self.events_index = self.filterMenu.Append(-1, "Filter events: index")
-        self.events_random = self.filterMenu.Append(-1, "Filter events: random choice without replacement")
-        self.events_replace = self.filterMenu.Append(-1, "Filter events: random choice with replacement")
+        self.events_index = self.filterMenu.Append(-1, "Sub-Sample events: index")
+        self.events_random = self.filterMenu.Append(-1, "Sub-Sample events: random choice without replacement")
+        self.events_replace = self.filterMenu.Append(-1, "Sub-Sample events: random choice with replacement")
 
         # bind filter menuitems
         self.Bind(wx.EVT_MENU, self.OnChannels, self.channels)

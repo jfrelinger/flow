@@ -86,7 +86,7 @@ class MainApp(wx.App): #IGNORE:R0902
         menuItems = [(self.fileMenu, 'File'), 
                      (self.controlFrame.edit, 'Tree'),
                      (self.compensateMenu, 'Compensation'),
-                     (self.controlFrame.filterMenu, 'Filter'),
+                     (self.controlFrame.filterMenu, 'Sub-Sample'),
                      (self.controlFrame.transformMenu, 'Transformation'),
                      (self.graphicsMenu, 'Graphics'),
                      (self.statisticsMenu, 'Statistics'),
