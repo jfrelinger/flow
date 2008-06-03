@@ -57,11 +57,11 @@ class MainApp(wx.App): #IGNORE:R0902
 
         self.compensateMenu = wx.Menu()
         compensate = self.compensateMenu.Append(-1, 'Apply compensation')
-        load_comp = self.compensateMenu.Append(-1, 'Load compensation matrix')
-        edit_comp = self.compensateMenu.Append(-1, 'Edit compensation matrix')
+        #load_comp = self.compensateMenu.Append(-1, 'Load compensation matrix')
+        #edit_comp = self.compensateMenu.Append(-1, 'Edit compensation matrix')
         self.controlFrame.Bind(wx.EVT_MENU, self.OnCompensate, compensate)
-        self.controlFrame.Bind(wx.EVT_MENU, self.OnLoadCompensate, load_comp)
-        self.controlFrame.Bind(wx.EVT_MENU, self.OnEditCompensate, edit_comp)
+        #self.controlFrame.Bind(wx.EVT_MENU, self.OnLoadCompensate, load_comp)
+        #self.controlFrame.Bind(wx.EVT_MENU, self.OnEditCompensate, edit_comp)
 
         self.graphicsMenu = wx.Menu()
         self.visuals = loadFrames("plugins/visual")

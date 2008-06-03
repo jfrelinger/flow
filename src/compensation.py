@@ -24,11 +24,14 @@ class CompensationFrame(wx.Frame):
         self.grid = wx.grid.Grid(self.panel)
         
         try:
-            self.headers = self.data.getAttr('fields')
+            self.headers = self.data.getAttr('fields')[:]
         except AttributeError:
             self.headers = None
             
         #print self.headers
+        
+        self.headers.remove('FSC-H')
+        self.headers.remove('SSC-H')
         self.gridSize = len(self.headers)
         self.grid.CreateGrid(self.gridSize,self.gridSize)
         #self.grid.CreateGrid(4,4)
@@ -114,8 +117,8 @@ class CompensationFrame(wx.Frame):
             if self.pos[0] != self.pos[1]:
                 self.grid.SetCellBackgroundColour(self.pos[1], self.pos[0], wx.Colour(*(255,128,128)))
             self.grid.Refresh()
-            self.graphs.x = self.points[:,self.pos[0]]
-            self.graphs.y = self.points[:,self.pos[1]]
+            self.graphs.x = self.points[:,self.pos[0]+2]
+            self.graphs.y = self.points[:,self.pos[1]+2]
             self.graphs.draw()
 
             
@@ -131,10 +134,12 @@ class CompensationFrame(wx.Frame):
         event.Skip()
     
     def Compensate(self):
-        comp = numpy.zeros((self.gridSize, self.gridSize))
+        comp = numpy.zeros((self.gridSize+2, self.gridSize+2))
+        comp[0,0] = 1
+        comp[1,1] = 1
         for i in range(self.gridSize):
             for j in range(self.gridSize):
-                comp[i,j] = float(self.grid.GetCellValue(i,j))
+                comp[i+2,j+2] = float(self.grid.GetCellValue(i,j))
 #        indices = [data.attrs.fields.index(data.attrs.NtoS[m])
 #                       for m in self.headers]
 #        observed = array([data[:,i] for i in indices])
