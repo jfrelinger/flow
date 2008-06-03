@@ -16,7 +16,7 @@ class annotateFrame(wx.Frame):
         self.model = model
         
         self.annotations = []
-        self.notebox = wx.FlexGridSizer(2,2, 0,0)
+        self.notebox = wx.FlexGridSizer(2,2, 5,5)
         self.notebox.Add(wx.StaticText(self.panel, -1, 'Name'))
         self.notebox.Add(wx.StaticText(self.panel, -1, 'Value'))
         self.notebox.AddGrowableCol(0,1)
@@ -24,18 +24,18 @@ class annotateFrame(wx.Frame):
         if annotations is not None:
             for note in annotations:
                 self.notebox.SetRows(self.notebox.GetRows()+1)
-                name = wx.TextCtrl(self.panel, -1, note[0])
-                value = wx.TextCtrl(self.panel, -1, note[1])
-                self.notebox.Add(name)
-                self.notebox.Add(value)
+                name = wx.TextCtrl(self.panel, -1, note[0], style=wx.TE_MULTILINE)
+                value = wx.TextCtrl(self.panel, -1, note[1], style = wx.TE_MULTILINE)
+                self.notebox.Add(name, 1, wx.EXPAND)
+                self.notebox.Add(value, 1, wx.EXPAND)
                 self.annotations.append((name,value))
                 self.Bind(wx.EVT_TEXT, self.OnNotes, name)
                 self.Bind(wx.EVT_TEXT, self.OnNotes, value)
             
-        name = wx.TextCtrl(self.panel, -1, '')
-        value = wx.TextCtrl(self.panel, -1, '')
-        self.notebox.Add(name)
-        self.notebox.Add(value)
+        name = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
+        value = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
+        self.notebox.Add(name, 1 , wx.EXPAND)
+        self.notebox.Add(value, 1, wx.EXPAND)
         self.Bind(wx.EVT_TEXT, self.OnNotes, name)
         self.Bind(wx.EVT_TEXT, self.OnNotes, value)
         self.annotations.append((name,value))
@@ -44,7 +44,7 @@ class annotateFrame(wx.Frame):
         #layout
         self.mainsizer = wx.BoxSizer(wx.VERTICAL)
         #mainsizer.Add(self.textBox,1,wx.EXPAND)
-        self.mainsizer.Add(self.notebox)
+        self.mainsizer.Add(self.notebox, 1, wx.EXPAND)
         btnsizer = wx.BoxSizer(wx.HORIZONTAL)
         btnsizer.Add((10,10),1)
         btnsizer.Add(self.cancelBtn)
@@ -64,11 +64,11 @@ class annotateFrame(wx.Frame):
             if not note[1].GetValue():
                 full = False
         if full:
-            name = wx.TextCtrl(self.panel, -1, '')
-            value = wx.TextCtrl(self.panel, -1, '')
+            name = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
+            value = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
             self.notebox.SetRows(self.notebox.GetRows()+1)
-            self.notebox.Add(name)
-            self.notebox.Add(value)
+            self.notebox.Add(name,1,wx.EXPAND)
+            self.notebox.Add(value,1,wx.EXPAND)
             self.annotations.append((name,value))
             self.Bind(wx.EVT_TEXT, self.OnNotes, name)
             self.Bind(wx.EVT_TEXT, self.OnNotes, value)
