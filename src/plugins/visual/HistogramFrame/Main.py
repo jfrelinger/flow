@@ -55,14 +55,24 @@ class HistogramFrame(VizFrame):
                 if hasattr(data.attrs, 'fields'):
                     newhist = data[:,data.getAttr('fields').index(self.radioX.GetStringSelection())]
                     #self.hists[group] = newhist
-                    newmenu = self.AddMenu.AppendCheckItem(-1, groupName)
-                    newmenu.Check(True)
-                    self.Bind(wx.EVT_MENU, self.OnHistSelect, newmenu)
-                    self.widget.hists[groupName]= newhist
+                    if groupName not in self.widget.hists.keys():
+                        newmenu = self.AddMenu.AppendCheckItem(-1, groupName)
+                        newmenu.Check(True)
+                        self.Bind(wx.EVT_MENU, self.OnHistSelect, newmenu)
+                        self.widget.hists[groupName]= [newhist,True]
                     self.widget.draw()
     
     def OnHistSelect(self, event):
-        pass
+        menuItem = self.AddMenu.FindItemById(event.GetId())
+        if menuItem.IsChecked():
+            self.widget.hists[menuItem.GetLabel()][1] = True
+            #pass
+        else:
+            self.widget.hists[menuItem.GetLabel()][1] = False
+            #pass
+        #print menuItem.GetLabel()
+        self.widget.draw()
+        
     
     def OnExport(self, event):
         print "Test export graphics"
@@ -108,20 +118,23 @@ class HistogramPanel(PlotPanel):
         self.hists = {}
   
     def draw(self):
+        colors = cq(['b','r','g'])
         if not hasattr(self, 'subplot'):
             self.subplot = self.figure.add_subplot(111)
         self.subplot.clear()
         if self.x is not None:
             self.patches = []
             self.histograms = []
-            n, bins, hist = self.subplot.hist(self.x, 1024)
+            n, bins, hist = self.subplot.hist(self.x, 100, fc=colors.next())
             self.patches.extend(hist)
             self.histograms.append(hist)
             self.subplot.set_xlabel(str(self.name), fontsize = 12)
             for group in self.hists.keys():
-                n, bins, hist = self.subplot.hist(self.hists[group], 1024)
-                self.patches.extend(hist)
-                self.histograms.append(hist)
+                print group
+                if self.hists[group][1]:
+                    n, bins, hist = self.subplot.hist(self.hists[group][0], 100, fc=colors.next())
+                    self.patches.extend(hist)
+                    self.histograms.append(hist)
             sizes = [len(patch) for patch in self.histograms]
             sizes.insert(0,0)
             print sizes
@@ -132,4 +145,12 @@ class HistogramPanel(PlotPanel):
             self.subplot.patches = self.patches[splits[0]:splits[upper]]
         self.Refresh()
         
+class cq(object): # the argument q is a list
+   def __init__(self,q):
+      self.q = q
+   def __iter__(self):
+      return self
+   def next(self):
+      self.q = self.q[1:] + [self.q[0]]
+      return self.q[-1]
 
