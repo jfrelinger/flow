@@ -325,7 +325,7 @@ class TwoDDensity(VizFrame):
                 q2 = []
                 q3 = []
                 q4 = []
-                for i,d in enumerate(self.data):
+                for i,d in enumerate(self.data[:]):
                     if self.widget.x[i] < x:
                         if self.widget.y[i] < y:
                             q3.append(d)
@@ -337,17 +337,11 @@ class TwoDDensity(VizFrame):
                         else:
                             q1.append(d)
                 curGroup = self.model.GetCurrentGroup()
-                self.model.updateHDF('Q1', array(q1), self.data)
-                self.model.GetCurrentData().attrs.batch=['qgate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), (x,y)]
-                self.model.SelectGroup(curGroup)
-                self.model.updateHDF('Q2', array(q2), self.data)
-                self.model.GetCurrentData().attrs.batch=['qgate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), (x,y)]
-                self.model.SelectGroup(curGroup)
-                self.model.updateHDF('Q3', array(q3), self.data)
-                self.model.GetCurrentData().attrs.batch=['qgate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), (x,y)]
-                self.model.SelectGroup(curGroup)
-                self.model.updateHDF('Q4', array(q4), self.data)
-                self.model.GetCurrentData().attrs.batch=['qgate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), (x,y)]
+                for i,j in [(q1,'Q1'), (q2, 'Q2'), (q3, 'Q3'), (q4, 'Q4')]:
+                    if len(i) > 0:
+                        self.model.SelectGroup(curGroup)
+                        self.model.updateHDF(j, array(i), self.data)
+                        self.model.GetCurrentData().attrs.batch=['qgate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), (x,y)]
                     
 
 class TwoDPanel(PlotPanel):
