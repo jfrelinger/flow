@@ -83,7 +83,7 @@ class annotateFrame(wx.Frame):
         # need to do stuff here
         new = []
         for note in self.annotations:
-            new.append(( note[0].GetValue(), note[1].GetValue()))
+            new.append(( note[0].GetValue().encode('utf8'), note[1].GetValue().encode('utf8')))
         #print new
         annote = array(filter(lambda x: x != ('',''), new))
         self.model.NewArray('annotation', annote, parent=self.group, overwrite=True)
