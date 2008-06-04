@@ -152,8 +152,8 @@ class MainFrame(VizFrame):
         if dlg.ShowModal() == wx.ID_OK:
             indices = range(inputs['start'], inputs['stop'], inputs['stride'])
             name = self.model.GetCurrentGroup()._v_pathname
-            self.model.FilterOnRows('FilterOnEventsIndex', indices)
-            self.model.AddHistory(('FilterOnRows', [name, inputs]))
+            self.model.FilterOnRows('SampleOnEventsIndex', indices)
+            self.model.AddHistory(('SampleOnRows', [name, inputs]))
         dlg.Destroy()
 
     def OnEventsRandom(self, event):
@@ -169,8 +169,8 @@ class MainFrame(VizFrame):
             shuffle(indices)
             indices = indices[:inputs['n']]
             name = self.model.GetCurrentGroup()._v_pathname
-            self.model.FilterOnRows('FilterOnEventsRandom', indices)
-            self.model.AddHistory(('FilterOnRows', [name, inputs, ('state', get_state())]))
+            self.model.FilterOnRows('SampleOnEventsRandom', indices)
+            self.model.AddHistory(('SampleOnRows', [name, inputs, ('state', get_state())]))
         dlg.Destroy()
 
     def OnEventsReplace(self, event):
@@ -184,8 +184,8 @@ class MainFrame(VizFrame):
         if dlg.ShowModal() == wx.ID_OK:
             indices = randint(0, n, inputs['n'])
             name = self.model.GetCurrentGroup()._v_pathname
-            self.model.FilterOnRows('FilterOnEventsReplace', indices)
-            self.model.AddHistory(('FilterOnRows', [name, inputs, ('state', get_state())]))
+            self.model.FilterOnRows('SampleOnEventsReplace', indices)
+            self.model.AddHistory(('SampleOnRows', [name, inputs, ('state', get_state())]))
         dlg.Destroy()
 
     # Transforms
@@ -481,6 +481,11 @@ class MainFrame(VizFrame):
         
         source = self.model.GetCurrentData()
         choices = self.model.GetDataGroups()
+        #print source._v_pathname
+        try:
+            choices.remove(self.GetCurrentGroup()._v_pathname)
+        except:
+            pass
         dialog = wx.MultiChoiceDialog(None, "Chose groups to apply " +source.getAttr('batch')[0] + " to",
                                        "choices", choices)
         batchOp = source.getAttr('batch')
@@ -501,6 +506,8 @@ class MainFrame(VizFrame):
             print [choices[i] for i in dialog.GetSelections()]
             if batchOp[0] == 'gate':
                 self.OnBatchGate(source, [choices[i] for i in dialog.GetSelections()])
+            elif batchOp[0] == 'qgate':
+                self.OnBatchGate(source, [choices[i] for i in dialog.GetSelections()], quad=True)
             elif batchOp[0] in transforms.keys():
                 for i in dialog.GetSelections():
                     self.model.SelectGroupByPath(choices[i])
@@ -508,25 +515,45 @@ class MainFrame(VizFrame):
             else:
                 print source.getAttr('batch')[0]
             
-    def OnBatchGate(self, source, dest):
+    def OnBatchGate(self, source, dest, quad=False):
         x,y = source.getAttr('batch')[1]
-        for group in dest:
-            self.model.SelectGroupByPath(group)
-            if x and y in self.model.GetCurrentData().getAttr('fields'):
-                window = self.Visuals['2D Density'](self, show=False)
-                window.AttachModel(self.model)
-                window.radioX.SetStringSelection(x)
-                window.radioY.SetStringSelection(y)
-                window.OnControlSwitch(-1)
-                window.OnAddPolyGate(-1)
-                window.widget.p.poly.verts = list(source.getAttr('batch')[2])
-                window.widget.p.poly_changed(window.widget.p.poly)
-                window.Gate(-1)
-                window.Destroy()
-            else:
-                dialog = wx.MessageDialog(self, "Unable to find matching fields for " + group, style=wx.OK)
-                if dialog.ShowModal() == wx.ID_OK:
-                    pass
+        if quad:
+            for group in dest:
+                self.model.SelectGroupByPath(group)
+                if x and y in self.model.GetCurrentData().getAttr('fields'):
+                    xline, yline = source.getAttr('batch')[2]
+                    window = self.Visuals['2D Density'](self, show=False)
+                    window.AttachModel(self.model)
+                    window.radioX.SetStringSelection(x)
+                    window.radioY.SetStringSelection(y)
+                    window.OnControlSwitch(-1)
+                    window.OnAddQuadGate(-1)
+                    window.widget.vline._x = [xline,xline]
+                    window.widget.hline._y = [yline,yline]
+                    window.Gate(-1)
+                    window.Destroy()
+                else:
+                    dialog = wx.MessageDialog(self, "Unable to find matching fields for " + group, style=wx.OK)
+                    if dialog.ShowModal() == wx.ID_OK:
+                        pass
+        else:
+            for group in dest:
+                self.model.SelectGroupByPath(group)
+                if x and y in self.model.GetCurrentData().getAttr('fields'):
+                    window = self.Visuals['2D Density'](self, show=False)
+                    window.AttachModel(self.model)
+                    window.radioX.SetStringSelection(x)
+                    window.radioY.SetStringSelection(y)
+                    window.OnControlSwitch(-1)
+                    window.OnAddPolyGate(-1)
+                    window.widget.p.poly.verts = list(source.getAttr('batch')[2])
+                    window.widget.p.poly_changed(window.widget.p.poly)
+                    window.Gate(-1)
+                    window.Destroy()
+                else:
+                    dialog = wx.MessageDialog(self, "Unable to find matching fields for " + group, style=wx.OK)
+                    if dialog.ShowModal() == wx.ID_OK:
+                        pass
     def OnAnnotate(self):
         selection = self.tree.GetSelection()
         item = self.tree.GetItemPyData(selection)
