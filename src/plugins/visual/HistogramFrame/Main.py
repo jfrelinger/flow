@@ -87,8 +87,8 @@ class HistogramFrame(VizFrame):
         self.radioX.Bind(wx.EVT_RADIOBOX, self.OnControlSwitch)
 
     def UpdateHistogram(self, x):
-        self.widget.x = self.model.GetCurrentData()[:,x]
-        fields = self.model.GetCurrentData().getAttr('fields')
+        self.widget.x = self.data[:,x]
+        fields = self.data.getAttr('fields')
         self.widget.name = fields[x]
         self.widget.draw()
         
@@ -107,6 +107,7 @@ class HistogramFrame(VizFrame):
     
     def ModelUpdate(self,model):
         self.model = model
+        self.data = self.model.GetCurrentData()
         self.Plot()
 
 class HistogramPanel(PlotPanel):
@@ -125,14 +126,16 @@ class HistogramPanel(PlotPanel):
         if self.x is not None:
             self.patches = []
             self.histograms = []
-            n, bins, hist = self.subplot.hist(self.x, 100, fc=colors.next())
+            color = colors.next()
+            n, bins, hist = self.subplot.hist(self.x, 1024, fc=color, ec=color)
             self.patches.extend(hist)
             self.histograms.append(hist)
             self.subplot.set_xlabel(str(self.name), fontsize = 12)
             for group in self.hists.keys():
                 print group
                 if self.hists[group][1]:
-                    n, bins, hist = self.subplot.hist(self.hists[group][0], 100, fc=colors.next())
+                    color = colors.next()
+                    n, bins, hist = self.subplot.hist(self.hists[group][0], 1024, fc=color, ec=color)
                     self.patches.extend(hist)
                     self.histograms.append(hist)
             sizes = [len(patch) for patch in self.histograms]
