@@ -179,7 +179,14 @@ class GraphingPanel(PlotPanel):
              self.subplot = self.figure.add_subplot(111)
          self.subplot.clear()
          bins = 250
-         
+         if len(self.x) > 10000:
+             stride = len(self.x)/10000
+         else:
+            stride = 1
+        
+         self.x = self.x[:10000*stride:stride]
+         self.y = self.y[:10000*stride:stride]
+
          z, xedge, yedge = numpy.histogram2d(self.y, self.x, bins=[bins, bins], 
                                     range=[(numpy.min(self.y), numpy.max(self.y)),
                                            (numpy.min(self.x), numpy.max(self.x))])

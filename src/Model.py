@@ -99,7 +99,14 @@ class FlowModel(AbstractModel):
         elif group._c_classId == "ARRAY": #IGNORE:W0212
             self.current_group = group._v_parent #IGNORE:W0212
             self.current_array = group
+        elif group is self.hdf5.root:
+            self.current_group = self.hdf5.root
+            if hasattr(self.hdf5.root, 'data'):
+                self.current_array = self.hdf5.root.data
+            else:
+                self.current_array = None
         self.isChanged = True
+        
 
     def SelectGroupByPath(self, group):
         """ selecta group via it's path"""
