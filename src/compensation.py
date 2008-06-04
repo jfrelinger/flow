@@ -28,23 +28,16 @@ class CompensationFrame(wx.Frame):
         except AttributeError:
             self.headers = None
             
-        print self.headers
+        self.origSize=len(self.headers)
         self.skips = []
         newheaders = self.headers[:]
         for a,b in enumerate(self.headers):
             print a, b
-            if b.startswith('FSC'):
+            if b.startswith('FSC') or b.startswith('SSC') or b.startswith('Time'):
                 print 'throwing out column ' + b
-                self.skips.append(a)
                 newheaders.remove(b)
-            if b.startswith('SSC'):
-                print 'throwing out column ' + b
-                self.skips.append(a)
-                newheaders.remove(b)
-            if b.startswith('Time'):
-                print 'throwing out column ' + b
-                self.skips.append(a)
-                newheaders.remove(b)
+            else:
+               self.skips.append(a)
         print self.skips
         self.headers = newheaders
         
@@ -65,8 +58,8 @@ class CompensationFrame(wx.Frame):
                     self.grid.SetCellValue(i,j, '1')
                 else:
                     self.grid.SetCellValue(i,j, '0')
-#                if self.matrix is not None:
-#                    self.grid.SetCellValue(i,j, str(self.matrix[i,j]))
+                if self.matrix is not None:
+                    self.grid.SetCellValue(i,j, str(self.matrix[i,j]))
                 
         self.grid.AutoSize()
         self.grid.Bind(wx.EVT_SIZE, self.OnGridSize)
@@ -135,8 +128,8 @@ class CompensationFrame(wx.Frame):
             if self.pos[0] != self.pos[1]:
                 self.grid.SetCellBackgroundColour(self.pos[1], self.pos[0], wx.Colour(*(255,128,128)))
             self.grid.Refresh()
-            self.graphs.x = self.points[:,self.pos[0]]
-            self.graphs.y = self.points[:,self.pos[1]]
+            self.graphs.x = self.points[:,self.skips[self.pos[0]]]
+            self.graphs.y = self.points[:,self.skips[self.pos[1]]]
             self.graphs.draw()
 
             
@@ -152,12 +145,13 @@ class CompensationFrame(wx.Frame):
         event.Skip()
     
     def Compensate(self):
-        comp = numpy.zeros((self.gridSize+2, self.gridSize+2))
-        comp[0,0] = 1
-        comp[1,1] = 1
+        comp = numpy.zeros((self.origSize, self.origSize))
+        for i in xrange(self.origSize):
+            comp[i,i]=1
+        
         for i in range(self.gridSize):
             for j in range(self.gridSize):
-                comp[i+2,j+2] = float(self.grid.GetCellValue(i,j))
+                comp[self.skips[i],self.skips[j]] = float(self.grid.GetCellValue(i,j))
 #        indices = [data.attrs.fields.index(data.attrs.NtoS[m])
 #                       for m in self.headers]
 #        observed = array([data[:,i] for i in indices])
