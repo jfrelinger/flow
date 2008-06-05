@@ -6,7 +6,7 @@ class annotateFrame(wx.Frame):
         wx.Frame.__init__(self, None, -1, "Annotations for " + group_name,style = wx.DEFAULT_FRAME_STYLE | wx.RESIZE_BORDER )
         self.panel = wx.ScrolledWindow(self, -1, size = self.GetSize() , style = wx.DEFAULT | wx.VSCROLL)
         self.panel.SetScrollRate(5,5)
-        #self.textBox = wx.TextCtrl(self.panel, -1, txt, style= wx.TE_MULTILINE)
+        #self.textBox = wx.TextCtrl(self.panel, -1, txt, style= wx.TE_MULTILINE|wx.HSCROLL|wx.TE_AUTO_URL)
         self.okBtn = wx.Button(self.panel, id=wx.ID_OK)
         self.cancelBtn = wx.Button(self.panel, id=wx.ID_CANCEL)
         self.Bind(wx.EVT_BUTTON, self.OnOkay, self.okBtn)
@@ -24,16 +24,16 @@ class annotateFrame(wx.Frame):
         if annotations is not None:
             for note in annotations:
                 self.notebox.SetRows(self.notebox.GetRows()+1)
-                name = wx.TextCtrl(self.panel, -1, note[0], style=wx.TE_MULTILINE)
-                value = wx.TextCtrl(self.panel, -1, note[1], style = wx.TE_MULTILINE)
+                name = wx.TextCtrl(self.panel, -1, note[0], style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_AUTO_URL)
+                value = wx.TextCtrl(self.panel, -1, note[1], style = wx.TE_MULTILINE|wx.HSCROLL|wx.TE_AUTO_URL)
                 self.notebox.Add(name, 1, wx.EXPAND)
                 self.notebox.Add(value, 1, wx.EXPAND)
                 self.annotations.append((name,value))
                 self.Bind(wx.EVT_TEXT, self.OnNotes, name)
                 self.Bind(wx.EVT_TEXT, self.OnNotes, value)
             
-        name = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
-        value = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
+        name = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_AUTO_URL)
+        value = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_AUTO_URL)
         self.notebox.Add(name, 1 , wx.EXPAND)
         self.notebox.Add(value, 1, wx.EXPAND)
         self.Bind(wx.EVT_TEXT, self.OnNotes, name)
@@ -64,8 +64,8 @@ class annotateFrame(wx.Frame):
             if not note[1].GetValue():
                 full = False
         if full:
-            name = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
-            value = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE)
+            name = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_AUTO_URL)
+            value = wx.TextCtrl(self.panel, -1, '', style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_AUTO_URL)
             self.notebox.SetRows(self.notebox.GetRows()+1)
             self.notebox.Add(name,1,wx.EXPAND)
             self.notebox.Add(value,1,wx.EXPAND)
