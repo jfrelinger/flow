@@ -6,7 +6,9 @@ Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
 Package: flow
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Architecture: i386
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.6, python-tables, python-scipy, python-matplotlib, \
+	python-biopython
+Recommends: python-vtk, libboost-python-dev, python-rpy, gfortran
 Description: Flow cytometry package
  Flow cytometry software package.
