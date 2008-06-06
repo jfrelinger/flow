@@ -1,0 +1,5 @@
+to make debian/ubuntu packages:
+copy the tree of files you want in to place under debian/
+currently that means you need to create a debian/usr/lib/python2.5/site-packages/flow and populate it with the apropreate files.
+currently the debian/DEBIAN/control file is set up for our current build, but changes may need to be made based on future development (or better understanding of how to do smarting things inside the packages).  Also do not forget to increase the revision number as aproprate
+once populated run 'dpkg-deb --build debian'.  this makes a debian.deb file that is the package.  copy/rename as apropreate
