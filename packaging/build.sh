@@ -10,5 +10,6 @@ echo 'cd /usr/lib/python2.5/site-packages/flow && /usr/bin/python2.5  /usr/lib/p
 
 echo 'copy bayes.so to debian/usr/lib/python2.5/site-packages/flow/plugins/statistics/Bayes/'
 echo 'copy flow.so to debian/usr/lib/python2.5/site-packages/flow/plugins/statistics/Kde/'
+echo 'Also do not forget to update the debian/DEBIAN/control'
 echo 'then run dpkg-deb --build debian'
 
