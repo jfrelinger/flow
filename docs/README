@@ -13,6 +13,16 @@ Download by clicking on the bz2, zip or gz links at the top of http://hg/dulci.o
 Debian/Ubuntu installation
 ==========================
 
+The simplest way to install the package is to download the flow-x.x.x-i386.deb or flow-x.x.x-amd64.deb from https://galen.dulci.duhs.duke.edu/flow/wiki/Software, and install using a package manager, for example
+
+sudo gdebi flow-x.x.x-i386.deb
+
+This will automatically install most of the dependencies needed. However the python-mdp package is only available for Debian lenny and sid, and has not made it to the Ubuntu repositories yet, so manual installation is still necessary by following these steps
+
+Download tar.gz file from sourceforge http://sourceforge.net/project/showfiles.php?group_id=116959
+tar -xzf MDP-2.3.tar.gz 
+sudo python setup.py install
+
 [[ Base system ]] 
 sudo apt-get install python-wxgtk2.6 python-numpy python-tables python-scipy python-matplotlib python-networkx
 
@@ -67,6 +77,15 @@ tar -xzf rpy-1.0.2.tar.gz
 cd rpy-1.0.2
 python setup.py build
 python setup.py install
+
+[Projections/ica2 and pca2 using the Python Modular toolkit]
+# available for Debian lenny and sid
+sudo apt-get install python-mdp
+
+# all other distributions
+Download tar.gz file from sourceforge http://sourceforge.net/project/showfiles.php?group_id=116959
+tar -xzf MDP-2.3.tar.gz 
+sudo python setup.py install
 
 # Flow should now be ready to run
 cd $FLOW/src
@@ -199,3 +218,9 @@ tar -xzf rpy-1.0.2.tar.gz
 cd rpy-1.0.2
 python setup.py build
 python setup.py install
+
+[Projections/ica2 and pca2 using the Python Modular toolkit]
+Download tar.gz file from sourceforge http://sourceforge.net/project/showfiles.php?group_id=116959
+tar -xzf MDP-2.3.tar.gz 
+sudo python setup.py install
+
