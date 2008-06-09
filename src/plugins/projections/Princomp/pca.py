@@ -1,3 +1,12 @@
+# This code is copied verbatim from
+# http://itb.biologie.hu-berlin.de/~zito/teaching/CNSIV/30.04.2004.html
+# and is not meant for production use but simply to illustrate how
+# simple it is to write sucn a projection plugin in Python 
+#
+# PCA code is by Tiziano Zito at the Institute for Theoretical
+# Biology, Humboldt University Berlin
+
+
 #########################################################################
 # Hi! If you came here searching for Python PCA in google, note that    #
 # this is a script for a lecture. If you are looking for Python code to #

@@ -1,5 +1,5 @@
 from plugin import Projections
-import pca 
+import pca
 
 class Pca(Projections):
     name = "Pca"
