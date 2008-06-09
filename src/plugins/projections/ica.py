@@ -1,6 +1,6 @@
 from plugin import Projections
 from rpy import r
-from Numeric import dot, array
+from numpy import dot, array
 import wx
 
 r.library("fastICA")
