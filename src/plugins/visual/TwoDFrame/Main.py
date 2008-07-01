@@ -236,14 +236,18 @@ class TwoDDensity(VizFrame):
         self.widget.subplot.add_patch(poly)
         self.widget.p = mpl_gate.PolygonInteractor(self.widget, self.widget.subplot, poly)
         self.widget.subplot.add_line(self.widget.p.line)
+
         self.widget.draw()
 
     def OnRemovePolyGate(self, event):
         try:
+            self.widget.p.line.set_visible(False)
+            self.widget.p.poly.set_visible(False)
+            # self.widget.p.canvas.blit(self.widget.subplot.bbox)
             del self.widget.p
-            self.widget.draw()
-        except AttributeError:
-            pass
+        except Exception, e:
+            print e
+        self.widget.draw()
 
     def OnRemoveQuadGate(self, event):
         try:
@@ -546,7 +550,6 @@ class TwoDPanel(PlotPanel):
                                       va='center', ha='center')
             except AttributeError, e:
                 # don't label if error (e.g. no mu_end)
-                print e
                 pass
 
         if self.quad:
