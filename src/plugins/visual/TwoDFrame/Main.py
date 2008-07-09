@@ -178,8 +178,8 @@ class TwoDDensity(VizFrame):
             sizer = wx.BoxSizer(wx.VERTICAL)
             sizer.AddMany(self.cbs)
             panel.SetSizer(sizer)
+            panel.SetScrollRate(0,5)
             self.leftPanel.Insert(1,panel,1, wx.ALL | wx.EXPAND) 
-            panel.SetScrollRate(5,5)
 
         return panel
 
