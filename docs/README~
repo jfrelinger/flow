@@ -1,0 +1,131 @@
+Debian installation
+===================
+
+Base system
+sudo apt-get install python-wxgtk2.6 python-numpy python-tables python-scipy python-matplotlib python-networkx
+
+Plugins
+
+Graphics/ThreeDFrame
+sudo apt-get install python-vtk
+
+Statistics/kmeans
+sudo apt-get install python-biopython
+
+Statistics/Kde and Statistics/bayes
+sudo apt-get install scons libboost-dev r-mathlib blitz++ lapack3-dev
+
+# install the ANN library (for kde)
+cd /tmp
+wget http://www.cs.umd.edu/~mount/ANN/Files/1.1.1/ann_1.1.1.tar.gz
+tar -xzf ann_1.1.1.tar.gz
+cd ann_1.1.1/
+make linux-g++
+sudo mv ann_1.1.1 /usr/local/src
+
+# install the boost numeric binding headers (for bayes)
+cd /tmp
+wget http://news.tiker.net/news.tiker.net/download/software/boost-bindings/boost-bindings-20070826.tar.gz
+tar -xzf boost-bindings-20070826.tar.gz
+sudo cp -R boost-bindings/boost/numeric/bindings/ /usr/include/boost/numeric/
+
+# build the python shared librarie
+cd $FLOW/src
+scons install
+
+Projections/ica
+sudo apt-get install python-rpy r-base
+sudo R
+> install.packages("fastICA")
+
+Mac OS X installation
+=====================
+
+Download and install setuptools from http://pypi.python.org/pypi/setuptools
+tar -xzf setuptools-0.6c8.tar.gz 
+cd setuptools-0.6c8
+sudo python setup.py install
+
+Download and install wxPython from http://www.wxpython.org/
+Here's a slightly nutty way to do it all from the command line
+cd /tmp
+wget http://superb-east.dl.sourceforge.net/sourceforge/wxpython/wxPython2.8-osx-unicode-2.8.7.1-universal-py2.5.dmg
+hdid wxPython2.8-osx-unicode-2.8.7.1-universal-py2.5.dmg 
+cd /Volumes/wxPython2.8-osx-unicode-2.8.7.1-universal-py2.5/
+sudo installer -package wxPython2.8-osx-unicode-universal-py2.5.pkg -target /Volumes/Macintosh\ HD
+
+wget http://pypi.python.org/packages/source/n/networkx/networkx-0.36.tar.gz
+tar -xzf networkx-0.36.tar.gz 
+cd networkx-0.36
+python setup.py build
+sudo python setup.py install
+
+wget http://www.pytables.org/download/stable/pytables-2.0.3.tar.gz
+tar -xzf pytables-2.0.3.tar.gz 
+cd pytables-2.0.3
+python setup.py build
+sudo python setup.py install
+
+Install the Scipy superpack from 
+http://idisk.mac.com/fonnesbeck-Public/ScipySuperpackInstaller.zip
+
+Alternatively, individual packages can be downloaded and installed from
+http://pythonmac.org/packages/py25-fat/index.html
+
+Install R from source
+wget http://cran.r-project.org/src/base/R-2/R-2.6.2.tar.gz
+tar -xzf R-2.6.2.tar.gz
+cd R-2.6.2.tar.gz
+./configure --enable-BLAS-shlib --with-blas='-framework vecLib'
+make
+sudo make install
+cd src/nmath/standalone
+make
+sudo ln -s /Library/Frameworks/R.framework/Resources/R /usr/local/bin/R
+
+Statistics/kmeans
+wget http://downloads.sourceforge.net/numpy/Numeric-24.2.tar.gz
+
+* Installing Qt
+wget http://ftp.ntua.gr/pub/X11/Qt/qt/source/qt-mac-opensource-src-4.3.4.tar.gz
+tar -xzf qt-mac-opensource-src-4.3.4.tar.gz
+cd qt-mac-opensource-src-4.3.4
+./configure
+make
+sudo make install
+
+* Installing cmake
+wget http://www.cmake.org/files/v2.4/cmake-2.4.8.tar.gz
+tar -xzf cmake-2.4.8.tar.gz
+cd cmake-2.4.8
+./bootstrap
+make
+sudo make install
+
+* Installing Paraview
+export PATH=$PATH:/usr/local/Trolltech/Qt-4.3.4/
+cvs -d :pserver:anoncvs@www.paraview.org:/cvsroot/ParaView3 login
+cvs -d :pserver:anoncvs@www.paraview.org:/cvsroot/ParaView3 co ParaView3
+mkdir ParaViewBuild
+cd ParaViewBuild/
+ccmake ../ParaView3
+options (PARAVIEW_ENABLE_PYTHON ON)
+Hit 'c' to configure and 'g' to generate Makefiles
+make
+sudo make install
+
+* Installing VTK
+cvs -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK login
+(respond with password vtk)
+cvs -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK checkout VTK
+mkdir VTKBuild
+cd VTKBuild
+ccmake ../VTK
+options (BUILD_SHARED_LIBS ON; VTK_WRAP_PYTHON ON)
+Hit 'c' to configure and 'g' to generate Makefiles
+make
+sudo make install
+cd Wrapping/Python
+python setup.py build
+sudo python setup.py install
+export PYTHONPATH=/Library/Python/2.5/site-packages/VTK-5.1.0-py2.5.egg/vtk
