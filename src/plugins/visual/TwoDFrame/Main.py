@@ -391,7 +391,7 @@ class TwoDPanel(PlotPanel):
       if self.x is not None:
         # sample at most 10000 points for display
         if len(self.x) > 10000:
-          stride = len(self.x)/10000
+            stride = len(self.x)/10000
         else:
             stride = 1
         
@@ -420,7 +420,8 @@ class TwoDPanel(PlotPanel):
             except AttributeError:
                 # PUT COLOR CODE HERE
                 # ONLY WORKS IF NOT GATING
-                if hasattr(self, 'model') and self.Zs is not None:
+                if hasattr(self, 'model') and self.Zs is not None \
+                        and len(self.Zs)==len(self.x):
                     z = array(self.Zs[:], 'i')
                     maxz = max(z)
                     self.colors = [colormap.floatRgb(i, 0, maxz+1, i/(maxz+1)) for i in range(maxz+1)]
