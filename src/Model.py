@@ -192,6 +192,15 @@ class FlowModel(AbstractModel):
         self.isChanged = True
         
     def GetZLabels(self, z):
+        # get proportion to put in label
+        try:
+            pro = self.current_group.pi_end[:]
+            pro = 100*pro/float(sum(pro))
+        except AttributeError:
+            pro = [0]*(1+max(z[:]))
+
+        print max(z[:]), len(pro)
+
         if z ==  None:
             return ["Color 1"]
         else:
@@ -200,7 +209,7 @@ class FlowModel(AbstractModel):
             except:
                 values = []
                 for i in range(1, max(z[:])+2):
-                    values.append("Color " + str(i))
+                    values.append("Color %d (%.2f)" % (i, pro[i-1]))
                 z.attrs.labels = values
                 return values
 
