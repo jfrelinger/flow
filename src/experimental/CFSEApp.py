@@ -3,14 +3,17 @@
 import wx
 import numpy
 import sys
-sys.path.append('..')
+sys.path.extend(['..', '../plugins/visual/HistogramFrame'])
 from dialogs import ParameterDialog, ChoiceDialog
+from Main import HistogramPanel
 
 class Model(object):
     """Model to store and manipulate data."""
     def __init__(self):
         self.sample = None
         self.control = None
+        self.sample_fit = None
+        self.control_fit = None
 
     def fit_data(self, inputs):
         """Fit normals to data."""
@@ -30,30 +33,54 @@ class CFSEApp(wx.App):
     """Main application for fitting normals to CFSE data."""
     def __init__(self, redirect=False):
         wx.App.__init__(self, redirect)
+        self.frame = MainFrame("CFSE fitting application")
+        # self.frame.Show(True)
 
     def OnInit(self):
         return True
+
+class HistogramFrame(wx.Frame):
+    """Frame to display control and sample Histograms."""
+    def __init__(self, title="", name="",  pos=wx.DefaultPosition, size=wx.DefaultSize):
+        wx.Frame.__init__(self, None, -1, title, pos, size)
+
+        self.widget = HistogramPanel(None, 1, self, -1)
+        self.widget.name = name
+        self.widget.draw()
+        self.Show()
+
+    def update(self, x):
+        self.widget.x = x
+        self.widget.draw()
 
 class MainFrame(wx.Frame):
     """Main frame for CFSE application."""
     def __init__(self, title="", pos=wx.DefaultPosition, size=wx.DefaultSize):
         wx.Frame.__init__(self, None, -1, title, pos, size)
+
         fileMenu = wx.Menu()
         load_sample = fileMenu.Append(-1, "Load sample data")
         load_control = fileMenu.Append(-1, "Load control data")
         analysisMenu = wx.Menu()
-        fit_sample = analysisMenu.Append(-1, "Fit sample data")
-        fit_control = analysisMenu.Append(-1, "Fit control data")
-        menuBar = wx.MenuBar()
-        menuBar.Append(fileMenu, "&File")
-        menuBar.Append(analysisMenu, "&Analysis")
-        self.SetMenuBar(menuBar)
+        self.fit_sample = analysisMenu.Append(-1, "Fit sample data")
+        self.fit_control = analysisMenu.Append(-1, "Fit control data")
+        self.menuBar = wx.MenuBar()
+        self.menuBar.Append(fileMenu, "&File")
+        self.menuBar.Append(analysisMenu, "&Analysis")
+        self.SetMenuBar(self.menuBar)
         self.CreateStatusBar()
-        self.SetStatusText("Ready for fitting")
+        self.SetStatusText("Ready")
         self.Bind(wx.EVT_MENU, self.OnLoadSample, load_sample)
         self.Bind(wx.EVT_MENU, self.OnLoadControl, load_control)
-        self.Bind(wx.EVT_MENU, self.OnFitSample, fit_sample)
-        self.Bind(wx.EVT_MENU, self.OnFitControl, fit_control)
+        self.Bind(wx.EVT_MENU, self.OnFitSample, self.fit_sample)
+        self.Bind(wx.EVT_MENU, self.OnFitControl, self.fit_control)
+
+        # disable menu events until pre-conditions met
+        self.menuBar.Enable(self.fit_control.GetId(), False)
+        self.menuBar.Enable(self.fit_sample.GetId(), False)
+
+        self.histogram_control = HistogramFrame("Control histogram", "Control", (0, 22), (600,400))
+        self.sample_control = HistogramFrame("Sample histogram", "Sample", (600, 22), (600,400))
 
         self.model = Model()
 
@@ -62,7 +89,11 @@ class MainFrame(wx.Frame):
 
         Expects floating point numbers in plain text separated by white space.
         """
-        return numpy.array(map(float, open(file).read().strip().split()))
+        try:
+            return numpy.array(map(float, open(file).read().strip().split()))
+        except Exception, e:
+            print e
+            return None
 
     def OnLoadData(self, event):
         """Generic data loader."""
@@ -81,11 +112,19 @@ class MainFrame(wx.Frame):
         """Load a sample file for fitting."""
         file = self.OnLoadData(event)
         self.model.sample = self.read_data(file)
+        if self.model.sample is not None:
+            self.menuBar.Enable(self.fit_sample.GetId(), True)
+            self.SetStatusText("Sample data loaded")
+            self.sample_control.update(self.model.sample)
 
     def OnLoadControl(self, event):
         """Load a control file with well-defined peaks."""
         file = self.OnLoadData(event)
         self.model.control = self.read_data(file)
+        if self.model.control is not None:
+            self.menuBar.Enable(self.fit_control.GetId(), True)
+            self.SetStatusText("Control data loaded")
+            self.histogram_control.update(self.model.control)
 
     def OnFitData(self, event):
         """Generic data fitting."""
@@ -102,15 +141,16 @@ class MainFrame(wx.Frame):
         """Fit the sample data."""
         inputs = self.OnFitData(event)
         self.model.fit_sample(inputs)
+        if self.model.sample_fit is not None:
+            self.SetStatusText("Sample data fitted")
 
     def OnFitControl(self, event):
         """Fit the control data."""
         inputs = self.OnFitData(event)
         self.model.fit_control(inputs)
-
+        if self.model.control_fit is not None:
+            self.SetStatusText("Control data fitted")
 
 if __name__ == '__main__':
     app = CFSEApp()
-    frame = MainFrame("CFSE fitting application")
-    frame.Show(True)
     app.MainLoop()
