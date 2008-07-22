@@ -4,6 +4,7 @@ from plots import PlotPanel
 import densities2 as dens
 from numpy import array, arange, mgrid, isnan, sqrt, histogram2d, min, max, take, modf
 from numpy.linalg import inv
+from numpy.linalg.linalg import LinAlgError
 from numpy.random import randn, rand
 from pylab import cm, hist, zeros, connect
 import pylab
@@ -390,7 +391,7 @@ class TwoDPanel(PlotPanel):
       if self.x is not None:
         # sample at most 10000 points for display
         if len(self.x) > 10000:
-          stride = len(self.x)/10000
+            stride = len(self.x)/10000
         else:
             stride = 1
         
@@ -419,7 +420,8 @@ class TwoDPanel(PlotPanel):
             except AttributeError:
                 # PUT COLOR CODE HERE
                 # ONLY WORKS IF NOT GATING
-                if hasattr(self, 'model') and self.Zs is not None:
+                if hasattr(self, 'model') and self.Zs is not None \
+                        and len(self.Zs)==len(self.x):
                     z = array(self.Zs[:], 'i')
                     maxz = max(z)
                     self.colors = [colormap.floatRgb(i, 0, maxz+1, i/(maxz+1)) for i in range(maxz+1)]
@@ -463,6 +465,25 @@ class TwoDPanel(PlotPanel):
 
                     s = self.subplot.scatter(x, y, alpha=alpha, s=1, c=zvals, faceted=False )
             alpha = alpha - .25
+
+        # always put labels on if possible at mean location
+        if (not self.ellipse.IsChecked()) and (self.coord1 != self.coord2):
+            try:
+                mu = self.model.current_group.mu_end[:]
+                lvl = 0
+                for i, m in enumerate(mu):
+                    lvl += 1
+                    if hasattr(self, 'components') and i not in self.components:
+                        continue
+                    xk = m[self.coord1]
+                    yk = m[self.coord2]
+                    self.subplot.text(xk, yk, str(lvl), 
+                                      fontsize=14, weight='bold', 
+                                      bbox=dict(facecolor='yellow', alpha=0.5),
+                                      va='center', ha='center')
+            except AttributeError, e:
+                print e
+
         if self.quad:
             if hasattr(self, 'hline'):
                 self.subplot.add_line(self.hline)
@@ -481,6 +502,7 @@ class TwoDPanel(PlotPanel):
             z, xedge, yedge = histogram2d(self.y, self.x, bins=[bins, bins], range=[(self.miny, max(self.y)),(self.minx, max(self.x))])
             c = self.subplot.contour(z, 25, cmap=cm.jet, alpha=alpha, extent=self.area)
             alpha = alpha - .25
+
         if self.ellipse.IsChecked() and (self.coord1 != self.coord2):
             try:
                 mu = self.model.current_group.mu_end[:]
@@ -506,10 +528,14 @@ class TwoDPanel(PlotPanel):
                     if spread_form == 'omega':
                         sp = inv(sp)
 
-                    Xe, Ye = dens.gauss_ell(m, sp, dim=[self.coord1, self.coord2], npoints=100, level=self.levels[i])
-                    xk = Xe[int(0.1*len(Xe))]
-                    yk = Ye[int(0.1*len(Ye))]
-
+                    try:
+                        Xe, Ye = dens.gauss_ell(m, sp, dim=[self.coord1, self.coord2], npoints=100, level=self.levels[i])
+                        xk = Xe[int(0.1*len(Xe))]
+                        yk = Ye[int(0.1*len(Ye))]
+                    except LinAlgError:
+                        Xe = Ye = []
+                        xk = m[self.coord1]
+                        yk = m[self.coord2]
                     self.subplot.plot(Xe, Ye, 'r-', linewidth=2)
                     self.subplot.text(xk, yk, str(lvl), fontsize=14, weight='bold', bbox=dict(facecolor='yellow', alpha=0.5))
 
