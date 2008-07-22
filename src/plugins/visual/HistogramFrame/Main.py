@@ -4,7 +4,6 @@ import sys
 import os
 from plots import PlotPanel
 from numpy import cumsum
-
 from VizFrame import VizFrame
 
 class HistogramFrame(VizFrame):
@@ -87,15 +86,30 @@ class HistogramFrame(VizFrame):
         self.radioX.Bind(wx.EVT_RADIOBOX, self.OnControlSwitch)
 
     def UpdateHistogram(self, x):
-        self.widget.x = self.data[:,x]
-        fields = self.data.getAttr('fields')
+        if len(self.data.shape)== 1:
+            self.widget.x = self.data[:]
+        else:
+            self.widget.x = self.data[:,x]
+        fields = self.GetFields()
         self.widget.name = fields[x]
         self.widget.draw()
-        
+    
+    def GetFields(self):
+       try:
+            fields = self.data.getAttr('fields')
+       except AttributeError:
+            fields = []
+            if len(self.data.shape)==1:
+                fields.append('column')
+            else:
+                for i in range(len(self.data[1,:])):
+                    fields.append('column %d' % i)
+       return fields
     def Plot(self):
         try:
             if self.model.ready:
-                self.RadioButtons(self.model.GetCurrentData().getAttr('fields'))
+                fields = self.GetFields()
+                self.RadioButtons(fields)
                 self.UpdateHistogram(self.radioX.GetSelection())
             else:
                 pass
