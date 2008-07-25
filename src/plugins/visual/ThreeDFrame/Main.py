@@ -7,8 +7,8 @@ import os
 # from vtk.wx.wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
 # use Enthought version copied from svn/enthought/src/lib/enthought/pyface/tvtk/wxVTKRenderWindowInteractor.py
 # which fixes bug crashing wxVTKRenderWindowInteractor on GTK2
-# from wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
-from wxVTKRenderWindow import wxVTKRenderWindow as wxVTKRenderWindowInteractor
+from wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
+# from wxVTKRenderWindow import wxVTKRenderWindow as wxVTKRenderWindowInteractor
 from VizFrame import VizFrame
 from OboFrame import OboTreeFrame
 
