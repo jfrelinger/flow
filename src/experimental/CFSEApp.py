@@ -3,9 +3,11 @@
 import wx
 import numpy
 import sys
-sys.path.extend(['..', '../plugins/visual/HistogramFrame'])
+sys.path.extend(['..', '../plugins/visual/HistogramFrame',
+                 '/Volumes/HD2/hg/cfse_old/python'])
 from dialogs import ParameterDialog, ChoiceDialog
 from Main import HistogramPanel
+from cfse_optimize import *
 
 class Model(object):
     """Model to store and manipulate data."""
@@ -15,19 +17,41 @@ class Model(object):
         self.sample_fit = None
         self.control_fit = None
 
-    def fit_data(self, inputs):
+    def fit_data(self, inputs, peaks=None, max_shift=10.0, scale_factor=10.0):
         """Fit normals to data."""
         print "Fitting data to inputs: ", inputs
+        min_interval = inputs['min_interval']
+        max_interval = inputs['max_interval']
+        span = 30
+        overlap = 29
+        adict = build_freq_dict(self.data)
+        f1 = build_func_from_dict(adict)
+        xmin, xmax = get_bounds(adict, span=0.995)
+        resolution = 1
+
+        if peaks is None:
+            peaks = find_fuzzy_peaks(xmin, xmax, min_interval, max_interval, resolution, span, overlap, f1)
+        
+        data = numpy.reshape(self.data, (len(self.data), 1))
+        peaks = numpy.array(peaks)
+        peaks = numpy.reshape(peaks, (1, len(peaks)))
+        mu, sd, counts = cfse_em(data, peaks, scale_factor, max_shift)
+
+        return data, mu, sd, counts
+        
 
     def fit_sample(self, inputs):
         """Fit normals to sample data."""
         self.data = self.sample
-        self.fit_data(inputs)
+        return self.fit_data(inputs, peaks=self.ctrl_mu, max_shift=0.0,
+                             scale_factor=10.0)
 
     def fit_control(self, inputs):
         """Fit normals to control data."""
         self.data = self.control
-        self.fit_data(inputs)
+        x, mu, sd, counts = self.fit_data(inputs)
+        self.ctrl_mu = mu
+        return x, mu, sd, counts
 
 class CFSEApp(wx.App):
     """Main application for fitting normals to CFSE data."""
@@ -52,6 +76,9 @@ class HistogramFrame(wx.Frame):
     def update(self, x):
         self.widget.x = x
         self.widget.draw()
+
+    def plot_fit(self, x, mu, sd, counts):
+        self.widget.plot_fit(x, mu, sd, counts)
 
 class MainFrame(wx.Frame):
     """Main frame for CFSE application."""
@@ -80,7 +107,7 @@ class MainFrame(wx.Frame):
         self.menuBar.Enable(self.fit_sample.GetId(), False)
 
         self.histogram_control = HistogramFrame("Control histogram", "Control", (0, 22), (600,400))
-        self.sample_control = HistogramFrame("Sample histogram", "Sample", (600, 22), (600,400))
+        self.histogram_sample = HistogramFrame("Sample histogram", "Sample", (600, 22), (600,400))
 
         self.model = Model()
 
@@ -115,7 +142,7 @@ class MainFrame(wx.Frame):
         if self.model.sample is not None:
             self.menuBar.Enable(self.fit_sample.GetId(), True)
             self.SetStatusText("Sample data loaded")
-            self.sample_control.update(self.model.sample)
+            self.histogram_sample.update(self.model.sample)
 
     def OnLoadControl(self, event):
         """Load a control file with well-defined peaks."""
@@ -129,8 +156,8 @@ class MainFrame(wx.Frame):
     def OnFitData(self, event):
         """Generic data fitting."""
         inputs = {}
-        dlg = ParameterDialog([('mix_interval', 'FloatValidator', str(50.0)),
-                               ('max_intervall', 'FloatValidator', str(100.0))],
+        dlg = ParameterDialog([('min_interval', 'FloatValidator', str(80.0)),
+                               ('max_interval', 'FloatValidator', str(120.0))],
                                inputs,
                                'Some information to help the fitting')
         if dlg.ShowModal() == wx.ID_OK:
@@ -140,14 +167,18 @@ class MainFrame(wx.Frame):
     def OnFitSample(self, event):
         """Fit the sample data."""
         inputs = self.OnFitData(event)
-        self.model.fit_sample(inputs)
+        x, mu, sd, counts = self.model.fit_sample(inputs)
+        self.histogram_sample.plot_fit(x, mu, sd, counts)
+
         if self.model.sample_fit is not None:
             self.SetStatusText("Sample data fitted")
 
     def OnFitControl(self, event):
         """Fit the control data."""
         inputs = self.OnFitData(event)
-        self.model.fit_control(inputs)
+        x, mu, sd, counts = self.model.fit_control(inputs)
+        self.histogram_control.plot_fit(x, mu, sd, counts)
+
         if self.model.control_fit is not None:
             self.SetStatusText("Control data fitted")
 
