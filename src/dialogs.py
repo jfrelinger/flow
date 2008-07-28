@@ -35,22 +35,23 @@ class RemoteProcessDialog(wx.Dialog):
         job_button = wx.Button(self, -1, label="Browse")
         self.Bind(wx.EVT_BUTTON, self.OnClick, job_button)
         
-        # okay = wx.Button(self, wx.ID_OK)
-        # okay.SetDefault()
-        # cancel = wx.Button(self, wx.ID_CANCEL)
-        
         # layout
         fgs.Add(server_label, 0, wx.EXPAND)
         fgs.Add(self.server_ctrl, 0, wx.EXPAND)
         fgs.Add(job_label, 0, wx.EXPAND)
         fgs.Add(job_button, 0, wx.EXPAND)
+
+        okay = wx.Button(self, wx.ID_OK)
+        okay.SetDefault()
+        cancel = wx.Button(self, wx.ID_CANCEL)
+        
+        btns = wx.StdDialogButtonSizer()
+        btns.Add(okay)
+        btns.Add(cancel)
+        fgs.Add(btns, 0, wx.EXPAND|wx.ALL)
+
         self.SetSizer(fgs)
         fgs.Fit(self)
-
-        # btns = wx.StdDialogButtonSizer()
-        # btns.Add(okay)
-        # btns.Add(cancel)
-        # fgs.Add(btns, 0, wx.EXPAND|wx.ALL)
 
 
     def OnClick(self, event):
