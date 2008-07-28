@@ -91,7 +91,8 @@ class MainApp(wx.App): #IGNORE:R0902
                      (self.graphicsMenu, 'Graphics'),
                      (self.statisticsMenu, 'Statistics'),
                      (self.projectionsMenu, 'Projection'),
-                     (self.controlFrame.ontologyMenu, 'Ontology')]
+                     (self.controlFrame.ontologyMenu, 'Ontology'),
+                     (self.controlFrame.remoteProcessMenu, 'Server')]
         for item in menuItems:
             self.controlFrame.GetMenuBar().Append(*item)
         

@@ -4,7 +4,7 @@ import wx
 import numpy
 import sys
 sys.path.extend(['..', '../plugins/visual/HistogramFrame',
-                 '/Volumes/HD2/hg/cfse_old/python'])
+                 '/Users/cliburn/hg/cfse_old/python'])
 from dialogs import ParameterDialog, ChoiceDialog
 from Main import HistogramPanel
 from cfse_optimize import *
