@@ -281,7 +281,10 @@ class TwoDDensity(VizFrame):
             
 
     def OnControlSwitch(self,event):
-        self.UpdateSimple(self.radioX.GetSelection(),self.radioY.GetSelection(),self.radioX.GetStringSelection(), self.radioY.GetStringSelection())
+        self.UpdateSimple(self.radioX.GetSelection(),
+                          self.radioY.GetSelection(),
+                          self.radioX.GetStringSelection(), 
+                          self.radioY.GetStringSelection())
     
     def OnMenuSwitch(self,event):
         self.widget.draw()
