@@ -1,3 +1,4 @@
+import os
 import wx
 import factory
 
@@ -17,6 +18,54 @@ class BlockWindow(wx.Panel):
         w,h = dc.GetTextExtent(self.label) 
         dc.SetFont(self.GetFont()) 
         dc.DrawText(self.label, (sz.width-w)/2, (sz.height-h)/2) 
+
+class RemoteProcessDialog(wx.Dialog):
+    """Dialog box to specify server, data and job for processing."""
+    def __init__(self, label="Remote process invocation", server='', job=''):
+        wx.Dialog.__init__(self, None, -1, label)
+        self.server = server
+        self.job = job
+        
+        fgs = wx.FlexGridSizer(cols=2, vgap=5, hgap=5)
+        server_label = wx.StaticText(self, -1, 'Server URL')
+        self.server_ctrl = wx.TextCtrl(self, -1, 'http://localhost', size=(200,-1))
+        self.server_ctrl.SetInsertionPoint(0)
+
+        job_label = wx.StaticText(self, -1, 'Job spec file')
+        job_button = wx.Button(self, -1, label="Browse")
+        self.Bind(wx.EVT_BUTTON, self.OnClick, job_button)
+        
+        # layout
+        fgs.Add(server_label, 0, wx.EXPAND)
+        fgs.Add(self.server_ctrl, 0, wx.EXPAND)
+        fgs.Add(job_label, 0, wx.EXPAND)
+        fgs.Add(job_button, 0, wx.EXPAND)
+
+        okay = wx.Button(self, wx.ID_OK)
+        okay.SetDefault()
+        cancel = wx.Button(self, wx.ID_CANCEL)
+        
+        btns = wx.StdDialogButtonSizer()
+        btns.Add(okay)
+        btns.Add(cancel)
+        fgs.Add(btns, 0, wx.EXPAND|wx.ALL)
+
+        self.SetSizer(fgs)
+        fgs.Fit(self)
+
+
+    def OnClick(self, event):
+        """Opens file browser."""
+        dlg = wx.FileDialog(self, 
+                            wildcard="Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                            defaultDir='.',
+                            style=wx.OPEN)
+        if dlg.ShowModal() == wx.ID_OK:
+            file = dlg.GetPath()
+        else:
+            file = None
+        dlg.Destroy()
+        self.job = file
 
 class ParameterDialog(wx.Dialog):
     def __init__(self, params, data, desc=''):
