@@ -3,7 +3,7 @@ import os
 from io import Io
 from VizFrame import VizFrame
 from EditTable import EditFrame, Table
-from dialogs import ParameterDialog, ChoiceDialog
+from dialogs import ParameterDialog, ChoiceDialog, RemoteProcessDialog
 from numpy import array, where, greater, log10, log, clip, take, argsort, arcsinh, min, max
 from numpy.random import shuffle, randint, get_state
 import transforms
@@ -73,7 +73,10 @@ class MainFrame(VizFrame):
         loadOntology = self.ontologyMenu.Append(-1, "Load OBO file")
         self.Bind(wx.EVT_MENU, self.OnLoadOntology, loadOntology)
 
-
+        # remote process menu
+        self.remoteProcessMenu = wx.Menu()
+        submit_job = self.remoteProcessMenu.Append(-1, "Submit job to remote process")
+        self.Bind(wx.EVT_MENU, self.OnSubmitJob, submit_job)
         
         self.SetMenuBar(menubar)
         #statusbar = self.CreateStatusBar()
@@ -123,6 +126,23 @@ class MainFrame(VizFrame):
             self.defaultOBOdir = os.path.split(file)[0]
             self.model.obofile = file
 
+        dlg.Destroy()
+
+    # Remote process
+    def OnSubmitJob(self, event):
+        """Job submission dialog."""
+        if self.model.ready:
+            data = self.model.GetCurrentData()[:]
+        else:
+            wx.MessageBox("No data found")
+            return            
+
+        dlg = RemoteProcessDialog()
+        if dlg.ShowModal() == wx.ID_OK:
+            job = dlg.job
+            server = dlg.server_ctrl.GetValue()
+            print data.shape, job, server
+        
         dlg.Destroy()
 
     # Filters
@@ -411,7 +431,7 @@ class MainFrame(VizFrame):
             menu = wx.Menu()
             self.popupItems = {}
             self.pasteItem = None
-            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate', 'Batch']:
+            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate', 'Batch', 'Remote Process']:
                 self.popupItems[str] = menu.Append(-1, str)
                 self.Bind(wx.EVT_MENU, self.OnPopupSelected, self.popupItems[str])
             
@@ -474,6 +494,8 @@ class MainFrame(VizFrame):
             self.OnAnnotate()
         elif text == 'Batch':
             self.OnBatch()
+        elif text == 'Remote Process':
+            self.OnSubmitJob(None)
         else:
             wx.MessageBox(text)
             

@@ -3,8 +3,10 @@ import wx
 import sys
 import os
 from plots import PlotPanel
-from numpy import cumsum
+from numpy import cumsum, linspace, zeros
 from VizFrame import VizFrame
+from scipy.stats import norm
+
 
 class HistogramFrame(VizFrame):
     """frame for viewing histograms"""
@@ -160,6 +162,19 @@ class HistogramPanel(PlotPanel):
             print len(self.patches)
             print splits
             self.subplot.patches = self.patches[splits[0]:splits[upper]]
+        self.Refresh()
+
+    def plot_fit(self, x, mu, sd, counts):
+        """Fit with normal mixture."""
+        lines = []
+        xx = linspace(min(x), max(x), 1000)
+        envelope= zeros(len(xx), 'd')
+        for i, (loc, scale, count) in enumerate(zip(mu, sd, counts)):
+            line = self.subplot.plot(xx, count*norm(loc=loc,scale=scale).pdf(xx), 'b-', linewidth=2)
+            lines.append(line)
+            envelope += count*norm(loc=loc,scale=scale).pdf(xx)
+        line = self.subplot.plot(xx, envelope, 'r-', linewidth=2)
+        lines.append(line)
         self.Refresh()
         
 class cq(object): # the argument q is a list

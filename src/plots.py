@@ -111,7 +111,7 @@ class PlotPanel(wx.Panel):
                 else:
                     i = dialog.GetFilterIndex()
                     ext = ['.png', '.ps', '.eps'][i]
-                self.subplot.get_figure().savefig(path + ext)
+                self.subplot.get_figure().savefig(str(path) + ext)
             dialog.Destroy()
         else:
             dialog = wx.MessageBox("No graphic to export from this frame.")
