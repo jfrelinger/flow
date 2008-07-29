@@ -48,6 +48,9 @@ class FlowModel(AbstractModel):
         # obo file
         self.obofile = 'obo/cell.obo'
 
+        # current server URL
+        self.server = 'http://localhost/'
+
     def LoadData(self, headers, data, datastr):
         """Create a new array with headers and data."""
         self.ready = False

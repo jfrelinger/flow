@@ -21,14 +21,13 @@ class BlockWindow(wx.Panel):
 
 class RemoteProcessDialog(wx.Dialog):
     """Dialog box to specify server, data and job for processing."""
-    def __init__(self, label="Remote process invocation", server='', job=''):
+    def __init__(self, server, label="Remote process invocation"):
         wx.Dialog.__init__(self, None, -1, label)
-        self.server = server
-        self.job = job
-        
+
         fgs = wx.FlexGridSizer(cols=2, vgap=5, hgap=5)
         server_label = wx.StaticText(self, -1, 'Server URL')
-        self.server_ctrl = wx.TextCtrl(self, -1, 'http://localhost', size=(200,-1))
+        
+        self.server_ctrl = wx.TextCtrl(self, -1, server, size=(200,-1))
         self.server_ctrl.SetInsertionPoint(0)
 
         job_label = wx.StaticText(self, -1, 'Job spec file')
