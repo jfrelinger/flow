@@ -494,6 +494,8 @@ class MainFrame(VizFrame):
             self.OnAnnotate()
         elif text == 'Batch':
             self.OnBatch()
+        elif text == 'Remote Process':
+            self.OnSubmitJob(None)
         else:
             wx.MessageBox(text)
             
