@@ -431,7 +431,7 @@ class MainFrame(VizFrame):
             menu = wx.Menu()
             self.popupItems = {}
             self.pasteItem = None
-            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate', 'Batch']:
+            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate', 'Batch', 'Remote Process']:
                 self.popupItems[str] = menu.Append(-1, str)
                 self.Bind(wx.EVT_MENU, self.OnPopupSelected, self.popupItems[str])
             
