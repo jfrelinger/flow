@@ -18,7 +18,10 @@ class Session_manager(object):
         self.data_file = self.session.send_data(self.data)
         
     def send_job(self, job_def):
-        self.session.send_job(job_def)
+        if self.data_file  is None:
+            raise ENoData
+        else:
+            self.session.send_job(job_def, self.data_file)
         
     def get_status(self, job_id):
         return self.session.get_status(job_id)
@@ -43,3 +46,4 @@ if __name__ == '__main__':
     foo = numpy.zeros((4,4))
     session.send_data(foo)
     print session.data_file
+    print session.get_status(1)
