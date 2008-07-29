@@ -131,11 +131,17 @@ class MainFrame(VizFrame):
     # Remote process
     def OnSubmitJob(self, event):
         """Job submission dialog."""
+        if self.model.ready:
+            data = self.model.GetCurrentData()[:]
+        else:
+            wx.MessageBox("No data found")
+            return            
+
         dlg = RemoteProcessDialog()
         if dlg.ShowModal() == wx.ID_OK:
             job = dlg.job
             server = dlg.server_ctrl.GetValue()
-            print job, server
+            print data.shape, job, server
         
         dlg.Destroy()
 

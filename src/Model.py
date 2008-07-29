@@ -310,7 +310,8 @@ class FlowModel(AbstractModel):
         
         self.UpdateData()
         self.isChanged = True
-    
+        self.ready = False
+
     def open(self, hdf5File):
         self.ready = False
         self.close()
