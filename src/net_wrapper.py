@@ -21,7 +21,8 @@ class Session_manager(object):
         if self.data_file  is None:
             raise ENoData
         else:
-            self.session.send_job(job_def, self.data_file)
+            job_id = self.session.send_job(job_def, self.data_file)
+            return job_id
         
     def get_status(self, job_id):
         return self.session.get_status(job_id)
