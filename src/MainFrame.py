@@ -76,7 +76,9 @@ class MainFrame(VizFrame):
         # remote process menu
         self.remoteProcessMenu = wx.Menu()
         submit_job = self.remoteProcessMenu.Append(-1, "Submit job to remote process")
+        submit_batch = self.remoteProcessMenu.Append(-1, "Submit batch jobs to remote process")
         self.Bind(wx.EVT_MENU, self.OnSubmitJob, submit_job)
+        self.Bind(wx.EVT_MENU, self.OnSubmitBatch, submit_batch)
         
         self.SetMenuBar(menubar)
         #statusbar = self.CreateStatusBar()
@@ -137,13 +139,31 @@ class MainFrame(VizFrame):
             wx.MessageBox("No data found")
             return            
 
-        dlg = RemoteProcessDialog()
+        dlg = RemoteProcessDialog(self.model.server)
         if dlg.ShowModal() == wx.ID_OK:
             job = dlg.job
-            server = dlg.server_ctrl.GetValue()
-            print data.shape, job, server
+            self.model.server = dlg.server_ctrl.GetValue()
+            print data.shape, job, self.model.server
         
         dlg.Destroy()
+
+    def OnSubmitBatch(self, event):
+        """Batch job submission dialog."""
+        pass
+#         if self.model.ready:
+#             data = self.model.GetCurrentData()[:]
+#         else:
+#             wx.MessageBox("No data found")
+#             return            
+
+#         dlg = RemoteProcessDialog(self.model.server)
+#         if dlg.ShowModal() == wx.ID_OK:
+#             job = dlg.job
+#             self.model.server = dlg.server_ctrl.GetValue()
+#             print data.shape, job, self.model.server
+        
+#         dlg.Destroy()
+
 
     # Filters
     def OnChannels(self, event):
