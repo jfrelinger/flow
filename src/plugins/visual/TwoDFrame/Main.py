@@ -335,6 +335,8 @@ class TwoDDensity(VizFrame):
     def Gate(self, event):
         """Capture events inside drawn gates."""
         results = []
+        nrows, ncols = self.data.shape
+
         if hasattr(self.widget, 'p'):
             for i, d in enumerate(self.data):
                 if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
@@ -345,21 +347,29 @@ class TwoDDensity(VizFrame):
             if self.widget.quad is True:
                 x = self.widget.vline._x[0]
                 y = self.widget.hline._y[0]
-                q1 = []
-                q2 = []
-                q3 = []
-                q4 = []
-                for i,d in enumerate(self.data[:]):
-                    if self.widget.x[i] < x:
-                        if self.widget.y[i] < y:
-                            q3.append(d)
-                        else:
-                            q2.append(d)
-                    else:
-                        if self.widget.y[i] < y:
-                            q4.append(d)
-                        else:
-                            q1.append(d)
+                
+                data = self.model.GetCurrentData()[:]
+
+                q3 = data[(self.widget.x < x) & (self.widget.y < y), :]
+                q2 = data[(self.widget.x < x) & (self.widget.y > y), :]
+                q4 = data[(self.widget.x > x) & (self.widget.y < y), :]
+                q1 = data[(self.widget.x > x) & (self.widget.y > y), :]
+
+#                 q1 = []
+#                 q2 = []
+#                 q3 = []
+#                 q4 = []
+#                 for i,d in enumerate(self.data[:]):
+#                     if self.widget.x[i] < x:
+#                         if self.widget.y[i] < y:
+#                             q3.append(d)
+#                         else:
+#                             q2.append(d)
+#                     else:
+#                         if self.widget.y[i] < y:
+#                             q4.append(d)
+#                         else:
+#                             q1.append(d)
                 curGroup = self.model.GetCurrentGroup()
                 for i,j in [(q1,'Q1'), (q2, 'Q2'), (q3, 'Q3'), (q4, 'Q4')]:
                     if len(i) > 0:
@@ -505,7 +515,8 @@ class TwoDPanel(PlotPanel):
                                       bbox=dict(facecolor='yellow', alpha=0.5),
                                       va='center', ha='center')
             except AttributeError, e:
-                print e
+                # don't label if error (e.g. no mu_end)
+                pass
 
         if self.quad:
             if hasattr(self, 'hline'):
