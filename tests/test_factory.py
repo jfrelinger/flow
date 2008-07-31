@@ -19,5 +19,10 @@ class TestFactory(unittest.TestCase):
         x2 = numpy.log(10.0)
         self.assertEqual(x1, x2)
 
+    def test_double2(self):
+        args = ['double', 2]
+        f = factory.forname('__main__', args[0])
+        self.assertEqual(f(*args[1:]), 4)        
+
 if __name__ == '__main__':
     unittest.main()
