@@ -1,3 +1,4 @@
+
 import wx
 
 from plots import PlotPanel
@@ -290,26 +291,45 @@ class TwoDDensity(VizFrame):
         self.widget.draw()
     
     def GateByColor(self, event):
+        data = self.model.GetCurrentData()[:]
+        nrows, ncols = data.shape
         fields = self.data.getAttr('fields')
-        results = []
-        z = []
-        # self.checked = [i for i, cb in enumerate(self.cbs) if cb.IsChecked()]
-        for i in xrange(0, self.data.shape[0]):
-            if self.cbs[self.colors[i]].IsChecked():     
-                results.append(self.data[i,:])
-                z.append(self.colors[i])
-        mu_end = self.model.GetCurrentGroup().mu_end[:]
-        sigma_end = self.model.GetCurrentGroup().sigma_end[:]
+        checks = [i for i in range(len(self.cbs)) if self.cbs[i].IsChecked()]
+        idx = array([0]*nrows, 'bool')
+        z = array(self.model.GetCurrentZ()[:], 'i')
+        for check in checks:
+            idx |= z==check
 
-        filtered = array(results)
+        filtered = data[idx, :]
+        filtered_z = z[idx]
+
+#         results = []
+#         z = []
+#         # self.checked = [i for i, cb in enumerate(self.cbs) if cb.IsChecked()]
+#         for i in xrange(0, self.data.shape[0]):
+#             if self.cbs[self.colors[i]].IsChecked():     
+#                 results.append(self.data[i,:])
+#                 z.append(self.colors[i])
+#         filtered = array(results)
+
+
+        parent = self.model.GetCurrentGroup()
         newgroup = self.model.NewGroup('GatedByColor')
         self.model.NewArray('data',filtered, parent=newgroup)
         self.model.current_array.setAttr('fields', fields)
-        self.model.hdf5.createArray(self.model.current_group, 'z', array(z))
-        self.model.hdf5.createArray(self.model.current_group, 'mu_end', 
-                                    mu_end)
-        self.model.hdf5.createArray(self.model.current_group, 'sigma_end', 
-                                    sigma_end)
+        self.model.hdf5.createArray(self.model.current_group, 'z', filtered_z)
+        try:
+            mu_end = parent.mu_end[:] 
+            self.model.hdf5.createArray(self.model.current_group, 'mu_end', 
+                                        mu_end)
+        except Exception, e:
+            pass
+        try:
+            sigma_end = parent.sigma_end[:]
+            self.model.hdf5.createArray(self.model.current_group, 'sigma_end', 
+                                        sigma_end)
+        except Exception, e:
+            pass
         self.model.update()
 
     def Gate(self, event):
