@@ -3,7 +3,7 @@ import wx
 
 from plots import PlotPanel
 import densities2 as dens
-from numpy import array, arange, mgrid, isnan, sqrt, histogram2d, min, max, take, modf
+from numpy import array, arange, mgrid, isnan, sqrt, histogram2d, min, max, take, modf, concatenate
 from numpy.linalg import inv
 from numpy.linalg.linalg import LinAlgError
 from numpy.random import randn, rand
@@ -338,9 +338,14 @@ class TwoDDensity(VizFrame):
         nrows, ncols = self.data.shape
 
         if hasattr(self.widget, 'p'):
-            for i, d in enumerate(self.data):
-                if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
-                    results.append(d)
+            pts = array([self.widget.x, self.widget.y])
+            data = self.data[:]
+            idx = self.widget.p.PointsInPoly(pts)
+            results = data[idx,:]
+
+#             for i, d in enumerate(self.data):
+#                 if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
+#                     results.append(d)
             self.model.updateHDF('GatedData', array(results), self.data)
             self.model.GetCurrentData().attrs.batch=['gate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), self.widget.p.poly.verts]
         else:
@@ -437,17 +442,24 @@ class TwoDPanel(PlotPanel):
         if self.scatter.IsChecked() :
             # add stuff to color in and out of gate differently
             try:
-                xi = []
-                yi = []
-                xo = []
-                yo = []
-                for pt in zip(x, y):
-                    if self.p.PointInPoly(pt):
-                        xi.append(pt[0])
-                        yi.append(pt[1])
-                    else:
-                        xo.append(pt[0])
-                        yo.append(pt[1])
+#                 xi = []
+#                 yi = []
+#                 xo = []
+#                 yo = []
+
+                idx = self.p.PointsInPoly(array([x, y]))
+                xi = x[idx]
+                yi = y[idx]
+                xo = x[~idx]
+                yo = y[~idx]
+                
+#                 for pt in zip(x, y):
+#                     if self.p.PointInPoly(pt):
+#                         xi.append(pt[0])
+#                         yi.append(pt[1])
+#                     else:
+#                         xo.append(pt[0])
+#                         yo.append(pt[1])
                 self.subplot.plot(xi, yi, 'r.', ms=self.ms)
                 self.subplot.plot(xo, yo, 'b.', ms=self.ms)
             except AttributeError:

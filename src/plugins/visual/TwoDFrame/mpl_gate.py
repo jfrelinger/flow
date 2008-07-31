@@ -17,6 +17,7 @@ from matplotlib.numerix import sqrt, nonzero, equal, array, dot, Float, take
 from matplotlib.numerix.mlab import amin
 from matplotlib.mlab import dist_point_to_segment
 from scipy import vectorize
+from numpy import logical_not, logical_xor, logical_and
 
 class acRectangle(Rectangle):
     """Just a rectangle that returns vertices in anti-clockwise order."""
@@ -82,6 +83,28 @@ class PolygonInteractor(object):
             v0 = v1
             v1 = verts[j]
         return inside
+
+    def PointsInPoly(self, pts):
+        """Return True if pt is in polygon defined by verts, False otherwise. Verts are in anticlockwise order.
+        Adapted from http://www.acm.org/tog/GraphicsGems/gemsiv/ptpoly_haines/ptinpoly.c"""
+        verts = self.poly.verts
+        nverts = len(verts)
+        v0 = verts[-2]
+        v1 = verts[-1]
+        yflag0 = v0[1] >= pts[1,:]
+
+        inside = array([0]*pts.shape[1], 'bool')
+        for j in range(nverts):
+            yflag1 = v1[1] >= pts[1,:]
+            candidates = yflag0 != yflag1
+            flips = (((v1[1] - pts[1,:]) * (v0[0] - v1[0]) >= 
+                      (v1[0] - pts[0,:]) * (v0[1] - v1[1])) == yflag1)
+            inside[logical_and(candidates, flips)] = logical_not(inside[logical_and(candidates, flips)])
+            yflag0 = yflag1
+            v0 = v1
+            v1 = verts[j]
+        return inside
+
 
     def draw_callback(self, event):
         self.background = self.canvas.copy_from_bbox(self.ax.bbox)
