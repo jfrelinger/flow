@@ -3,15 +3,23 @@ import pickle
 '''
 network layer wrapper for xmlrpc code
 '''
+class BadLogin(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
+class NoDataFile(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
 class Session_manager(object):
-    def __init__(self, url):
+    def __init__(self, url, user, pw):
         self.session = xmlrpclib.Server(url)
         print self.session
-        #self.user = user
-        #self.pw = pw
         self.data_file = None
+        self.pw = pw # TODO encrypt password
+        self.user = self.session.login(user,pw)
+        if self.user == -1:
+            raise BadLogin("Bad username or password")
         
     def send_data(self, array):
         self.data = pickle.dumps(array)
@@ -19,16 +27,16 @@ class Session_manager(object):
         
     def send_job(self, job_def):
         if self.data_file  is None:
-            raise ENoData
+            raise ENoData('No data file has been sent for this job')
         else:
-            job_id = self.session.send_job(job_def, self.data_file)
+            job_id = self.session.send_job(job_def, self.data_file, self.user)
             return job_id
         
     def get_status(self, job_id):
-        return self.session.get_status(job_id)
+        return self.session.get_status(job_id, self.user)
         
     def get_result(self, job_id):
-        return self.session.get_result(job_id)
+        return self.session.get_result(job_id, self.user)
     
     def get_server_status(self):
         return self.session.server_status()
@@ -38,7 +46,7 @@ def connect(url, username, pw):
     eventually will setup a newwork connection and return the session_manager object
     '''
     
-    return Session_manager(url)
+    return Session_manager(url, username, pw)
 
 if __name__ == '__main__':
     import numpy
