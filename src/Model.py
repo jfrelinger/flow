@@ -322,6 +322,7 @@ class FlowModel(AbstractModel):
         src = tables.openFile(hdf5File,'r')
 
         src.copyFile(name)
+
         src.close()
         self.hdf5 = tables.openFile(name,'a')
         try:

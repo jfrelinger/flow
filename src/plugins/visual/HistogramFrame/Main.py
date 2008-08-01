@@ -170,7 +170,7 @@ class HistogramPanel(PlotPanel):
         xx = linspace(min(x), max(x), 1000)
         envelope= zeros(len(xx), 'd')
         for i, (loc, scale, count) in enumerate(zip(mu, sd, counts)):
-            line = self.subplot.plot(xx, count*norm(loc=loc,scale=scale).pdf(xx), 'b-', linewidth=2)
+            line = self.subplot.plot(xx, count*norm(loc=loc,scale=scale).pdf(xx), 'r--', linewidth=2)
             lines.append(line)
             envelope += count*norm(loc=loc,scale=scale).pdf(xx)
         line = self.subplot.plot(xx, envelope, 'r-', linewidth=2)

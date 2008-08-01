@@ -428,13 +428,14 @@ class TwoDPanel(PlotPanel):
       self.subplot.clear()
       if self.x is not None:
         # sample at most 10000 points for display
-        if len(self.x) > 10000:
-            stride = len(self.x)/10000
+        npts = 10000
+        if len(self.x) > npts:
+            stride = len(self.x)/npts
         else:
             stride = 1
         
-        x = self.x[:10000*stride:stride]
-        y = self.y[:10000*stride:stride]
+        x = self.x[:npts*stride:stride]
+        y = self.y[:npts*stride:stride]
 
         self.subplot.set_xlabel(self.xlab)
         self.subplot.set_ylabel(self.ylab)
@@ -473,8 +474,8 @@ class TwoDPanel(PlotPanel):
                     for i in range(maxz+1):
                         if hasattr(self, 'components') and i not in self.components:
                             continue
-                        xx = self.x[z==i][:10000*stride:stride]
-                        yy = self.y[z==i][:10000*stride:stride]
+                        xx = self.x[z==i][:npts*stride:stride]
+                        yy = self.y[z==i][:npts*stride:stride]
                         self.subplot.plot(xx, yy, '.', c=self.colors[i], alpha=alpha, ms=self.ms)
                 else:
                     bins = 100
