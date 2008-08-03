@@ -451,7 +451,7 @@ class MainFrame(VizFrame):
             menu = wx.Menu()
             self.popupItems = {}
             self.pasteItem = None
-            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export To Database', 'Annotate', 'Batch', 'Remote Process']:
+            for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export', 'Annotate', 'Batch', 'Remote Process']:
                 self.popupItems[str] = menu.Append(-1, str)
                 self.Bind(wx.EVT_MENU, self.OnPopupSelected, self.popupItems[str])
             
@@ -508,7 +508,7 @@ class MainFrame(VizFrame):
             self.OnRename()
         elif text == 'Delete':
             self.OnDelete()
-        elif text == 'Export To Database':
+        elif text == 'Export':
             self.OnExport()
         elif text == 'Annotate':
             self.OnAnnotate()
@@ -647,4 +647,37 @@ class MainFrame(VizFrame):
     def OnExport(self):
         # window = DBDialog(self.model)
         # window.Show()
-        pass
+        """Export data associated with current group."""
+        if self.model.ready:
+            x = self.model.GetCurrentData()[:]
+        else:
+            wx.MessageBox("No data found")
+            return            
+        wildcard = "Tab-delimited (*.txt)|*.txt|Comma-delimited (*.csv)|*.csv"
+        dialog = wx.FileDialog(parent=self, 
+                               wildcard=wildcard,
+                               message="Export Data", 
+                               defaultDir=os.getcwd(),
+                               style=wx.SAVE|wx.OVERWRITE_PROMPT)
+        
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+
+            if path.split('.')[-1] in ['txt', 'csv']:
+                ext = ''
+            else:
+                i = dialog.GetFilterIndex()
+                ext = ['.txt', '.csv'][i]
+            
+            if (path + ext).split('.') == 'txt':
+                sep = '\t'
+            else:
+                sep = ','
+
+            fo = open(path + ext, 'w')
+            fo.write('\n'.join([sep.join(map(str, item)) for item in x[:,:]]))
+            fo.close()
+
+        dialog.Destroy()
+        
+        
