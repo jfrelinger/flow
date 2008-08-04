@@ -143,7 +143,7 @@ class HistogramPanel(PlotPanel):
             self.patches = []
             self.histograms = []
             color = colors.next()
-            n, bins, hist = self.subplot.hist(self.x, 1024, fc=color, ec=color)
+            n, bins, hist = self.subplot.hist(self.x, 250, normed=True, fc=color, ec=color)
             self.patches.extend(hist)
             self.histograms.append(hist)
             self.subplot.set_xlabel(str(self.name), fontsize = 12)
@@ -151,7 +151,7 @@ class HistogramPanel(PlotPanel):
                 print group
                 if self.hists[group][1]:
                     color = colors.next()
-                    n, bins, hist = self.subplot.hist(self.hists[group][0], 1024, fc=color, ec=color)
+                    n, bins, hist = self.subplot.hist(self.hists[group][0], 250, normed=True, fc=color, ec=color)
                     self.patches.extend(hist)
                     self.histograms.append(hist)
             sizes = [len(patch) for patch in self.histograms]
@@ -167,9 +167,11 @@ class HistogramPanel(PlotPanel):
     def plot_fit(self, x, mu, sd, counts):
         """Fit with normal mixture."""
         lines = []
-        xx = linspace(min(x), max(x), 1000)
+        xx = linspace(min(x), max(x), 100)
         envelope= zeros(len(xx), 'd')
+        total = sum(counts)
         for i, (loc, scale, count) in enumerate(zip(mu, sd, counts)):
+            count /= total
             line = self.subplot.plot(xx, count*norm(loc=loc,scale=scale).pdf(xx), 'r--', linewidth=2)
             lines.append(line)
             envelope += count*norm(loc=loc,scale=scale).pdf(xx)

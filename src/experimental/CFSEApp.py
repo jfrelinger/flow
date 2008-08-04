@@ -28,6 +28,7 @@ class Model(object):
             adict = build_freq_dict(self.data)
             f1 = build_func_from_dict(adict)
             xmin, xmax = get_bounds(adict, span=0.995)
+
             resolution = 1
             peaks = find_fuzzy_peaks(xmin, xmax, min_interval, max_interval, resolution, span, overlap, f1)
         
@@ -177,6 +178,7 @@ class MainFrame(wx.Frame):
     def OnFitControl(self, event):
         """Fit the control data."""
         inputs = self.OnFitData(event)
+        
         x, mu, sd, counts = self.model.fit_control(inputs)
         self.histogram_control.plot_fit(x, mu, sd, counts)
 
