@@ -650,32 +650,40 @@ class MainFrame(VizFrame):
         """Export data associated with current group."""
         if self.model.ready:
             x = self.model.GetCurrentData()[:]
+            cs = self.model.GetCurrentData().getAttr('fields')
+            print cs
         else:
             wx.MessageBox("No data found")
             return            
-        wildcard = "Tab-delimited (*.txt)|*.txt|Comma-delimited (*.csv)|*.csv"
+
+        dlg = ChoiceDialog(cs)
+        if dlg.ShowModal() == wx.ID_OK:
+            indices = dlg.GetSelections()
+        dlg.Destroy()
+
+        wildcard = "Tab-delimited (*.out)|*.out"
         dialog = wx.FileDialog(parent=self, 
                                wildcard=wildcard,
                                message="Export Data", 
-                               defaultDir=os.getcwd(),
+                               defaultDir=self.io.defaultDir.replace('results','data'),
                                style=wx.SAVE|wx.OVERWRITE_PROMPT)
         
         if dialog.ShowModal() == wx.ID_OK:
             path = dialog.GetPath()
 
-            if path.split('.')[-1] in ['txt', 'csv']:
+            if path.split('.')[-1] in ['out']:
                 ext = ''
             else:
-                i = dialog.GetFilterIndex()
-                ext = ['.txt', '.csv'][i]
+                ext = '.out'
             
-            if (path + ext).split('.') == 'txt':
-                sep = '\t'
-            else:
-                sep = ','
-
             fo = open(path + ext, 'w')
-            fo.write('\n'.join([sep.join(map(str, item)) for item in x[:,:]]))
+            fo.write('\n'.join(['\t'.join(map(str, item)) 
+                                for item in x[:,indices]]))
+            fo.close()
+
+            # store associated headers
+            fo = open(path + '.txt', 'w')
+            fo.write('\n'.join([header for header in array(cs)[indices]]))
             fo.close()
 
         dialog.Destroy()

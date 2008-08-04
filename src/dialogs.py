@@ -118,6 +118,10 @@ class ChoiceDialog(wx.Dialog):
         okay.SetDefault()
         cancel = wx.Button(self, wx.ID_CANCEL)
 
+        # check all by default
+        for i in range(self.lb.GetCount()):
+            self.lb.Check(i)
+
         # layout
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.lb, 1, wx.EXPAND|wx.ALL, 5)
