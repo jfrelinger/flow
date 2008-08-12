@@ -13,13 +13,15 @@ class NoDataFile(Exception):
 
 class Session_manager(object):
     def __init__(self, url, user, pw):
+        url = url.replace('//', '//'+user + ':' + pw + '@', 1)
+        print url
         self.session = xmlrpclib.Server(url)
         print self.session
         self.data_file = None
-        self.pw = pw # TODO encrypt password
-        self.user = self.session.login(user,pw)
-        if self.user == -1:
-            raise BadLogin("Bad username or password")
+#        self.pw = pw # TODO encrypt password
+        self.user = self.session.get_userid(user)
+#        if self.user == -1:
+#            raise BadLogin("Bad username or password")
         
     def send_data(self, array):
         self.data = pickle.dumps(array)
@@ -50,9 +52,9 @@ def connect(url, username, pw):
 
 if __name__ == '__main__':
     import numpy
-    session = connect('http://localhost:8000', 'foo', 'bar')
+    session = connect('http://localhost:8000', 'jfrelinger', 'secret')
     print session.get_server_status()
     foo = numpy.zeros((4,4))
     session.send_data(foo)
     print session.data_file
-    print session.get_status(1)
+    #print session.get_status(1)
