@@ -45,7 +45,8 @@ class RemoteProcessDialog(wx.Dialog):
         shape_label = wx.StaticText(self, -1, 'Dimensions')
         self.shape_ctrl = wx.TextCtrl(self, -1, str(data_shape))
 
-        job_label = wx.StaticText(self, -1, 'Job spec file')
+        #  job_label = wx.StaticText(self, -1, 'Job Specification')
+        self.job_ctrl = wx.TextCtrl(self, -1, 'Job specification file')
         job_button = wx.Button(self, -1, label="Browse")
         self.Bind(wx.EVT_BUTTON, self.OnClick, job_button)
         
@@ -71,8 +72,8 @@ class RemoteProcessDialog(wx.Dialog):
         fgs.Add(shape_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         fgs.Add(self.shape_ctrl, 0, wx.EXPAND)
 
-        fgs.Add(job_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        fgs.Add(job_button, 0, wx.EXPAND)
+        fgs.Add(job_button, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        fgs.Add(self.job_ctrl, 0, wx.EXPAND)
 
         okay = wx.Button(self, wx.ID_OK)
         okay.SetDefault()
@@ -83,9 +84,9 @@ class RemoteProcessDialog(wx.Dialog):
         btns.Add(cancel)
 
         sizer.Add((20,20))
-        sizer.Add(fgs, wx.EXPAND|wx.ALL, border=10)
+        sizer.Add(fgs, 0, wx.EXPAND|wx.ALL, border=25)
         sizer.Add((20,20))
-        sizer.Add(btns, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM)
+        sizer.Add(btns, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM, border=25)
         sizer.Add((20,20))
 
         sizer.Fit(self)
@@ -103,7 +104,7 @@ class RemoteProcessDialog(wx.Dialog):
         else:
             file = None
         dlg.Destroy()
-        self.job = file
+        self.job_ctrl.SetValue(file)
 
 class ParameterDialog(wx.Dialog):
     def __init__(self, params, data, desc=''):

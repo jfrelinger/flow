@@ -29,7 +29,9 @@ class MainFrame(VizFrame):
 
         self.log = wx.TextCtrl(self.p2, -1, "",
                                        style=wx.TE_RICH|wx.TE_MULTILINE|wx.TE_READONLY, size=(200,100))
-
+        # current server URL
+        self.server = 'http://localhost/'
+        
         menubar = wx.MenuBar()
         
 
@@ -139,11 +141,16 @@ class MainFrame(VizFrame):
             wx.MessageBox("No data found")
             return            
 
-        dlg = RemoteProcessDialog(self.model.server, filename, data_path, data.shape)
+        dlg = RemoteProcessDialog(self.server, filename, data_path, data.shape)
         if dlg.ShowModal() == wx.ID_OK:
-            job = dlg.job
-            self.model.server = dlg.server_ctrl.GetValue()
-            print data.shape, job, self.model.server
+            self.server = dlg.server_ctrl.GetValue()
+            self.user = dlg.user_ctrl.GetValue()
+            self.password = dlg.password_ctrl.GetValue()
+            self.filename = dlg.file_ctrl.GetValue()
+            self.data = dlg.data_ctrl.GetValue()
+            self.job = dlg.job_ctrl.GetValue()
+            
+            print self.server, self.user, self.password, self.filename, self.data, self.job
         
         dlg.Destroy()
 
