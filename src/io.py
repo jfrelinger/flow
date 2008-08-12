@@ -29,6 +29,7 @@ class Io(object):
             file = dlg.GetPath()
             self.defaultDir = os.path.split(file)[0]
             self.__getattribute__(readType)(file)
+            self.model.savedAs = os.path.splitext(file)[0] + '.h5'
         
         self.model.update()
     

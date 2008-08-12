@@ -11,9 +11,6 @@ from OboFrame import OboTreeFrame
 from AnnotateFrame import annotateFrame
 import sys
 
-
-# from dbio import DBDialog
-
 class MainFrame(VizFrame):
     """Main user interface frame includes the control panel"""
     def __init__(self, parent=None, id=-1,
@@ -134,12 +131,15 @@ class MainFrame(VizFrame):
     def OnSubmitJob(self, event):
         """Job submission dialog."""
         if self.model.ready:
-            data = self.model.GetCurrentData()[:]
+            _data = self.model.GetCurrentData()
+            data = _data[:]
+            data_path = _data._v_pathname
+            filename = self.model.savedAs
         else:
             wx.MessageBox("No data found")
             return            
 
-        dlg = RemoteProcessDialog(self.model.server)
+        dlg = RemoteProcessDialog(self.model.server, filename, data_path, data.shape)
         if dlg.ShowModal() == wx.ID_OK:
             job = dlg.job
             self.model.server = dlg.server_ctrl.GetValue()

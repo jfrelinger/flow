@@ -21,23 +21,57 @@ class BlockWindow(wx.Panel):
 
 class RemoteProcessDialog(wx.Dialog):
     """Dialog box to specify server, data and job for processing."""
-    def __init__(self, server, label="Remote process invocation"):
+    def __init__(self, server, filename, data_path, data_shape, label="Remote process invocation"):
         wx.Dialog.__init__(self, None, -1, label)
 
-        fgs = wx.FlexGridSizer(cols=2, vgap=5, hgap=5)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
         server_label = wx.StaticText(self, -1, 'Server URL')
-        
-        self.server_ctrl = wx.TextCtrl(self, -1, server, size=(200,-1))
+        self.server_ctrl = wx.TextCtrl(self, -1, server, size=(300,-1))
         self.server_ctrl.SetInsertionPoint(0)
+        
+        user_label = wx.StaticText(self, -1, 'Username')
+        self.user_ctrl = wx.TextCtrl(self, -1)
+        
+        password_label = wx.StaticText(self, -1, 'Password')
+        self.password_ctrl = wx.TextCtrl(self, -1, style=wx.TE_PASSWORD)
+
+        file_label = wx.StaticText(self, -1, 'File')
+        self.file_ctrl = wx.TextCtrl(self, -1, filename)
+
+        data_label = wx.StaticText(self, -1, 'Data')
+        self.data_ctrl = wx.TextCtrl(self, -1, data_path)
+
+        shape_label = wx.StaticText(self, -1, 'Dimensions')
+        self.shape_ctrl = wx.TextCtrl(self, -1, str(data_shape))
 
         job_label = wx.StaticText(self, -1, 'Job spec file')
         job_button = wx.Button(self, -1, label="Browse")
         self.Bind(wx.EVT_BUTTON, self.OnClick, job_button)
         
         # layout
-        fgs.Add(server_label, 0, wx.EXPAND)
+        fgs = wx.FlexGridSizer(cols=2, vgap=5, hgap=5)
+        fgs.AddGrowableCol(1) 
+
+        fgs.Add(server_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         fgs.Add(self.server_ctrl, 0, wx.EXPAND)
-        fgs.Add(job_label, 0, wx.EXPAND)
+
+        fgs.Add(user_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        fgs.Add(self.user_ctrl, 0, wx.EXPAND)
+
+        fgs.Add(password_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        fgs.Add(self.password_ctrl, 0, wx.EXPAND)
+
+        fgs.Add(file_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        fgs.Add(self.file_ctrl, 0, wx.EXPAND)
+
+        fgs.Add(data_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        fgs.Add(self.data_ctrl, 0, wx.EXPAND)
+
+        fgs.Add(shape_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        fgs.Add(self.shape_ctrl, 0, wx.EXPAND)
+
+        fgs.Add(job_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         fgs.Add(job_button, 0, wx.EXPAND)
 
         okay = wx.Button(self, wx.ID_OK)
@@ -47,11 +81,16 @@ class RemoteProcessDialog(wx.Dialog):
         btns = wx.StdDialogButtonSizer()
         btns.Add(okay)
         btns.Add(cancel)
-        fgs.Add(btns, 0, wx.EXPAND|wx.ALL)
 
-        self.SetSizer(fgs)
-        fgs.Fit(self)
+        sizer.Add((20,20))
+        sizer.Add(fgs, wx.EXPAND|wx.ALL, border=10)
+        sizer.Add((20,20))
+        sizer.Add(btns, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM)
+        sizer.Add((20,20))
 
+        sizer.Fit(self)
+        self.SetSizer(sizer)
+        
 
     def OnClick(self, event):
         """Opens file browser."""

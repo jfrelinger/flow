@@ -26,7 +26,7 @@ class AbstractModel(object):
             eachFunc(self)
             
 class FlowModel(AbstractModel):
-    """Model part of MVC for vizualization"""
+    """Model part of MVC for visualization"""
     def __init__(self):
         super(FlowModel, self).__init__()
 
@@ -318,6 +318,7 @@ class FlowModel(AbstractModel):
     def open(self, hdf5File):
         self.ready = False
         self.close()
+        
         name = NamedTemporaryFile().name
         src = tables.openFile(hdf5File,'r')
 
