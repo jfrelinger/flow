@@ -44,10 +44,6 @@ class Session_manager(object):
         return self.session.server_status()
 
 def connect(url, username, pw):
-    '''
-    eventually will setup a newwork connection and return the session_manager object
-    '''
-    
     return Session_manager(url, username, pw)
 
 if __name__ == '__main__':

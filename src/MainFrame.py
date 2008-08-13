@@ -10,6 +10,7 @@ import transforms
 from OboFrame import OboTreeFrame
 from AnnotateFrame import annotateFrame
 import sys
+from net_wrapper import connect
 
 class MainFrame(VizFrame):
     """Main user interface frame includes the control panel"""
@@ -128,7 +129,7 @@ class MainFrame(VizFrame):
             self.model.obofile = file
 
         dlg.Destroy()
-
+        
     # Remote process
     def OnSubmitJob(self, event):
         """Job submission dialog."""
@@ -151,8 +152,15 @@ class MainFrame(VizFrame):
             self.job = dlg.job_ctrl.GetValue()
             
             print self.server, self.user, self.password, self.filename, self.data, self.job
-        
+            session = connect(self.server, self.user, self.password)
+            session.send_data(self.data)
+            #TODO add sending source file name for use later
+            #session.send_filename(self.filename) #NOT IMPLEMENTED
+            job_def = parsejob(self.job)
+            print job_def
+            session.send_job(job_def)
         dlg.Destroy()
+    
 
     def OnSubmitBatch(self, event):
         """Batch job submission dialog."""
@@ -695,4 +703,23 @@ class MainFrame(VizFrame):
 
         dialog.Destroy()
         
-        
+def parsejob(jobfile):
+    results = []
+    file = open(jobfile, 'r')
+    for line in file:
+        line = line.replace('\n','')
+        tmp = line.split('\t')
+        type = strip_quotes(tmp[0])
+        args = strip_quotes(tmp[1])
+        more = [strip_quotes(x) for x in tmp[2:]]
+        results.append((type, args, more))
+    file.close()
+    print results
+    return results
+
+def strip_quotes(str):
+    # gotta be a more sane way to do this...
+    return str.replace("'",'').replace('"','')
+      
+if __name__ == '__main__':
+    print parsejob('/home/jolly/foo.txt')   
