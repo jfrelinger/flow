@@ -87,20 +87,20 @@ class TwoDDensity(VizFrame):
     def AttachModel(self, model):
         if self.model == None:
             self.model = model
-            self.data = self.model.GetCurrentData()
+            self.data = self.model.GetCurrentData()[:]
             if self.model.IsZ():
                 self.colors = array(self.model.GetCurrentZ()[:],'i')
                 self.colorGate.Enable(True)
             else:
                 self.colors = None
             try:
-                fields = self.model.current_array.getAttr('fields')
+                self.fields = self.model.current_array.getAttr('fields')
             except AttributeError:
                 # fields = map(str,range(1, self.model.current_array.shape[1]+1))
                 print "debug this!"
             self.widget.model = self.model
             self.widget.Zs = self.colors
-            self.RadioButtons(fields)
+            self.RadioButtons(self.fields)
             self.BuildColors()
             if not hasattr(self.model.GetCurrentGroup(), 'mu_end'):
                 self.ellipses.Enable(False)
@@ -291,12 +291,12 @@ class TwoDDensity(VizFrame):
         self.widget.draw()
     
     def GateByColor(self, event):
-        data = self.model.GetCurrentData()[:]
+        data = self.data
         nrows, ncols = data.shape
-        fields = self.data.getAttr('fields')
+        fields = self.fields
         checks = [i for i in range(len(self.cbs)) if self.cbs[i].IsChecked()]
         idx = array([0]*nrows, 'bool')
-        z = array(self.model.GetCurrentZ()[:], 'i')
+        z = self.colors
         for check in checks:
             idx |= z==check
 
