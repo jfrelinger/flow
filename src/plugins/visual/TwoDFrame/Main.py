@@ -22,6 +22,7 @@ class TwoDDensity(VizFrame):
     def __init__(self, parent=None, id=-1,
                  pos=wx.DefaultPosition,
                  title="2D Density", show=True):
+
         VizFrame.__init__(self, parent, id, pos, title)
         self.widget = TwoDPanel(None, 1, 1, self)
         self.widget.draw()
@@ -105,6 +106,7 @@ class TwoDDensity(VizFrame):
             if not hasattr(self.model.GetCurrentGroup(), 'mu_end'):
                 self.ellipses.Enable(False)
                 self.widget.ellipse.Enable(False)
+
         
     def OnCopyGate(self, event):
         """Store current gate vertex locations."""
