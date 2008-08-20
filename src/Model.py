@@ -209,7 +209,7 @@ class FlowModel(AbstractModel):
                     pro = [0]*(1+max(z[:]))
 
                 values = []
-                for i in range(1, max(z[:])+2):
+                for i in range(1, int(max(z[:]))+2):
                     values.append("Color %d (%.2f)" % (i, pro[i-1]))
                 z.attrs.labels = values
                 return values

@@ -100,6 +100,7 @@ class TwoDDensity(VizFrame):
                 print "debug this!"
             self.widget.model = self.model
             self.widget.Zs = self.colors
+            self.widget.parent = self.group
             self.RadioButtons(self.fields)
             self.BuildColors()
             if not hasattr(self.group, 'mu_end'):
@@ -511,7 +512,7 @@ class TwoDPanel(PlotPanel):
         # always put labels on if possible at mean location
         if (not self.ellipse.IsChecked()) and (self.coord1 != self.coord2):
             try:
-                mu = self.group.mu_end[:]
+                mu = self.parent.mu_end[:]
                 lvl = 0
                 for i, m in enumerate(mu):
                     lvl += 1
@@ -525,6 +526,7 @@ class TwoDPanel(PlotPanel):
                                       va='center', ha='center')
             except AttributeError, e:
                 # don't label if error (e.g. no mu_end)
+                print e
                 pass
 
         if self.quad:
@@ -548,12 +550,12 @@ class TwoDPanel(PlotPanel):
 
         if self.ellipse.IsChecked() and (self.coord1 != self.coord2):
             try:
-                mu = self.group.mu_end[:]
+                mu = self.parent.mu_end[:]
                 try:
-                    spread = self.group.omega_end[:]
+                    spread = self.parent.omega_end[:]
                     spread_form = 'omega'
                 except AttributeError:
-                    spread = self.gorup.sigma_end[:]
+                    spread = self.parent.sigma_end[:]
                     spread_form = 'sigma'
                 try:
                     self.levels
