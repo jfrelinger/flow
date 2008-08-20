@@ -1,6 +1,4 @@
-
 import wx
-
 from plots import PlotPanel
 import densities2 as dens
 from numpy import array, arange, mgrid, isnan, sqrt, histogram2d, min, max, take, modf, concatenate
@@ -88,7 +86,9 @@ class TwoDDensity(VizFrame):
     def AttachModel(self, model):
         if self.model == None:
             self.model = model
-            self.data = self.model.GetCurrentData()[:]
+            self.data_obj = self.model.GetCurrentData()
+            self.data = self.data_obj[:]
+            self.group = self.model.GetCurrentGroup()
             if self.model.IsZ():
                 self.colors = array(self.model.GetCurrentZ()[:],'i')
                 self.colorGate.Enable(True)
@@ -103,7 +103,7 @@ class TwoDDensity(VizFrame):
             self.widget.Zs = self.colors
             self.RadioButtons(self.fields)
             self.BuildColors()
-            if not hasattr(self.model.GetCurrentGroup(), 'mu_end'):
+            if not hasattr(self.group, 'mu_end'):
                 self.ellipses.Enable(False)
                 self.widget.ellipse.Enable(False)
 
@@ -157,12 +157,11 @@ class TwoDDensity(VizFrame):
     def BuildColorPanel(self):
         """Select components by color and reassign labels if desired."""
         panel = wx.ScrolledWindow(self, -1, style=wx.VSCROLL)
-        color_names = self.model.GetZLabels(self.model.GetCurrentZ())
+        color_names = self.model.GetZLabels(self.model.GetCurrentZ(self.group))
         self.cbs = [wx.CheckBox(panel, -1, name) for name in color_names]
 
-        if self.model.IsZ():
-            z = array(self.model.GetCurrentZ()[:], 'i')
-            maxz = max(z)
+        if self.colors is not None:
+            maxz = max(self.colors)
             colors = [colormap.floatRgb(i, 0, maxz+1, i/(maxz+1)) for i in range(maxz+1)]
 
             self.popup = wx.Menu()
@@ -198,7 +197,7 @@ class TwoDDensity(VizFrame):
         obo.Show()
 
     def OnOboClose(self, event):
-        color_names = self.model.GetZLabels(self.model.GetCurrentZ())
+        color_names = self.model.GetZLabels(self.model.GetCurrentZ(self.group))
         
         for i, cb in enumerate(self.cbs):
             cb.SetLabel(color_names[i])
@@ -208,7 +207,7 @@ class TwoDDensity(VizFrame):
         
     def OnEllipses(self, event):
         """Specify confidence level for ellipse of each component."""
-        n = len(self.model.current_group.mu_end[:])
+        n = len(self.group.mu_end[:])
         inputs = {}
         choices = [('Component %d' % i, 'FloatValidator', str(0.95)) for i in range(1, n+1)]
         dlg = ParameterDialog(choices, inputs, 'Specify confidence level for ellipse of each component')
@@ -315,21 +314,19 @@ class TwoDDensity(VizFrame):
 #         filtered = array(results)
 
 
-        parent = self.model.GetCurrentGroup()
-        newgroup = self.model.NewGroup('GatedByColor')
+        #parent = self.model.GetCurrentGroup()
+        newgroup = self.model.NewGroup('GatedByColor', parent=self.aprent)
         self.model.NewArray('data',filtered, parent=newgroup)
         self.model.current_array.setAttr('fields', fields)
-        self.model.hdf5.createArray(self.model.current_group, 'z', filtered_z)
+        self.model.NewArray( 'z', filtered_z, parent=newgroup)
         try:
-            mu_end = parent.mu_end[:] 
-            self.model.hdf5.createArray(self.model.current_group, 'mu_end', 
-                                        mu_end)
+            mu_end = self.parent.mu_end[:] 
+            self.model.NewArray( 'mu_end',  mu_end, parent=newgroup)
         except Exception, e:
             pass
         try:
             sigma_end = parent.sigma_end[:]
-            self.model.hdf5.createArray(self.model.current_group, 'sigma_end', 
-                                        sigma_end)
+            self.model.NewArray('sigma_end',  sigma_end, parent=newgroup)
         except Exception, e:
             pass
         self.model.update()
@@ -348,19 +345,18 @@ class TwoDDensity(VizFrame):
 #             for i, d in enumerate(self.data):
 #                 if self.widget.p.PointInPoly((self.widget.x[i], self.widget.y[i])):
 #                     results.append(d)
-            self.model.updateHDF('GatedData', array(results), self.data)
-            self.model.GetCurrentData().attrs.batch=['gate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), self.widget.p.poly.verts]
+            self.model.SelectGroup(self.group)
+            self.model.updateHDF('GatedData', array(results), self.data_obj)
+            self.data_obj.attrs.batch=['gate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), self.widget.p.poly.verts]
         else:
             if self.widget.quad is True:
                 x = self.widget.vline._x[0]
                 y = self.widget.hline._y[0]
-                
-                data = self.model.GetCurrentData()[:]
 
-                q3 = data[(self.widget.x < x) & (self.widget.y < y), :]
-                q2 = data[(self.widget.x < x) & (self.widget.y > y), :]
-                q4 = data[(self.widget.x > x) & (self.widget.y < y), :]
-                q1 = data[(self.widget.x > x) & (self.widget.y > y), :]
+                q3 = self.data[(self.widget.x < x) & (self.widget.y < y), :]
+                q2 = self.data[(self.widget.x < x) & (self.widget.y > y), :]
+                q4 = self.data[(self.widget.x > x) & (self.widget.y < y), :]
+                q1 = self.data[(self.widget.x > x) & (self.widget.y > y), :]
 
 #                 q1 = []
 #                 q2 = []
@@ -377,12 +373,12 @@ class TwoDDensity(VizFrame):
 #                             q4.append(d)
 #                         else:
 #                             q1.append(d)
-                curGroup = self.model.GetCurrentGroup()
+                
                 for i,j in [(q1,'Q1'), (q2, 'Q2'), (q3, 'Q3'), (q4, 'Q4')]:
                     if len(i) > 0:
-                        self.model.SelectGroup(curGroup)
-                        self.model.updateHDF(j, array(i), self.data)
-                        self.model.GetCurrentData().attrs.batch=['qgate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), (x,y)]
+                        self.model.SelectGroup(self.group)
+                        self.model.updateHDF(j, array(i), self.data_obj)
+                        self.data_obj.attrs.batch=['qgate', (self.radioX.GetStringSelection(),self.radioY.GetStringSelection()), (x,y)]
                     
 
 class TwoDPanel(PlotPanel):
@@ -517,7 +513,7 @@ class TwoDPanel(PlotPanel):
         # always put labels on if possible at mean location
         if (not self.ellipse.IsChecked()) and (self.coord1 != self.coord2):
             try:
-                mu = self.model.current_group.mu_end[:]
+                mu = self.group.mu_end[:]
                 lvl = 0
                 for i, m in enumerate(mu):
                     lvl += 1
@@ -554,12 +550,12 @@ class TwoDPanel(PlotPanel):
 
         if self.ellipse.IsChecked() and (self.coord1 != self.coord2):
             try:
-                mu = self.model.current_group.mu_end[:]
+                mu = self.group.mu_end[:]
                 try:
-                    spread = self.model.current_group.omega_end[:]
+                    spread = self.group.omega_end[:]
                     spread_form = 'omega'
                 except AttributeError:
-                    spread = self.model.current_group.sigma_end[:]
+                    spread = self.gorup.sigma_end[:]
                     spread_form = 'sigma'
                 try:
                     self.levels
