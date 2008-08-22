@@ -57,6 +57,8 @@ class TwoDDensity(VizFrame):
         self.colorGate = self.GateMenu.Append(-1, "Gate on visible colors only")
         polyGate = self.GateMenu.Append(-1, "Add 4-polygon gate")
         quadGate = self.GateMenu.Append(-1, "Add quadrant gate")
+        removePolyGate = self.GateMenu.Append(-1, "Remove 4-polygon gate")
+        removeQuadGate = self.GateMenu.Append(-1, "Remove quadrant gate")
         gate = self.GateMenu.Append(-1, "Capture gated events")
         self.ellipses = self.GateMenu.Append(-1, "Specify ellipse confidence")
 
@@ -69,6 +71,8 @@ class TwoDDensity(VizFrame):
         self.Bind(wx.EVT_MENU, self.OnEllipses, self.ellipses)
         self.Bind(wx.EVT_MENU, self.OnAddPolyGate, polyGate)
         self.Bind(wx.EVT_MENU, self.OnAddQuadGate, quadGate)
+        self.Bind(wx.EVT_MENU, self.OnRemovePolyGate, removePolyGate)
+        self.Bind(wx.EVT_MENU, self.OnRemoveQuadGate, removeQuadGate)
         self.Bind(wx.EVT_MENU, self.Gate, gate)
         self.Bind(wx.EVT_MENU, self.OnCopyGate, copyGate)
         self.Bind(wx.EVT_MENU, self.OnPasteGate, pasteGate)
@@ -233,6 +237,20 @@ class TwoDDensity(VizFrame):
         self.widget.p = mpl_gate.PolygonInteractor(self.widget, self.widget.subplot, poly)
         self.widget.subplot.add_line(self.widget.p.line)
         self.widget.draw()
+
+    def OnRemovePolyGate(self, event):
+        try:
+            del self.widget.p
+            self.widget.draw()
+        except AttributeError:
+            pass
+
+    def OnRemoveQuadGate(self, event):
+        try:
+            self.widget.quad = False
+            self.widget.draw()
+        except AttributeError:
+            pass
 
     def OnAddQuadGate(self, event):
         print "adding quad gate"

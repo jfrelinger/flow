@@ -26,9 +26,10 @@ class acRectangle(Rectangle):
 
     def get_verts(self):
         """Return the vertices of the rectangle, in anticlockwise order."""
-        x, y = self.xy
-        return ((x, y), (x+self.width, y), 
-                (x+self.width, y+self.height), (x, y+self.height))
+        x, y = self.get_x(), self.get_y()
+        return ((x, y), (x+self.get_width(), y), 
+                (x+self.get_width(), y+self.get_height()),
+                (x, y+self.get_height()))
 
 class PolygonInteractor(object):
     """
