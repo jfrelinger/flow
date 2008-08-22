@@ -130,11 +130,13 @@ class FlowModel(AbstractModel):
         """returns the current data array"""
         return self._loopForData(self.current_group)
     
-    def GetCurrentZ(self):
-        """get current Z group if it exists"""
+    def GetCurrentZ(self, group = None):
+        """get current Z for a group if it exists, defaults to the currently selected gorup"""
+        if group is None:
+            group = self.current_group
         try:
             # print self.current_group
-            return self._loopForZ(self.current_group)
+            return self._loopForZ(group)
         except AttributeError:
             return None
         
@@ -207,7 +209,7 @@ class FlowModel(AbstractModel):
                     pro = [0]*(1+max(z[:]))
 
                 values = []
-                for i in range(1, int(max(z[:])+2)):
+                for i in range(1, int(max(z[:]))+2):
                     values.append("Color %d (%.2f)" % (i, pro[i-1]))
                 z.attrs.labels = values
                 return values
@@ -221,6 +223,7 @@ class FlowModel(AbstractModel):
                 raise AttributeError
             else:
                 return self._loopForData(group._v_parent) #IGNORE:W0212 #IGNORE:W0702
+            
     def _loopForZ(self, group):
         """Walk up tree looking for Z values"""
         try:
@@ -393,9 +396,11 @@ class FlowModel(AbstractModel):
             for n, i in enumerate(indices):
                 data[:,i] = compensated[n,:]
 
-    def updateHDF(self, group, data, old_data=None, **kwargs):
+    def updateHDF(self, group, data, old_data=None, old_group=None, **kwargs):
         if old_data is None:
             old_data = self.GetCurrentData()
+        if old_group is None:
+            old_group = self.GetCurrentGroup()
         self.NewGroup(group)
         _data = self.hdf5.createArray(self.current_group, 'data', array(data))
         # first copy over old attributes
