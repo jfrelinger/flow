@@ -17,7 +17,7 @@ from matplotlib.numerix import sqrt, nonzero, equal, array, dot, Float, take
 from matplotlib.numerix.mlab import amin
 from matplotlib.mlab import dist_point_to_segment
 from scipy import vectorize
-from numpy import logical_not, logical_xor, logical_and
+from numpy import logical_not, logical_xor, logical_and, transpose
 
 class acRectangle(Rectangle):
     """Just a rectangle that returns vertices in anti-clockwise order."""
@@ -125,6 +125,7 @@ class PolygonInteractor(object):
         x, y = zip(*self.poly.verts)
 
         # display coords
+        # API changed for new versions of matplotlib
         xt, yt = self.poly.get_transform().numerix_x_y(x, y)
         d = sqrt((xt-event.x)**2 + (yt-event.y)**2)
         indseq = nonzero(equal(d, amin(d)))

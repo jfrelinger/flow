@@ -23,8 +23,8 @@ if platform=='darwin':
     env = Environment(
         CPPDEFINES=['RMATH_RAND', 'NDEBUG'],
         LIBS=['Rmath', 'lapack', 'boost_unit_test_framework'],
-        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.6/Resources/lib'],
-        CPPPATH=['/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.6/Resources/include', pyinc],
+        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.7/Resources/lib'],
+        CPPPATH=['/opt/local/include', '/Library/Frameworks/R.framework/Versions/2.7/Resources/include', '/usr/local/include/boost-1_35', pyinc],
         RPATH=[],
         LINKFLAGS = '-framework Python -framework Accelerate', 
         CXXFLAGS='-bundle -Wall -Wno-long-long -pipe -mtune=%s' % arch,
@@ -33,8 +33,8 @@ if platform=='darwin':
     bp = Environment(
         CPPDEFINES=['RMATH_RAND', 'NDEBUG'],
         LIBS=['Rmath', 'lapack', 'boost_python', pyver],
-        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.6/Resources/lib', pylib],
-        CPPPATH=['/opt/local/inlude', '/Library/Frameworks/R.framework/Versions/2.6/Resources/include', pyinc],
+        LIBPATH=['/usr/local/lib', '/opt/local/lib', '/Library/Frameworks/R.framework/Versions/2.7/Resources/lib', pylib],
+        CPPPATH=['/opt/local/inlude', '/Library/Frameworks/R.framework/Versions/2.7/Resources/include', '/usr/local/include/boost-1_35', pyinc],
         RPATH=[],
         LINKFLAGS = '-framework Python -framework Accelerate', 
         CXXFLAGS='-bundle -Wall -Wno-long-long -pipe -mtune=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,

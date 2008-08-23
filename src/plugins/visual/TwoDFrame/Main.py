@@ -426,8 +426,8 @@ class TwoDPanel(PlotPanel):
         if event.inaxes and event.button==1:
             x ,y = event.xdata, event.ydata
             print 'data coords', event.xdata, event.ydata
-            self.hline._y = [event.ydata, event.ydata ]
-            self.vline._x = [event.xdata, event.xdata ]
+            self.hline.set_ydata(y)
+            self.vline.set_xdata(x)
             #(q1, q2, q3, q4) = reduce(lambda x,y: (x[0]+y[0], x[1]+y[1], x[2]+y[2], x[3]+y[3]), map(lambda x,y : (x>=event.xdata and y>=event.ydata and 1 or 0, x<event.xdata and y>=event.ydata and 1 or 0, x<event.xdata and y<event.ydata and 1 or 0, x>=event.xdata and y<event.ydata and 1 or 0), self.x, self.y))
             q3 = len(self.x[(self.x<x)*(self.y<y)])
             q2 = len(self.x[(self.x<x)*(self.y>y)])
