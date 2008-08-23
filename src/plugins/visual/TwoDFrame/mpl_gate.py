@@ -123,11 +123,16 @@ class PolygonInteractor(object):
     def get_ind_under_point(self, event):
         'get the index of the vertex under point if within epsilon tolerance'
         x, y = zip(*self.poly.verts)
+        xt, yt = array(x), array(y)
+        ax = self.ax.axis()
+        scalex, scaley = \
+            event.x/(event.xdata-ax[0]), event.y/(event.ydata-ax[2])
 
         # display coords
         # API changed for new versions of matplotlib
-        xt, yt = self.poly.get_transform().numerix_x_y(x, y)
-        d = sqrt((xt-event.x)**2 + (yt-event.y)**2)
+        # xt, yt = self.poly.get_transform().numerix_x_y(x, y)
+        # xt, yt = self.poly.get_transform().transform(array(self.poly.verts)).T
+        d = sqrt((scalex*(xt-event.xdata))**2 + (scaley*(yt-event.ydata))**2)
         indseq = nonzero(equal(d, amin(d)))
         ind = indseq[0]
 
