@@ -338,12 +338,12 @@ class TwoDDensity(VizFrame):
 
 
         #parent = self.model.GetCurrentGroup()
-        newgroup = self.model.NewGroup('GatedByColor', parent=self.aprent)
+        newgroup = self.model.NewGroup('GatedByColor', parent=self.group)
         self.model.NewArray('data',filtered, parent=newgroup)
         self.model.current_array.setAttr('fields', fields)
         self.model.NewArray( 'z', filtered_z, parent=newgroup)
         try:
-            mu_end = self.parent.mu_end[:] 
+            mu_end = self.group.mu_end[:] 
             self.model.NewArray( 'mu_end',  mu_end, parent=newgroup)
         except Exception, e:
             pass
