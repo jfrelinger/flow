@@ -91,6 +91,126 @@ sudo python setup.py install
 cd $FLOW/src
 python App.py
 
+Fedora Core 9 installation
+==========================
+
+Packages available using yum
+-----------------------------
+sudo yum install numpy scipy matplotlib hdf5-devel wxPython vtk-python python-setuptools R R-devel rpy 
+
+Packages to install from source
+-------------------------------
+
+1. pytables
+mkdir src
+cd src
+wget http://www.pytables.org/download/stable/pytables-2.0.4.tar.gz
+tar xzf pytables-2.0.4.tar.gz
+cd pytables-2.0.4
+python setup.py build_ext --inplace
+sudo python setup.py install
+exit
+cd ..
+
+2. networkx
+wget https://networkx.lanl.gov/download/network/networkx-0.37.tar.gz
+tar -xzf networkx-0.37.tar.gz
+cd networkx-0.37
+python seutp.py build
+sudo python setup.py install
+exit
+cd ..
+
+3. MDP
+wget http://voxel.dl.sourceforge.net/sourceforge/mdp-toolkit/MDP-2.3.tar.gz
+tar xvf MDP-2.3.tar.gz
+cd MDP-2.3
+python setup.py build
+sudo python setup.py install
+exit
+cd ..
+
+4. PyCluster
+wget http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/Pycluster-1.41.tar.gz
+tar xzf Pycluster-1.41.tar.tz
+cd Pycluster-1.41
+
+
+OpenSUSE 10.3 64-bit installation
+=================================
+
+Add the following repositories to YAST (or other package management tool)
+------------------------------------------------------------------------
+
+http://download.opensuse.org/repositories/science/openSUSE_10.3/
+http://software.opensuse.org/download/repositories/science/openSUSE_10.3/
+
+Install the following using YAST (or other package management tool)
+------------------------------------------------------------------
+
+gcc gcc-c++ make python-numpy python-scipy python-setuptools
+python-tables python-wxgtk python-matplotlib python-matplotlib-wx
+R-base 
+
+Install the following python packages using setuptools
+------------------------------------------------------
+
+sudo easy_install networkx
+
+Install the following from source
+---------------------------------
+
+# python Cluster library
+ wget http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/Pycluster-1.41.tar.gz
+tar -xzf Pycluster-1.41.tar.gz 
+cd Pycluster-1.41/
+sudo python setup.py install
+
+# R fastICA library
+R
+
+# ANN library (for kde)
+cd /tmp
+wget http://www.cs.umd.edu/~mount/ANN/Files/1.1.1/ann_1.1.1.tar.gz
+tar -xzf ann_1.1.1.tar.gz
+cd ann_1.1.1/
+make linux-g++
+cd ..
+sudo mv ann_1.1.1 /usr/local/src
+
+# python MDP library
+wget http://voxel.dl.sourceforge.net/sourceforge/mdp-toolkit/MDP-2.3.tar.gz
+tar -xzf MDP-2.3.tar.gz 
+sudo python setup.py install
+
+# VTK (python bindings do not appear to work in 64-bit openSUSE 10.3)
+wget http://www.vtk.org/files/release/5.2/vtkdata-5.2.0.tar.gz
+tar -xzf vtkdata-5.2.0.tar.gz 
+wget http://www.vtk.org/files/release/5.2/vtk-5.2.0.tar.gz
+tar -xzf vtk-5.2.0.tar.gz
+mkdir VTKBuild
+cd VTKBuild
+ccmake ../VTK (set the options as shown)
+ BUILD_EXAMPLES                   ON                                           
+ BUILD_SHARED_LIBS                ON                                           
+ BUILD_TESTING                    OFF                                          
+ CMAKE_BACKWARDS_COMPATIBILITY    2.4                                          
+ CMAKE_BUILD_TYPE                                                              
+ CMAKE_INSTALL_PREFIX             /usr/local                                   
+ VTK_DATA_ROOT                    < VTKData location - auto-detected >
+ VTK_USE_INFOVIS                  ON                                           
+ VTK_USE_PARALLEL                 OFF                                          
+ VTK_USE_RENDERING                ON                                           
+ VTK_USE_VIEWS                    ON                                           
+ VTK_WRAP_JAVA                    OFF                                          
+ VTK_WRAP_PYTHON                  ON                                           
+ VTK_WRAP_TCL                     OFF
+make
+sudo make install
+
+
+
+
 Mac OS X 10.5  installation
 =====================
 
