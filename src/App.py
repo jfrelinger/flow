@@ -8,6 +8,7 @@ import wx
 import sys
 import os
 import glob
+import os_utils
 
 # added a comment
 # import plugin directories
@@ -98,17 +99,25 @@ class MainApp(wx.App): #IGNORE:R0902
         
         # help menu
         self.helpMenu = wx.Menu()
-        self.about = self.helpMenu.Append(wx.ID_ABOUT, "&About FlowDevo")
-        self.help = self.helpMenu.Append(-1, "FlowDevo Help")
-        self.tutorial = self.helpMenu.Append(-1, "FlowDevo Tutorial")
+        self.about = self.helpMenu.Append(wx.ID_ABOUT, "&About Flow")
+        self.help = self.helpMenu.Append(-1, "Flow User Guide")
+        self.developer = self.helpMenu.Append(-1, "Flow Developer Guide")
+        # self.tutorial = self.helpMenu.Append(-1, "Flow Tutorial")
         self.helpMenu.AppendSeparator()
-        self.homepage = self.helpMenu.Append(-1, "FlowDevo homepage")
+        self.homepage = self.helpMenu.Append(-1, "Flow homepage")
         self.bugs = self.helpMenu.Append(-1, "Report bugs")
         self.helpMenu.AppendSeparator()
-        self.update = self.helpMenu.Append(-1, "Check for updates")
+        # self.update = self.helpMenu.Append(-1, "Check for updates")
         
         self.controlFrame.GetMenuBar().Append(self.helpMenu, "&Help")
+
         self.Bind(wx.EVT_MENU, self.OnAbout, self.about)
+        self.Bind(wx.EVT_MENU, self.OnHelp, self.help)
+        self.Bind(wx.EVT_MENU, self.OnDeveloper, self.developer)
+        # self.Bind(wx.EVT_MENU, self.OnTutorial, self.tutorial)
+        self.Bind(wx.EVT_MENU, self.OnHomepage, self.homepage)
+        self.Bind(wx.EVT_MENU, self.OnBugs, self.bugs)
+        # self.Bind(wx.EVT_MENU, self.OnUpdate, self.update)
 
         
         global Visual
@@ -282,9 +291,28 @@ class MainApp(wx.App): #IGNORE:R0902
         
     def OnAbout(self, event):
         """About screen."""
-        dlg = about.FlowDevoAbout(self.controlFrame)
+        dlg = about.FlowAbout(self.controlFrame)
         dlg.ShowModal()
         dlg.Destroy()
+
+    def OnHelp(self, event):
+        os_utils.open("../docs/userguide.pdf")
+
+    def OnDeveloper(self, event):
+        os_utils.open("../docs/developer_guide.pdf")
+
+    def OnTutorial(self, event):
+        pass
+
+    def OnHomepage(self, event):
+        os_utils.open('http://galen.dulci.org/flow')
+
+    def OnBugs(self, event):
+        os_utils.open('http://galen.dulci.org/flow/newticket')
+
+    def OnUpdate(self, event):
+        pass
+
 if __name__ == '__main__':
     App = MainApp(redirect=False) #IGNORE:C0103
     App.MainLoop()
