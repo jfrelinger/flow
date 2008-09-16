@@ -433,7 +433,7 @@ class TwoDPanel(PlotPanel):
             q2 = len(self.x[(self.x<x)*(self.y>y)])
             q4 = len(self.x[(self.x>x)*(self.y<y)])
             q1 = len(self.x[(self.x>x)*(self.y>y)])
-            self.title = ('bottom left=%d, top left=%d, top right=%d, bottom right=%d' % (q3, q2, q1, q4))
+            self.title = ('bottom left=%d, top left=%d, top right=%d, bottom right=%d, X = %d, Y= %d' % (q3, q2, q1, q4, x, y))
             print 'bottom left=%d, top left=%d, top right=%d, bottom right=%d' % (q3, q2, q1, q4)
             self.draw()
     
