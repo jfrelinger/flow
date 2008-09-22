@@ -4,7 +4,10 @@ platform = Environment()['PLATFORM']
 
 pylib = sysconfig.get_config_var('LIBPL')
 pyinc = sysconfig.get_config_var('INCLUDEPY')
-pyver = 'python' + sysconfig.get_config_var('VERSION')
+version = sysconfig.get_config_var('VERSION')
+if version==None:
+    version='25'
+pyver = 'python' + version
 
 def pyversion():
     pystr = commands.getoutput('python -V')

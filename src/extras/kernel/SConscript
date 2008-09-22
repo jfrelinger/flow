@@ -4,7 +4,10 @@ platform=Environment()["PLATFORM"]
 
 pylib = sysconfig.get_config_var('LIBPL')
 pyinc = sysconfig.get_config_var('INCLUDEPY')
-pyver = 'python' + sysconfig.get_config_var('VERSION')
+version = sysconfig.get_config_var('VERSION')
+if version==None:
+    version='25'
+pyver = 'python' + version
 
 # change architecture if necessary
 arch = 'prescott -msse3'
@@ -16,7 +19,24 @@ filenames = ['analyzer', 'label']
 files = [filename + '.cpp' for filename in filenames]
 test_files = ['test_seg_fault.cpp']
 
-if platform=='darwin':
+if platform == 'win32':
+    env = Environment(
+        LIBS=['ANN', pyver],
+        LIBPATH=['C:/ann_1.1.1/MS_Win32/dll/Release','C:/ann_1.1.1/MS_Win32/bin','C:/Program Files/boost/boost_1_35_0/lib'],
+        CPPPATH=['C:/ann_1.1.1/include/ANN','C:/Program Files/boost/boost_1_35_0/include'],
+        CXXFLAGS='-Wall -w -DANSI -EHsc /D "WIN32"',
+        )
+
+    bp = Environment(
+        LIBS=['ANN', 'boost_python', pyver],
+        LIBPATH=['C:/ann_1.1.1/MS_Win32/dll/Release','C:/ann_1.1.1/MS_Win32/bin','C:/Program Files/boost/boost_1_35_0/lib'],
+        CPPPATH=['C:/ann_1.1.1/include/ANN','C:/Program Files/boost/boost_1_35_0/include'],
+        CXXFLAGS='-Wall -w -DANSI -EHsc /GR /D "WIN32"',
+        OBJSUFFIX='.objs'
+        )
+
+
+elif platform == 'darwin':
     env = Environment(
         LIBS=['ANN', pyver],
         LIBPATH=['/usr/local/lib', '/usr/local/src/ann_1.1.1/lib', pylib],
@@ -36,7 +56,7 @@ if platform=='darwin':
         SHLIBSUFFIX = sysconfig.get_config_vars('SO')
         )
 
-else: # works for Debian and Ubuntu
+else : # works for Debian and Ubuntu
     env = Environment(
         CPPDEFINES=[],
         CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', pyinc],
