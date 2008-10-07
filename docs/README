@@ -135,6 +135,21 @@ wget http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/Pycluster-1.41.ta
 tar xzf Pycluster-1.41.tar.tz
 cd Pycluster-1.41
 
+5. fastICA using R (optional but useful as an example of R integration)
+sudo yum install gcc-gfortran
+R
+> install.packages('fastICA')
+Follow prompts and quit when done
+
+Download and run Flow
+---------------------
+
+wget http://hg.dulci.org/flow/archive/tip.tar.gz
+tar xzf tip.tar.gz
+cd flow-xxxxxxxxxxxxxx (where xxxxxxxxxxxxxx is some machine-assigned label)
+cd src
+python App.py
+
 
 OpenSUSE 10.3 64-bit installation
 =================================
