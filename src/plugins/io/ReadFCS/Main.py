@@ -63,7 +63,13 @@ class ReadFCS(Io):
         NtoS = dict(zip(markersN, markersS))
         
         version = f.header['version']
-        creator = f.text['CREATOR']
+        # do we need the creator?  It appears to be important for compensating for FACSDiva
+        # which we're not doing any more....
+        try: 
+            creator = f.text['CREATOR']
+        except KeyError:
+            creator = 'UNKNOWN'
+                
         d = numpy.array([f.data[k] for k in f.names], 'd')
 
         # customization for machine and fcs version
