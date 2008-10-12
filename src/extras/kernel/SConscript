@@ -37,19 +37,20 @@ if platform == 'win32':
 
 
 elif platform == 'darwin':
+    print platform
     env = Environment(
-        LIBS=['ANN', pyver],
+        LIBS=['ANN'], #, pyver],
         LIBPATH=['/usr/local/lib', '/usr/local/src/ann_1.1.1/lib', pylib],
-        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', pyinc],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/local/include/boost-1_35', pyinc],
         LINKFLAGS='-framework Python -framework Accelerate',
         CXXFLAGS='-bundle -Wall -Wno-long-long -pipe -mtune=%s' % arch,
         )
 
     bp = Environment(
         CPPDEFINES=[],
-        LIBS=['ANN', 'boost_python',  pyver],
+        LIBS=['ANN', 'boost_python'], #,  pyver],
         LIBPATH=['/usr/local/lib', '/usr/local/src/ann_1.1.1/lib', pylib],
-        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', pyinc],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/local/include/boost-1_35', pyinc],
         LINKFLAGS = '-framework Python -framework Accelerate', 
         CXXFLAGS='-bundle -Wall -Wno-long-long -pipe  -mtune=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
         SHLIBPREFIX = '', # gets rid of lib prefix
