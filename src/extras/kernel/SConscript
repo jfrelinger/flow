@@ -37,20 +37,27 @@ if platform == 'win32':
 
 
 elif platform == 'darwin':
+    # pylib = "/usr/lib/python/2.5/config"
+    # pyinc = "/usr/include/python2.5"
+
     print platform
+    print pyinc
+    print pyver
     env = Environment(
-        LIBS=['ANN'], #, pyver],
-        LIBPATH=['/usr/local/lib', '/usr/local/src/ann_1.1.1/lib', pylib],
-        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/local/include/boost-1_35', pyinc],
+        LIBS=['ANN'],
+        LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/local/include/boost-1_36', pyinc],
         LINKFLAGS='-framework Python -framework Accelerate',
         CXXFLAGS='-bundle -Wall -Wno-long-long -pipe -mtune=%s' % arch,
         )
 
+
     bp = Environment(
-        CPPDEFINES=[],
-        LIBS=['ANN', 'boost_python'], #,  pyver],
-        LIBPATH=['/usr/local/lib', '/usr/local/src/ann_1.1.1/lib', pylib],
-        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/local/include/boost-1_35', pyinc],
+        CPPDEFINES=['BOOST_PYTHON_DYNAMIC_LIB'],
+        LIBS=['ANN', 'boost_python'],
+        # LIBS=['ANN',  pyver],   
+        LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/local/include/boost-1_36', pyinc],
         LINKFLAGS = '-framework Python -framework Accelerate', 
         CXXFLAGS='-bundle -Wall -Wno-long-long -pipe  -mtune=%s -fno-strict-aliasing -fPIC -no-cpp-precomp -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
         SHLIBPREFIX = '', # gets rid of lib prefix
