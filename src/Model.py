@@ -203,7 +203,7 @@ class FlowModel(AbstractModel):
             except:
                 # get proportion to put in label
                 try:
-                    pro = self.current_group.pi_end[:]
+                    pro = array(self.current_group.pi_end[:])
                     pro = 100*pro/float(sum(pro))
                 except AttributeError:
                     pro = [0]*(1+max(z[:]))

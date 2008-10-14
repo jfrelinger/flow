@@ -1,7 +1,7 @@
 from plugin import Statistics
 from validators import IntValidator, FloatValidator
 
-# import wx
+import wx
 import sys
 import numpy
 import operator
