@@ -48,10 +48,62 @@ public:
   ublas::vector<ublas::vector<double> > get_mu() const { return mu; }
   ublas::vector<ublas::matrix<double> > get_Omega() const { return Omega; }
   ublas::vector<int> get_z() const { return z; }
-  std::vector<ublas::vector<double> > get_save_pi() const { return save_pi; }
-  std::vector<ublas::vector<ublas::vector<double> > > get_save_mu() const { return save_mu; }
-  std::vector<ublas::vector<ublas::matrix<double> > > get_save_Omega() const { return save_Omega; }
-  std::vector<ublas::vector<int> > get_save_z() const { return save_z; }
+  ublas::vector<ublas::vector<double> > get_save_pi() const {
+    ublas::vector<ublas::vector<double> > tmp;
+    tmp.resize(save_pi.size());
+    for (unsigned i=0; i<save_pi.size(); ++i)
+      tmp[i].resize(save_pi[i].size());
+    std::copy(save_pi.begin(), save_pi.end(), tmp.begin());
+    return tmp;
+    // return save_pi;
+  }
+
+
+  ublas::vector<ublas::vector<ublas::vector<double> > > get_save_mu() const { 
+    ublas::vector<ublas::vector<ublas::vector<double> > > tmp;
+    tmp.resize(save_mu.size());
+    for (unsigned i=0; i<save_mu.size(); ++i) {
+      tmp[i].resize(save_mu[i].size());
+      for (unsigned j=0; j<save_mu[i].size(); ++j) {
+	tmp[i][j].resize(save_mu[i][j].size());
+      }
+    }
+    for (unsigned i=0; i<save_mu.size(); ++i) {
+      std::copy(save_mu[i].begin(), save_mu[i].end(), tmp[i].begin());
+    }
+    return tmp;
+    // return save_mu; 
+  }
+
+
+  ublas::vector<ublas::vector<ublas::matrix<double> > > get_save_Omega() const { 
+    ublas::vector<ublas::vector<ublas::matrix<double> > > tmp;
+    tmp.resize(save_Omega.size());
+    for (unsigned i=0; i<save_Omega.size(); ++i) {
+      tmp[i].resize(save_Omega[i].size());
+      for (unsigned j=0; j<save_Omega[i].size(); ++j) {
+	tmp[i][j].resize(save_Omega[i][j].size1(), save_Omega[i][j].size2());
+      }
+    }
+    for (unsigned i=0; i<save_Omega.size(); ++i) 
+      for (unsigned j=0; j<save_Omega[i].size(); ++j) {
+	tmp[i][j].assign(save_Omega[i][j]);
+    }
+    return tmp;
+    // return save_Omega; 
+  }
+  ublas::vector<ublas::vector<int> > get_save_z() const { 
+    ublas::vector<ublas::vector<int> > tmp;
+    tmp.resize(save_z.size());
+    for (unsigned i=0; i<save_z.size(); ++i) {
+      tmp[i].resize(save_z[i].size());
+    }
+    for (unsigned i=0; i<save_z.size(); ++i) {
+      tmp[i].assign(save_z[i]);
+    }
+    return tmp;
+    // return save_z; 
+  }
 
   // mutators
   void set_pi(ublas::vector<double> _pi) { pi = _pi; }

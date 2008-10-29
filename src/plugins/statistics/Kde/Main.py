@@ -47,7 +47,7 @@ class KDEFrame(wx.Frame):
             thread.start()
 
     def Log(self, msg):
-        self.log.AppendText(msg )
+        self.log.AppendText(str(msg) )
         self.log.AppendText("\n")
                 
     def ThreadFinish(self, returns):

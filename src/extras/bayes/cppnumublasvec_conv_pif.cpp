@@ -128,6 +128,27 @@ void export_cppnumublasvec_conv()
     cppnumublasvec_to_python_numarr<ublas::vector<double> > >();
   cppnumublasvec_from_python_numarr<ublas::vector<double> >();
 
+
+
+  boost::python::to_python_converter<ublas::vector<ublas::vector<ublas::vector<double> > >,
+    cppnumublasvec_to_python_numarr<ublas::vector<ublas::vector<double> > > >();
+  cppnumublasvec_from_python_numarr<ublas::vector<ublas::vector<double> > >();
+
+  boost::python::to_python_converter<ublas::vector<ublas::vector<ublas::vector<int> > >,
+    cppnumublasvec_to_python_numarr<ublas::vector<ublas::vector<int> > > >();
+  cppnumublasvec_from_python_numarr<ublas::vector<ublas::vector<int> > >();
+
+  boost::python::to_python_converter<ublas::vector<ublas::vector<ublas::matrix<double> > >,
+    cppnumublasvec_to_python_numarr<ublas::vector<ublas::matrix<double> > > >();
+  cppnumublasvec_from_python_numarr<ublas::vector<ublas::matrix<double> > >();
+
+  boost::python::to_python_converter<ublas::vector<ublas::vector<ublas::matrix<int> > >,
+    cppnumublasvec_to_python_numarr<ublas::vector<ublas::matrix<int> > > >();
+  cppnumublasvec_from_python_numarr<ublas::vector<ublas::matrix<int> > >();
+
+
+
+
   boost::python::to_python_converter<ublas::vector<ublas::vector<int> >,
     cppnumublasvec_to_python_numarr<ublas::vector<int> > >();
   cppnumublasvec_from_python_numarr<ublas::vector<int> >();
@@ -139,6 +160,7 @@ void export_cppnumublasvec_conv()
   boost::python::to_python_converter<ublas::vector<ublas::matrix<int> >,
     cppnumublasvec_to_python_numarr<ublas::matrix<int> > >();
   cppnumublasvec_from_python_numarr<ublas::matrix<int> >();
+
 }
 
 // (from http://mail.python.org/pipermail/python-list/2005-November/309423.html)
