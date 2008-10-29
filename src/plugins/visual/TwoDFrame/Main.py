@@ -449,7 +449,7 @@ class TwoDPanel(PlotPanel):
       self.subplot.clear()
       if self.x is not None:
         # sample at most 10000 points for display
-        npts = 10000
+        npts = 100000
         if len(self.x) > npts:
             stride = len(self.x)/npts
         else:
@@ -530,7 +530,7 @@ class TwoDPanel(PlotPanel):
                         zvals[i] = q11*(1-_xf)*(1-_yf) + q21*(1-_xf)*(_yf) + \
                             q12*(_xf)*(1-_yf) + q22*(_xf)*(_yf)
 
-                    s = self.subplot.scatter(x, y, alpha=alpha, s=1, c=zvals, faceted=False )
+                    s = self.subplot.scatter(x, y, alpha=alpha, s=self.ms, c=zvals, faceted=False )
             alpha = alpha - .25
 
         # always put labels on if possible at mean location
