@@ -22,8 +22,9 @@ class TwoDDensity(VizFrame):
                  title="2D Density", show=True):
 
         VizFrame.__init__(self, parent, id, pos, title)
-        self.widget = TwoDPanel(None, 1, 1, self)
-        self.widget.draw()
+        #self.widget = TwoDPanel(None, 1, 1,self)
+        self.widget = TwoDPanel(self,None, None)
+        
 
         # layout the frame
         self.box = wx.BoxSizer(wx.HORIZONTAL)
@@ -32,6 +33,7 @@ class TwoDDensity(VizFrame):
         self.box.Add(self.leftPanel, 0, wx.EXPAND)
         self.box.Add(self.widget, 1, wx.EXPAND)
         self.Layout()
+        #self.widget.draw()
         
         self.MenuBar = wx.MenuBar()
         self.FileMenu = wx.Menu()
@@ -105,7 +107,7 @@ class TwoDDensity(VizFrame):
                 print "debug this!"
             self.widget.model = self.model
             self.widget.Zs = self.colors
-            self.widget.parent = self.group
+            self.widget.parentg = self.group
             self.RadioButtons(self.fields)
             self.BuildColors()
             if not hasattr(self.group, 'mu_end'):
@@ -348,7 +350,7 @@ class TwoDDensity(VizFrame):
         except Exception, e:
             pass
         try:
-            sigma_end = parent.sigma_end[:]
+            sigma_end = parentg.sigma_end[:]
             self.model.NewArray('sigma_end',  sigma_end, parent=newgroup)
         except Exception, e:
             pass
@@ -405,11 +407,18 @@ class TwoDDensity(VizFrame):
                     
 
 class TwoDPanel(PlotPanel):
-    def __init__(self, x, y, parent, *args):
-        super(TwoDPanel, self).__init__(*args)
-        self.x = x
-        self.y = y
+    def __init__(self,parent, x, y, *args):
+        super(TwoDPanel, self).__init__(parent,*args)
         self.parent = parent
+        print x,y
+        if x is None:
+            self.x = [0]
+        else:
+            self.x = x
+        if y is None:
+            self.y = [0]
+        else:
+            self.y = y
         self.colors = None
         self.Zs = None
         self.quad = False
@@ -438,7 +447,7 @@ class TwoDPanel(PlotPanel):
             self.draw()
     
     def draw(self):
-      alpha = 1
+      alpha = 1.0
       if not hasattr(self, 'ms'):
           try:
               self.ms = min(1, 1000.0/len(self.x))
@@ -530,13 +539,20 @@ class TwoDPanel(PlotPanel):
                         zvals[i] = q11*(1-_xf)*(1-_yf) + q21*(1-_xf)*(_yf) + \
                             q12*(_xf)*(1-_yf) + q22*(_xf)*(_yf)
 
-                    s = self.subplot.scatter(x, y, alpha=alpha, s=1, c=zvals, edgecolors='none' )
+                    try:
+                        s = self.subplot.scatter(x, y, alpha=alpha, s=1, c=zvals, edgecolors='none' )
+                    except LinAlgError, e:
+                        print "LinAlgError 533"
+                        print e
+                        print dir(e)
+                        print e.args
+                        print e.message
             alpha = alpha - .25
 
         # always put labels on if possible at mean location
         if (not self.ellipse.IsChecked()) and (self.coord1 != self.coord2):
             try:
-                mu = self.parent.mu_end[:]
+                mu = self.parentg.mu_end[:]
                 lvl = 0
                 for i, m in enumerate(mu):
                     lvl += 1
@@ -573,12 +589,12 @@ class TwoDPanel(PlotPanel):
 
         if self.ellipse.IsChecked() and (self.coord1 != self.coord2):
             try:
-                mu = self.parent.mu_end[:]
+                mu = self.parentg.mu_end[:]
                 try:
-                    spread = self.parent.omega_end[:]
+                    spread = self.parentg.omega_end[:]
                     spread_form = 'omega'
                 except AttributeError:
-                    spread = self.parent.sigma_end[:]
+                    spread = self.parentg.sigma_end[:]
                     spread_form = 'sigma'
                 try:
                     self.levels
