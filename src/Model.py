@@ -139,13 +139,20 @@ class FlowModel(AbstractModel):
             return self._loopForZ(group)
         except AttributeError:
             return None
-        
+
     def GetCurrentAnnotation(self):
         """Get the current annotation array"""
         try:
             return self._loopForAnnotation(self.current_group)
         except AttributeError:
             return None
+
+    def GetCurrentHeaders(self):
+        """Get headers for channels."""
+        try:
+            return self.GetCurrentGroup().headers[:]
+        except AttributeError:
+            return self.GetCurrentData().getAttr('fields')
 
     def GetHistory(self, node = None):
         '''
@@ -203,7 +210,7 @@ class FlowModel(AbstractModel):
             except:
                 # get proportion to put in label
                 try:
-                    pro = self.current_group.pi_end[:]
+                    pro = array(self.current_group.pi_end[:])
                     pro = 100*pro/float(sum(pro))
                 except AttributeError:
                     pro = [0]*(1+max(z[:]))

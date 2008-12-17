@@ -296,10 +296,10 @@ class MainApp(wx.App): #IGNORE:R0902
         dlg.Destroy()
 
     def OnHelp(self, event):
-        os_utils.open("../docs/userguide.pdf")
+        os_utils.open(os.path.join("..", "docs", "userguide.pdf"))
 
     def OnDeveloper(self, event):
-        os_utils.open("../docs/developer_guide.pdf")
+        os_utils.open(os.path.join("..", "docs", "developer_guide.pdf"))
 
     def OnTutorial(self, event):
         pass

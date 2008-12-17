@@ -48,7 +48,8 @@ class PlotPanel(wx.Panel):
     figure is triggered by an Idle event.
     """
     def __init__(self, parent, id = -1, color = None, \
-        dpi = None, style = wx.NO_FULL_REPAINT_ON_RESIZE, **kwargs):
+        dpi = None, style = wx.NO_FULL_REPAINT_ON_RESIZE,  **kwargs):
+        # taken out -  style = wx.NO_FULL_REPAINT_ON_RESIZE,
         # wx.Panel.__init__(self, parent, id = id, style = style, **kwargs)
         super(PlotPanel, self).__init__(parent, id, style = style, **kwargs)
         self.figure = Figure(None, dpi)

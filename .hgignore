@@ -1,3 +1,13 @@
+.*\.ppt
+.*\.zip
+.*\.rtf
+.*\.tif
+.*\.tiff
+.*\#
+.*\.cache
+.*\.h5
+.*\.pdf
+.*\.png
 .*\.dblite
 .*\.so
 .*\.o

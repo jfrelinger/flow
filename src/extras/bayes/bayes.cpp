@@ -27,7 +27,7 @@ void Bayes::init(const ublas::matrix<double>& _x, const int _n, const int _p, co
     for (int j=0; j<n; ++j)
       probx(i, j) = 0.0;
 
-  /* INITIALISE EXTERNALLY
+  // INITIALISE EXTERNALLY
   pi.resize(k);
   // assign equal weight
   for (int i=0; i<k; ++i)
@@ -43,8 +43,7 @@ void Bayes::init(const ublas::matrix<double>& _x, const int _n, const int _p, co
 
   // assign mu with kmeans
   mu = kmeans(x, n, k, p, 1e-6);
-  */   
-
+  
   // assign random indices to z
   z.resize(n);
   for (size_t i=0; i<z.size(); ++i)
@@ -57,6 +56,7 @@ void Bayes::init(const ublas::matrix<double>& _x, const int _n, const int _p, co
 void Bayes::sample_zpi() {
   //! sample classification
   // ublas::matrix<double> probx(k, n);
+
   for (int i=0; i<k; ++i) {
     row(probx, i).assign(pi(i) * mvnormpdf(x, mu(i), Omega(i)));
   }
@@ -110,6 +110,7 @@ void Bayes::sample_zpi() {
     for (size_t j=0; j<oldz.size(); ++j)
       if (i == oldz[j])
 	z[j] = idx[i];
+
 }
 
 void Bayes::sample_muOmega() {
@@ -185,17 +186,33 @@ void Bayes::mcmc(const int nit, const int nmc, const string& data_file, const bo
 
   Py_BEGIN_ALLOW_THREADS
 
+  // assign storage;
+  save_z.resize(nmc);
+  save_pi.resize(nmc);
+  save_mu.resize(nmc);
+  save_Omega.resize(nmc);
+  for (int i=0; i<nmc; ++i) {
+    save_z[i].resize(n);
+    save_pi[i].resize(k);
+    save_mu[i].resize(k);
+    save_Omega[i].resize(k);
+    for (int j=0; j<k; ++j) {
+      save_mu[i][j].resize(p);
+      save_Omega[i][j].resize(p, p);
+    }
+  }
+
   //! MCMC routine
   for (int i=0; i<(nit + nmc); ++i) {
     sample_zpi();
 
     // save MCMC samples
     if (i >= nit) {
-	save_z.push_back(z);
-	save_pi.push_back(pi);
-	save_mu.push_back(mu);
-	save_Omega.push_back(Omega);
-    }
+      	save_z.push_back(z);
+      	save_pi.push_back(pi);
+      	save_mu.push_back(mu);
+      	save_Omega.push_back(Omega);
+    } 
 
     // print out occasionally
     if (i%100 == 0) {
@@ -218,4 +235,5 @@ void Bayes::mcmc(const int nit, const int nmc, const string& data_file, const bo
     write_vec_vec("save_mu_" + int2str(k) + "_" + data_file, save_mu);
     write_vec_mat("save_omega_" + int2str(k) + "_" + data_file, save_Omega);
   }
+
 }
