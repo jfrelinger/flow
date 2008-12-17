@@ -22,16 +22,23 @@ class TwoDDensity(VizFrame):
                  title="2D Density", show=True):
 
         VizFrame.__init__(self, parent, id, pos, title)
-        self.widget = TwoDPanel(None, 1, 1, self)
-        self.widget.draw()
-
         # layout the frame
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.leftPanel = wx.BoxSizer(wx.VERTICAL)
+ 	self.rightPanel = wx.BoxSizer(wx.VERTICAL)
+
         self.SetSizer(self.box)
         self.box.Add(self.leftPanel, 0, wx.EXPAND)
-        self.box.Add(self.widget, 1, wx.EXPAND)
+        self.box.Add(self.rightPanel, 1, wx.EXPAND)
         self.Layout()
+        self.SetAutoLayout(True)
+
+        # sad hack to force refresh of widget
+        self.offset = 1
+        
+        self.widget = TwoDPanel(None, 1, self, self)
+        self.widget.draw()
+        self.rightPanel.Add(self.widget, 1, wx.EXPAND)
         
         self.MenuBar = wx.MenuBar()
         self.FileMenu = wx.Menu()
@@ -105,7 +112,7 @@ class TwoDDensity(VizFrame):
                 print "debug this!"
             self.widget.model = self.model
             self.widget.Zs = self.colors
-            self.widget.parent = self.group
+            self.widget.group = self.group
             self.RadioButtons(self.fields)
             self.BuildColors()
             if not hasattr(self.group, 'mu_end'):
@@ -147,6 +154,9 @@ class TwoDDensity(VizFrame):
             self.widget.update_attributes(inputs)
         dlg.Destroy()
         self.widget.draw()
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1
                    
 
     def OnExport(self, event):
@@ -195,6 +205,9 @@ class TwoDDensity(VizFrame):
         indices = [i for i, c in enumerate(self.cbs) if c.IsChecked()]
         self.widget.components = indices
         self.widget.draw()
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1
 
     def OnZLabel(self, event):
         obo = OboTreeFrame(self.model, self)
@@ -220,6 +233,9 @@ class TwoDDensity(VizFrame):
             self.widget.levels = [inputs['Component %d' % i] for i in range(1, n+1)]
         dlg.Destroy()
         self.widget.draw()
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1
 
     def OnAddPolyGate(self, event, poly=None):
         if poly is None:
@@ -238,6 +254,9 @@ class TwoDDensity(VizFrame):
         self.widget.subplot.add_line(self.widget.p.line)
 
         self.widget.draw()
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1
 
     def OnRemovePolyGate(self, event):
         try:
@@ -248,11 +267,17 @@ class TwoDDensity(VizFrame):
         except Exception, e:
             print e
         self.widget.draw()
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1
 
     def OnRemoveQuadGate(self, event):
         try:
             self.widget.quad = False
             self.widget.draw()
+            sz = array(self.GetClientSize()) + self.offset
+            self.SetClientSize(sz)
+            self.offset *= -1
         except AttributeError:
             pass
 
@@ -260,6 +285,9 @@ class TwoDDensity(VizFrame):
         print "adding quad gate"
         self.widget.quad=True
         self.widget.draw()
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1 
         
     def RadioButtons(self, list):
         panel = wx.Panel(self, -1)
@@ -300,7 +328,11 @@ class TwoDDensity(VizFrame):
         self.widget.area = [self.widget.minx, max(self.widget.x), self.widget.miny, max(self.widget.y)]
         self.widget.name = str(x) + " vs " + str(y)
         self.widget.draw()
-        
+
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1
+
     def Plot(self):
         self.UpdateSimple(self.radioX.GetSelection(),self.radioY.GetSelection(), self.radioX.GetStringSelection(), self.radioY.GetStringSelection())
             
@@ -313,6 +345,9 @@ class TwoDDensity(VizFrame):
     
     def OnMenuSwitch(self,event):
         self.widget.draw()
+        sz = array(self.GetClientSize()) + self.offset
+        self.SetClientSize(sz)
+        self.offset *= -1
     
     def GateByColor(self, event):
         data = self.data
@@ -337,7 +372,7 @@ class TwoDDensity(VizFrame):
 #         filtered = array(results)
 
 
-        #parent = self.model.GetCurrentGroup()
+        #group = self.model.GetCurrentGroup()
         newgroup = self.model.NewGroup('GatedByColor', parent=self.group)
         self.model.NewArray('data',filtered, parent=newgroup)
         self.model.current_array.setAttr('fields', fields)
@@ -348,7 +383,7 @@ class TwoDDensity(VizFrame):
         except Exception, e:
             pass
         try:
-            sigma_end = parent.sigma_end[:]
+            sigma_end = group.sigma_end[:]
             self.model.NewArray('sigma_end',  sigma_end, parent=newgroup)
         except Exception, e:
             pass
@@ -422,6 +457,7 @@ class TwoDPanel(PlotPanel):
         self.ylab = inputs['ylab']
         self.title = inputs['title']
         self.ms = inputs['ms']
+
     def onClick(self, event):
         if event.inaxes and event.button==1:
             x ,y = event.xdata, event.ydata
@@ -536,7 +572,7 @@ class TwoDPanel(PlotPanel):
         # always put labels on if possible at mean location
         if (not self.ellipse.IsChecked()) and (self.coord1 != self.coord2):
             try:
-                mu = self.parent.mu_end[:]
+                mu = self.group.mu_end[:]
                 lvl = 0
                 for i, m in enumerate(mu):
                     lvl += 1
@@ -573,12 +609,12 @@ class TwoDPanel(PlotPanel):
 
         if self.ellipse.IsChecked() and (self.coord1 != self.coord2):
             try:
-                mu = self.parent.mu_end[:]
+                mu = self.group.mu_end[:]
                 try:
-                    spread = self.parent.omega_end[:]
+                    spread = self.group.omega_end[:]
                     spread_form = 'omega'
                 except AttributeError:
-                    spread = self.parent.sigma_end[:]
+                    spread = self.group.sigma_end[:]
                     spread_form = 'sigma'
                 try:
                     self.levels
@@ -614,5 +650,3 @@ class TwoDPanel(PlotPanel):
                 self.ellipse.Check(False)
         self.subplot.axis(self.area)
 
-      self.Refresh()
-    
