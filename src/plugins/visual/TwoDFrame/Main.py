@@ -35,6 +35,7 @@ class TwoDDensity(VizFrame):
 
         # sad hack to force refresh of widget
         self.offset = 1
+        self.offset1 = 0
         
         self.widget = TwoDPanel(None, 1, self, self)
         self.widget.draw()
@@ -66,6 +67,8 @@ class TwoDDensity(VizFrame):
         removeQuadGate = self.GateMenu.Append(-1, "Remove quadrant gate")
         gate = self.GateMenu.Append(-1, "Capture gated events")
         self.ellipses = self.GateMenu.Append(-1, "Specify ellipse confidence")
+
+        # self.filter = self.GateMenu.Append(-1, "Filter by group properties")
 
         self.GateMenu.AppendSeparator()
         copyGate = self.GateMenu.Append(-1, "Copy 4-polygon gate")
@@ -106,7 +109,8 @@ class TwoDDensity(VizFrame):
             else:
                 self.colors = None
             try:
-                self.fields = self.model.current_array.getAttr('fields')
+                # self.fields = self.model.current_array.getAttr('fields')
+                self.fields = self.model.GetCurrentHeaders()
             except AttributeError:
                 # fields = map(str,range(1, self.model.current_array.shape[1]+1))
                 print "debug this!"
@@ -157,7 +161,6 @@ class TwoDDensity(VizFrame):
         sz = array(self.GetClientSize()) + self.offset
         self.SetClientSize(sz)
         self.offset *= -1
-                   
 
     def OnExport(self, event):
         print "Test export graphics"
@@ -331,7 +334,11 @@ class TwoDDensity(VizFrame):
 
         sz = array(self.GetClientSize()) + self.offset
         self.SetClientSize(sz)
-        self.offset *= -1
+        
+        self.offset1 += 1
+        if self.offset1 == 3:
+            self.offset1 = 0
+            self.offset *= -1
 
     def Plot(self):
         self.UpdateSimple(self.radioX.GetSelection(),self.radioY.GetSelection(), self.radioX.GetStringSelection(), self.radioY.GetStringSelection())
@@ -477,15 +484,15 @@ class TwoDPanel(PlotPanel):
       alpha = 1
       if not hasattr(self, 'ms'):
           try:
-              self.ms = min(1, 1000.0/len(self.x))
+              self.ms = min(3, 1000.0/len(self.x))
           except (ZeroDivisionError, TypeError):
-              self.ms = 1.0
+              self.ms = 3.0
       if not hasattr(self, 'subplot'):
           self.subplot = self.figure.add_subplot(111)
       self.subplot.clear()
       if self.x is not None:
         # sample at most 10000 points for display
-        npts = 100000
+        npts = 10000
         if len(self.x) > npts:
             stride = len(self.x)/npts
         else:
