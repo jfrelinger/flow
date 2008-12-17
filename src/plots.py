@@ -81,6 +81,9 @@ class PlotPanel(wx.Panel):
             self._SetSize()
             self.draw()
 
+    def set_resizeflag(self, val):
+        self._resizeflag = val
+
     def _SetSize(self, pixels = None):
         """
         This method can be called to force the Plot to be a desired size, which defaults to
