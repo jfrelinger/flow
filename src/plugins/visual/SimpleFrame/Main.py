@@ -91,5 +91,6 @@ class SimplePanel(PlotPanel):
             x = self.x[:999*stride:stride]
 
             self.subplot.plot(stride*arange(len(x)), x, 'b-')
+        super(SimplePanel, self).set_resizeflag(True)
         self.Refresh()
 
