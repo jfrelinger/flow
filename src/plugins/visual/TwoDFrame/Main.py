@@ -656,8 +656,9 @@ class TwoDPanel(PlotPanel):
                 dlg.Destroy()
                 self.ellipse.Check(False)
         self.subplot.axis(self.area)
-        super(TwoDPanel, self).set_resizeflag(True)
-        
+      super(TwoDPanel, self).set_resizeflag(True)
+      self.Refresh()
+  
 #       sz = array(self.parent.GetClientSize()) + self.parent.offset
 #       self.parent.SetClientSize(sz)
 #       self.parent.offset *= -1

@@ -152,6 +152,7 @@ class HistogramPanel(PlotPanel):
             self.subplot.patches = self.patches[splits[0]:splits[upper]]
             self.current = (self.current + 1) % len(self.xs)
             self.subplot.axis(xmax=maxed )
+        super(HistogramPanel, self).set_resizeflag(True)
         self.Refresh()
 
     def plot_fit(self, x, mu, sd, counts):
