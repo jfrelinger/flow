@@ -215,7 +215,7 @@ class GraphingPanel(PlotPanel):
             zvals[i] = q11*(1-_xf)*(1-_yf) + q21*(1-_xf)*(_yf) + \
                        q12*(_xf)*(1-_yf) + q22*(_xf)*(_yf)
          
-         self.subplot.scatter(self.x,self.y,s=1, c=zvals, faceted=False )
+         self.subplot.scatter(self.x,self.y,s=1, c=zvals, edgecolors='none' )
          self.Refresh()
          
       
