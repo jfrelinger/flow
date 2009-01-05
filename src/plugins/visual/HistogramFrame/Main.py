@@ -2,7 +2,7 @@
 import wx
 import sys
 import os
-from wxPlots import PlotPanel
+from plots import PlotPanel
 from numpy import cumsum, linspace, zeros
 from VizFrame import VizFrame
 from scipy.stats import norm
@@ -19,8 +19,8 @@ class HistogramFrame(VizFrame):
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.panel = wx.Panel(self,-1)
 
-        self.widget = HistogramPanel(self, None)
-        self.widget.draw()
+        self.widget = HistogramPanel(self, 1,'')
+        self.widget.draw()        
         
         self.MenuBar = wx.MenuBar()
         self.FileMenu = wx.Menu()
@@ -39,6 +39,7 @@ class HistogramFrame(VizFrame):
         self.box.Add(self.panel,0,wx.EXPAND)
         self.box.Add(self.widget,1,wx.EXPAND)
         self.SetSizer(self.box)
+
         self.Show()
     
     def OnAddHist(self, event):
@@ -128,12 +129,11 @@ class HistogramFrame(VizFrame):
 class HistogramPanel(PlotPanel):
     """An example plotting panel. The only method that needs 
     overriding is the draw method"""
-    def __init__(self, parent, x=None, name='', **kwargs):
-        self.parent = parent
+    def __init__(self, parent, x, name='', *args):
+        super(HistogramPanel, self).__init__(parent,*args)
         self.x = x
         self.hists = {}
-        #super(HistogramPanel, self).__init__(self, parent, **kwargs)
-        PlotPanel.__init__( self, parent, **kwargs )
+        self.name=name
   
     def draw(self):
         colors = cq(['b','r','g'])
