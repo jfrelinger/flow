@@ -1,5 +1,5 @@
 import wx
-from plots import PlotPanel
+from wxPlots import PlotPanel
 import densities2 as dens
 from numpy import array, arange, mgrid, isnan, sqrt, histogram2d, min, max, take, modf, concatenate
 from numpy.linalg import inv
@@ -29,9 +29,11 @@ class TwoDDensity(VizFrame):
         # layout the frame
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.leftPanel = wx.BoxSizer(wx.VERTICAL)
+ 	self.rightPanel = wx.BoxSizer(wx.VERTICAL)
+
         self.SetSizer(self.box)
         self.box.Add(self.leftPanel, 0, wx.EXPAND)
-        self.box.Add(self.widget, 1, wx.EXPAND)
+        self.box.Add(self.rightPanel, 1, wx.EXPAND)
         self.Layout()
         #self.widget.draw()
         
@@ -407,8 +409,8 @@ class TwoDDensity(VizFrame):
                     
 
 class TwoDPanel(PlotPanel):
-    def __init__(self,parent, x, y, *args):
-        super(TwoDPanel, self).__init__(parent,*args)
+    def __init__(self,parent, x, y, **kwargs):
+        #super(TwoDPanel, self).__init__(parent,*args)
         self.parent = parent
         print x,y
         if x is None:
