@@ -73,7 +73,6 @@ class HistogramFrame(VizFrame):
             #pass
         #print menuItem.GetLabel()
         self.widget.draw()
-        
     
     def OnExport(self, event):
         print "Test export graphics"
