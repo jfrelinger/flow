@@ -4,7 +4,7 @@ import wx
 import os
 import sys
 #sys.path.append(".")
-from plots import PlotPanel
+from wxPlots import PlotPanel
 from numpy import arange
 
 #from vtk.wx.wxVTKRenderWindow import wxVTKRenderWindow
@@ -22,7 +22,7 @@ class SimpleFrame(VizFrame):
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.panel = wx.Panel(self, -1)
 
-        self.widget = SimplePanel(None, 1, self)
+        self.widget = SimplePanel(self, None)
         self.widget.draw()
 
         self.MenuBar = wx.MenuBar()
@@ -74,9 +74,9 @@ class SimpleFrame(VizFrame):
 
 class SimplePanel(PlotPanel):
     """An example plotting panel. The only method that needs overriding is the draw method"""
-    def __init__(self, x, name='', *args):
-        super(SimplePanel, self).__init__(*args)
+    def __init__(self,parent, x, name='', **kwargs):
         self.x = x
+        PlotPanel.__init__( self, parent, **kwargs )
 
     def draw(self):
         if not hasattr(self, 'subplot'):
@@ -91,6 +91,5 @@ class SimplePanel(PlotPanel):
             x = self.x[:999*stride:stride]
 
             self.subplot.plot(stride*arange(len(x)), x, 'b-')
-        super(SimplePanel, self).set_resizeflag(True)
         self.Refresh()
 

@@ -1,5 +1,5 @@
 import wx
-from plots import PlotPanel
+from wxPlots import PlotPanel
 
 from VizFrame import VizFrame
 
@@ -34,7 +34,7 @@ class BoxWhiskersFrame(VizFrame):
         try:
             if self.model.ready:
                 self.widget.data = self.model.current_array[:]
-                if len(self.widgets.shape) == 2:
+                if len(self.widget.data.shape) == 2:
                     self.widget.labels = map(str, range(self.widget.data.shape[1]))
                 else:
                     self.widget.labels = self.model.GetCurrentData().getAttr('fields')
@@ -44,15 +44,17 @@ class BoxWhiskersFrame(VizFrame):
                 self.widget.draw()
             else:
                 pass
-        except AttributeError:
+        except AttributeError, e:
+            print e
             pass
 
 class BoxWhiskersPanel(PlotPanel):
     """Box and whiskers plot."""
-    def __init__(self, *args):
-        super(BoxWhiskersPanel, self).__init__(*args)
+    def __init__(self, parent, **kwargs):
+        #super(BoxWhiskersPanel, self).__init__(*args)
         self.labels = None
         self.data = None
+        PlotPanel.__init__( self, parent, **kwargs )
         
     def draw(self):
         if not hasattr(self, 'subplot'):
