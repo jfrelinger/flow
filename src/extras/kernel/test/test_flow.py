@@ -113,7 +113,7 @@ if __name__ == '__main__':
 #     pylab.figure(figsize=[8,8])
 #     dc = map(float, [clusters[i] for i in range(len(data))])
 #     dx, dy = zip(*data)[:2]
-#     pylab.scatter(dx, dy, 5, dc, cmap=pylab.cm.jet, edgecolors='none')
+#     pylab.scatter(dx, dy, 5, dc, cmap=pylab.cm.jet, faceted=False)
 #     pylab.xlabel('Dimension 1')
 #     pylab.ylabel('Dimension 2')
 #     pylab.axis('equal')

@@ -45,7 +45,7 @@ for i, (_x, _y, _xf, _yf) in enumerate(zip(xint, yint, xfrac, yfrac)):
         q12*(_xf)*(1-_yf) + q22*(_xf)*(_yf)
 
 ax = pylab.subplot(111)
-ax.scatter(x, y, s=1, c=zvals, edgecolors='none')
+ax.scatter(x, y, s=1, c=zvals, faceted=False)
 
 # ax.contour(numpy.linspace(-3, 3, num=150), numpy.linspace(-3, 3, num=150), z)
 ax.set_xlabel('X')
