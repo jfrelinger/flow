@@ -315,8 +315,8 @@ sudo make install
 
 # install the boost numeric binding headers (for bayes)
 cd /tmp
-wget http://news.tiker.net/news.tiker.net/download/software/boost-bindings/boost-bindings-20070826.tar.gz
-tar -xzf boost-bindings-20070826.tar.gz
+wget http://mathema.tician.de/news.tiker.net/download/software/boost-numeric-bindings/boost-numeric-bindings-20081116.tar.gz
+tar xzf boost-numeric-bindings-20081116.tar.gz 
 sudo cp -R boost-bindings/boost/numeric/bindings/ /usr/include/boost/numeric/
 
 # alternatively, check out svn repository of boost-sandbox
