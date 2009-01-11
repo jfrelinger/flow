@@ -492,7 +492,7 @@ class TwoDPanel(PlotPanel):
       self.subplot.clear()
       if self.x is not None:
         # sample at most 10000 points for display
-        npts = 10000
+        npts = 100000
         if len(self.x) > npts:
             stride = len(self.x)/npts
         else:
@@ -610,6 +610,8 @@ class TwoDPanel(PlotPanel):
             
         if self.contour.IsChecked() :
             bins = int(0.25*sqrt(len(self.x)))
+            if bins < 15:
+                bins = 15
             z, xedge, yedge = histogram2d(self.y, self.x, bins=[bins, bins], range=[(self.miny, max(self.y)),(self.minx, max(self.x))])
             c = self.subplot.contour(z, 25, cmap=cm.jet, alpha=alpha, extent=self.area)
             alpha = alpha - .25

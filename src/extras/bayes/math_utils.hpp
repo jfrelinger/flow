@@ -12,8 +12,8 @@ typedef ublas::matrix<double, ublas::column_major> matrix_t;
 void set_rseed(const unsigned int& seed1,
                const unsigned int& seed2);
 
-void set_state(const unsigned int& seed1 = std::time(NULL),
-               const unsigned int& seed2 = std::clock());
+void set_state(const unsigned int& seed1 = time(NULL),
+               const unsigned int& seed2 = clock());
 
 namespace Rmath {
   //! convenience functions to get vector of results
