@@ -67,18 +67,18 @@ elif platform == 'darwin':
 else : # works for Debian and Ubuntu
     env = Environment(
         CPPDEFINES=[],
-        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', pyinc],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/include/', '/usr/local/include', pyinc],
         CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -mtune=%s' % arch,
-        LIBPATH=['/usr/local/src/ann_1.1.1/lib'],
+        LIBPATH=['/usr/local/src/ann_1.1.1/lib', '/usr/lib', '/usr/local/lib'],
         LIBS=['ANN', 'm', pyver],
         )
 
     bp = Environment(
         CPPDEFINES=['BOOST_PYTHON_DYNAMIC_LIB '],
-        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', pyinc],
+        CPPPATH=['/usr/local/src/ann_1.1.1/include/ANN', '/usr/include/', '/usr/local/include', pyinc],
         LIBS=['ANN', 'boost_python', pyver],
         CXXFLAGS='-Wall -Wno-long-long -pipe -O3 -ffast-math -mtune=%s -fno-strict-aliasing -fPIC -ftemplate-depth-130 -w -DBOOST_DISABLE_THREADS' % arch,
-        LIBPATH=['/usr/local/src/ann_1.1.1/lib', pylib], 
+        LIBPATH=['/usr/local/src/ann_1.1.1/lib', pylib, '/usr/lib', '/usr/local/lib'], 
         SHLIBPREFIX=''
         )
 
