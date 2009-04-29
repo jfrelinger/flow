@@ -16,3 +16,4 @@
 .*\.pyc
 .*~
 .*Store
+packaging/*
