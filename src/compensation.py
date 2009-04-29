@@ -1,6 +1,6 @@
 import wx
 import wx.grid
-from plots import PlotPanel
+from wxPlots import PlotPanel
 import pylab
 import numpy
 from numpy.linalg import solve
@@ -159,11 +159,10 @@ class CompensationFrame(wx.Frame):
         
 
 class GraphingPanel(PlotPanel):
-    def __init__(self,parent, id, x,y,*args):
-         super(GraphingPanel, self).__init__(parent=parent, id=id)
+    def __init__(self,parent, id, x,y,**kwargs):
          self.x = x
          self.y = y
-         
+         PlotPanel.__init__( self, parent, **kwargs )
          # this really doesn't seem to speed things up much...
 #         speed = 10000
 #         if len(self.x) > speed:
@@ -216,7 +215,7 @@ class GraphingPanel(PlotPanel):
             zvals[i] = q11*(1-_xf)*(1-_yf) + q21*(1-_xf)*(_yf) + \
                        q12*(_xf)*(1-_yf) + q22*(_xf)*(_yf)
          
-         self.subplot.scatter(self.x,self.y,s=1, c=zvals, faceted=False )
+         self.subplot.scatter(self.x,self.y,s=1, c=zvals, edgecolors='none' )
          self.Refresh()
          
       

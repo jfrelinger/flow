@@ -1,5 +1,5 @@
 import wx
-from plots import PlotPanel
+from wxPlots import PlotPanel
 import densities2 as dens
 from numpy import array, arange, mgrid, isnan, sqrt, histogram2d, min, max, take, modf, concatenate
 from numpy.linalg import inv
@@ -37,7 +37,7 @@ class TwoDDensity(VizFrame):
         self.offset = 1
         self.offset1 = 0
         
-        self.widget = TwoDPanel(None, 1, self, self)
+        self.widget = TwoDPanel(self,None, None)
         self.widget.draw()
         self.rightPanel.Add(self.widget, 1, wx.EXPAND)
         
@@ -158,9 +158,9 @@ class TwoDDensity(VizFrame):
             self.widget.update_attributes(inputs)
         dlg.Destroy()
         self.widget.draw()
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
-        self.offset *= -1
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
+#         self.offset *= -1
 
     def OnExport(self, event):
         print "Test export graphics"
@@ -208,9 +208,9 @@ class TwoDDensity(VizFrame):
         indices = [i for i, c in enumerate(self.cbs) if c.IsChecked()]
         self.widget.components = indices
         self.widget.draw()
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
-        self.offset *= -1
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
+#         self.offset *= -1
 
     def OnZLabel(self, event):
         obo = OboTreeFrame(self.model, self)
@@ -236,9 +236,9 @@ class TwoDDensity(VizFrame):
             self.widget.levels = [inputs['Component %d' % i] for i in range(1, n+1)]
         dlg.Destroy()
         self.widget.draw()
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
-        self.offset *= -1
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
+#         self.offset *= -1
 
     def OnAddPolyGate(self, event, poly=None):
         if poly is None:
@@ -257,9 +257,9 @@ class TwoDDensity(VizFrame):
         self.widget.subplot.add_line(self.widget.p.line)
 
         self.widget.draw()
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
-        self.offset *= -1
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
+#         self.offset *= -1
 
     def OnRemovePolyGate(self, event):
         try:
@@ -270,17 +270,17 @@ class TwoDDensity(VizFrame):
         except Exception, e:
             print e
         self.widget.draw()
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
-        self.offset *= -1
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
+#         self.offset *= -1
 
     def OnRemoveQuadGate(self, event):
         try:
             self.widget.quad = False
             self.widget.draw()
-            sz = array(self.GetClientSize()) + self.offset
-            self.SetClientSize(sz)
-            self.offset *= -1
+#             sz = array(self.GetClientSize()) + self.offset
+#             self.SetClientSize(sz)
+#             self.offset *= -1
         except AttributeError:
             pass
 
@@ -288,9 +288,9 @@ class TwoDDensity(VizFrame):
         print "adding quad gate"
         self.widget.quad=True
         self.widget.draw()
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
-        self.offset *= -1 
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
+#         self.offset *= -1 
         
     def RadioButtons(self, list):
         panel = wx.Panel(self, -1)
@@ -332,13 +332,13 @@ class TwoDDensity(VizFrame):
         self.widget.name = str(x) + " vs " + str(y)
         self.widget.draw()
 
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
         
-        self.offset1 += 1
-        if self.offset1 == 3:
-            self.offset1 = 0
-            self.offset *= -1
+#         self.offset1 += 1
+#         if self.offset1 == 3:
+#             self.offset1 = 0
+#             self.offset *= -1
 
     def Plot(self):
         self.UpdateSimple(self.radioX.GetSelection(),self.radioY.GetSelection(), self.radioX.GetStringSelection(), self.radioY.GetStringSelection())
@@ -352,9 +352,9 @@ class TwoDDensity(VizFrame):
     
     def OnMenuSwitch(self,event):
         self.widget.draw()
-        sz = array(self.GetClientSize()) + self.offset
-        self.SetClientSize(sz)
-        self.offset *= -1
+#         sz = array(self.GetClientSize()) + self.offset
+#         self.SetClientSize(sz)
+#         self.offset *= -1
     
     def GateByColor(self, event):
         data = self.data
@@ -447,14 +447,14 @@ class TwoDDensity(VizFrame):
                     
 
 class TwoDPanel(PlotPanel):
-    def __init__(self, x, y, parent, *args):
-        super(TwoDPanel, self).__init__(*args)
+    def __init__(self,parent, x, y, **kwargs):
         self.x = x
         self.y = y
         self.parent = parent
         self.colors = None
         self.Zs = None
         self.quad = False
+        PlotPanel.__init__( self, parent, **kwargs )
 
     def update_attributes(self, inputs):
         if not hasattr(self, 'subplot'):
@@ -478,7 +478,7 @@ class TwoDPanel(PlotPanel):
             q1 = len(self.x[(self.x>x)*(self.y>y)])
             self.title = ('bottom left=%d, top left=%d, top right=%d, bottom right=%d, X = %d, Y= %d' % (q3, q2, q1, q4, x, y))
             print 'bottom left=%d, top left=%d, top right=%d, bottom right=%d' % (q3, q2, q1, q4)
-            self.draw()
+        self.draw()
     
     def draw(self):
       alpha = 1
@@ -492,7 +492,7 @@ class TwoDPanel(PlotPanel):
       self.subplot.clear()
       if self.x is not None:
         # sample at most 10000 points for display
-        npts = 10000
+        npts = 100000
         if len(self.x) > npts:
             stride = len(self.x)/npts
         else:
@@ -573,7 +573,7 @@ class TwoDPanel(PlotPanel):
                         zvals[i] = q11*(1-_xf)*(1-_yf) + q21*(1-_xf)*(_yf) + \
                             q12*(_xf)*(1-_yf) + q22*(_xf)*(_yf)
 
-                    s = self.subplot.scatter(x, y, alpha=alpha, s=self.ms, c=zvals, faceted=False )
+                    s = self.subplot.scatter(x, y, alpha=alpha, s=self.ms, c=zvals, edgecolors='none' )
             alpha = alpha - .25
 
         # always put labels on if possible at mean location
@@ -610,6 +610,8 @@ class TwoDPanel(PlotPanel):
             
         if self.contour.IsChecked() :
             bins = int(0.25*sqrt(len(self.x)))
+            if bins < 15:
+                bins = 15
             z, xedge, yedge = histogram2d(self.y, self.x, bins=[bins, bins], range=[(self.miny, max(self.y)),(self.minx, max(self.x))])
             c = self.subplot.contour(z, 25, cmap=cm.jet, alpha=alpha, extent=self.area)
             alpha = alpha - .25
@@ -656,4 +658,10 @@ class TwoDPanel(PlotPanel):
                 dlg.Destroy()
                 self.ellipse.Check(False)
         self.subplot.axis(self.area)
+      #super(TwoDPanel, self).set_resizeflag(True)
+      self.Refresh()
+  
+#       sz = array(self.parent.GetClientSize()) + self.parent.offset
+#       self.parent.SetClientSize(sz)
+#       self.parent.offset *= -1
 

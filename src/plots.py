@@ -77,9 +77,13 @@ class PlotPanel(wx.Panel):
     def _onIdle(self, evt): #IGNORE:W0613
         """idle event"""
         if self._resizeflag:
-            self._resizeflag = False
             self._SetSize()
+            # self._resizeflag = False
             self.draw()
+        self._resizeflag = False
+
+    def set_resizeflag(self, val):
+        self._resizeflag = val
 
     def _SetSize(self, pixels = None):
         """

@@ -174,10 +174,10 @@ class PolygonInteractor(object):
             self.canvas.blit(self.ax.bbox)
             # self.canvas.draw()
             self.parent.draw()
-            sz = array(self.parent.parent.GetClientSize()) + \
-                self.parent.parent.offset
-            self.parent.parent.SetClientSize(sz)
-            self.parent.parent.offset *= -1
+#             sz = array(self.parent.parent.GetClientSize()) + \
+#                 self.parent.parent.offset
+#             self.parent.parent.SetClientSize(sz)
+#             self.parent.parent.offset *= -1
 
             return
 
@@ -185,10 +185,10 @@ class PolygonInteractor(object):
         if event.button != 1: return
         self._ind = None
         self.parent.draw()
-        sz = array(self.parent.parent.GetClientSize()) + \
-            self.parent.parent.offset
-        self.parent.parent.SetClientSize(sz)
-        self.parent.parent.offset *= -1
+#         sz = array(self.parent.parent.GetClientSize()) + \
+#             self.parent.parent.offset
+#         self.parent.parent.SetClientSize(sz)
+#         self.parent.parent.offset *= -1
 
     def motion_notify_callback(self, event):
         'on mouse movement'
