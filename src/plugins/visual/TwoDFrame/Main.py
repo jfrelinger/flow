@@ -591,7 +591,7 @@ class TwoDPanel(PlotPanel):
                                       fontsize=14, weight='bold', 
                                       bbox=dict(facecolor='yellow', alpha=0.5),
                                       va='center', ha='center')
-            except AttributeError, e:
+            except AttributeError, e: 
                 # don't label if error (e.g. no mu_end)
                 pass
 
@@ -626,7 +626,7 @@ class TwoDPanel(PlotPanel):
                 try:
                     self.levels
                 except AttributeError:
-                    self.levels = [0.67]*len(mu)
+                    self.levels = [0.5]*len(mu)
                 lvl = 0
                 for i, item in enumerate(zip(mu, spread)):
                     # only display selected components
