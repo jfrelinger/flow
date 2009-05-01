@@ -35,9 +35,9 @@ flag, and the actual resizing of the figure is triggered by an Idle event."""
         self.figure = Figure( None, dpi )
         self.canvas = FigureCanvasWxAgg( self, -1, self.figure )
         self.SetColor( color )
-        self.parent = parent
+
         self._SetSize()
-        #self.draw()
+        self.draw()
 
         self._resizeflag = False
 
@@ -62,15 +62,11 @@ flag, and the actual resizing of the figure is triggered by an Idle event."""
             self._SetSize()
 
     def _SetSize( self ):
-        pixels = self.parent.GetClientSizeTuple() 
-        pixels = self.GetClientSizeTuple()
-        
+        pixels = tuple( self.parent.GetClientSize() )
         self.SetSize( pixels )
         self.canvas.SetSize( pixels )
         self.figure.set_size_inches( float( pixels[0] )/self.figure.get_dpi(),
                                      float( pixels[1] )/self.figure.get_dpi() )
-
-        print "set size"
 
     def draw(self): pass # abstract, to be overridden by child classes
 
