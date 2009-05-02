@@ -70,7 +70,7 @@ flag, and the actual resizing of the figure is triggered by an Idle event."""
         self.figure.set_size_inches( float( pixels[0] )/self.figure.get_dpi(),
                                      float( pixels[1] )/self.figure.get_dpi() )
 
-        print "set size"
+        # print "set size"
 
     def draw(self): pass # abstract, to be overridden by child classes
 
