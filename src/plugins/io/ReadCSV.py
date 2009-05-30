@@ -9,14 +9,18 @@ class ReadCSV(Io):
     type = 'Read'
     supported = "CSV files (*.out)|*.out|All files (*.*)|*.*"
 
-    def ReadCSV(self, filename, sep='\t'):
+    def ReadCSV(self, filename, sep=None):
         """reads a csv file and populates data structures"""
         # self.model.ready = False
 
-        text = open(filename).readlines()
-        headers = open(filename.replace('out', 'txt')).readlines()
-        # headers = text[0].strip('\n').strip('\r').split(sep)
-        arr = numpy.array([map(float, line.strip().split(sep)) for line in text[0:]])        
+        arr = numpy.loadtxt(filename, delimiter=sep)
+        headers = numpy.loadtxt(filename.replace('out', 'txt'),
+                                dtype='string')
+
+#         text = open(filename).readlines()
+#         headers = open(filename.replace('out', 'txt')).readlines()
+#         # headers = text[0].strip('\n').strip('\r').split(sep)
+#         arr = numpy.array([map(float, line.strip().split(sep)) for line in text[0:]])        
 
         # create a new group
         basename = os.path.basename(filename)

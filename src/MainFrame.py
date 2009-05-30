@@ -4,7 +4,7 @@ from io import Io
 from VizFrame import VizFrame
 from EditTable import EditFrame, Table
 from dialogs import ParameterDialog, ChoiceDialog, RemoteProcessDialog
-from numpy import array, where, greater, log10, log, clip, take, argsort, arcsinh, min, max
+from numpy import array, where, greater, log10, log, clip, take, argsort, arcsinh, min, max, savetxt, loadtxt
 from numpy.random import shuffle, randint, get_state
 import transforms
 from OboFrame import OboTreeFrame
@@ -93,6 +93,7 @@ class MainFrame(VizFrame):
 
         # default dir for OBO files
         self.defaultOBOdir = "."
+        self.exportDir = self.io.defaultDir.replace('results','data')
 
         # flag for saved
     def DoLayout(self):
@@ -680,26 +681,33 @@ class MainFrame(VizFrame):
         dialog = wx.FileDialog(parent=self, 
                                wildcard=wildcard,
                                message="Export Data", 
-                               defaultDir=self.io.defaultDir.replace('results','data'),
+                               defaultDir=self.exportDir,
                                style=wx.SAVE|wx.OVERWRITE_PROMPT)
         
         if dialog.ShowModal() == wx.ID_OK:
             path = dialog.GetPath()
 
+            self.exportDir = os.path.split(path)[0]
+
             if path.split('.')[-1] in ['out']:
                 ext = ''
             else:
                 ext = '.out'
+                
+            datafile = path + ext
+            savetxt(datafile, x[:,indices], delimiter='\t')
+            savetxt(datafile.replace('out', 'txt'), 
+                    array(cs)[indices], fmt='%s')
             
-            fo = open(path + ext, 'w')
-            fo.write('\n'.join(['\t'.join(map(str, item)) 
-                                for item in x[:,indices]]))
-            fo.close()
+#             fo = open(path + ext, 'w')
+#             fo.write('\n'.join(['\t'.join(map(str, item)) 
+#                                 for item in x[:,indices]]))
+#             fo.close()
 
-            # store associated headers
-            fo = open(path + '.txt', 'w')
-            fo.write('\n'.join([header for header in array(cs)[indices]]))
-            fo.close()
+#             # store associated headers
+#             fo = open(path + '.txt', 'w')
+#             fo.write('\n'.join([header for header in array(cs)[indices]]))
+#             fo.close()
 
         dialog.Destroy()
         
