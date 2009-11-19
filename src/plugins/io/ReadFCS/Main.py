@@ -46,7 +46,7 @@ import os
 class ReadFCS(Io):
     newMethods=('ReadFCS','Load FCS data file')
     type = 'Read'
-    supported = "FCS files (*.fcs)|*.fcs|All files (*.*)|*.*"
+    supported = "FCS files (*.fcs)|*.fcs|LMD files (*.lmd)|*.lmd|All files (*.*)|*.*"
 
     def ReadFCS(self, filename):
         """reads a fcs file and populates data structures"""

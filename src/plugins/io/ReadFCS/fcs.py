@@ -14,6 +14,7 @@ from utils import log2, fmt_integer, mask_integer
 class FCSReader(object):
 	"""A class to read FCS3.0 data files."""
 	def __init__(self, filename):
+		self.lmd = False # is stopping bit the last data bit or first bit after last data bit.
 		self.name = '_'.join(os.path.basename(filename).split('.')[0:-1])
 		self._file = cStringIO.StringIO(open(filename, 'rb').read())
 		self.header = self.parse_header()
@@ -107,8 +108,12 @@ class FCSReader(object):
 		header['text_last'] = int(self.read_bytes(18, 25))
 		header['data_first'] = int(self.read_bytes(26, 33))
 		header['data_last'] = int(self.read_bytes(34, 41))
-		header['analysis_first'] = int(self.read_bytes(42, 49))
-		header['analysis_last'] = int(self.read_bytes(50, 57))
+		try:
+			header['analysis_first'] = int(self.read_bytes(42, 49))
+			header['analysis_last'] = int(self.read_bytes(50, 57))
+		except ValueError:
+			header['analysis_first'] = -1
+			header['analysis_last'] = -1
 		return header
 
 
@@ -118,6 +123,8 @@ class FCSReader(object):
 			return {}
 		else:
 			delim = self.read_bytes(first, first)
+			if self.read_bytes(first+1, last)[-1] != delim:
+				self.lmd = True
 			text = [s.strip() for s in self.read_bytes(first+1, last).replace('$', '').split(delim)]
 			return dict(zip(text[::2], text[1::2]))
 	
@@ -130,6 +137,8 @@ class FCSReader(object):
 			first = int(self.text['BEGINDATA'])
 			last = int(self.text['ENDDATA'])
 
+		if self.lmd:
+			last = last - 1
 		if mode == 'L':
 			data = self.parse_list_data(first, last)
 		elif mode == 'C':
