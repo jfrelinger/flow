@@ -209,24 +209,25 @@ class PolygonInteractor(object):
         self.canvas.blit(self.ax.bbox)
 
 if __name__ == '__main__':
-    from pylab import *
-
-    fig = figure()
-    # circ = CirclePolygon((.5, .5), .5, animated=True)
-    rect = acRectangle((11.25, 11.25), 5.5, 5.5, animated=True)
-
-    ax = subplot(111)
-    # ax.add_patch(circ)
-    ax.add_patch(rect)
-    # circ.set_visible(False)
-    rect.set_visible(False)
-    # p = PolygonInteractor(ax, circ)
-    p = PolygonInteractor(ax, rect)
-
-    ax.add_line(p.line)
-    ax.set_title('Click and drag a point to move it')
-    ax.set_xlim((10,21))
-    ax.set_ylim((10,21))
-    show()
-
-    # print '>', PointInPoly([[0,0], [1,0], [1,1], [0,1]], [1.001, 1])
+#     from pylab import *
+# 
+#     fig = figure()
+#     # circ = CirclePolygon((.5, .5), .5, animated=True)
+#     rect = acRectangle((11.25, 11.25), 5.5, 5.5, animated=True)
+# 
+#     ax = subplot(111)
+#     # ax.add_patch(circ)
+#     ax.add_patch(rect)
+#     # circ.set_visible(False)
+#     rect.set_visible(False)
+#     # p = PolygonInteractor(ax, circ)
+#     p = PolygonInteractor(ax, rect)
+# 
+#     ax.add_line(p.line)
+#     ax.set_title('Click and drag a point to move it')
+#     ax.set_xlim((10,21))
+#     ax.set_ylim((10,21))
+#     show()
+# 
+    pts = array([[1.001,1],[0.5,0.5]]).T
+    print '>', PointsInPoly([[0,0], [1,0], [1,1], [0,1]], pts)

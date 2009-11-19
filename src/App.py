@@ -48,8 +48,10 @@ class MainApp(wx.App): #IGNORE:R0902
         self.fileMenu = wx.Menu()
         self.io.BuildOpenMenu(self.fileMenu)
         self.fileMenu.AppendSeparator()
-        importDir = self.fileMenu.Append(-1, "Load all FCS files in directory")
-        self.controlFrame.Bind(wx.EVT_MENU, self.OnImportDir, importDir)
+        importFCSDir = self.fileMenu.Append(-1, "Load all FCS files in directory")
+        importCSVDir = self.fileMenu.Append(-1, "Load all delimited files in directory")
+        self.controlFrame.Bind(wx.EVT_MENU, self.OnImportFCSDir, importFCSDir)
+        self.controlFrame.Bind(wx.EVT_MENU, self.OnImportCSVDir, importCSVDir)
         self.fileMenu.AppendSeparator()
         save = self.fileMenu.Append(-1,'Save HDF5 file')
         self.controlFrame.Bind(wx.EVT_MENU, self.OnSave, save)
@@ -178,7 +180,7 @@ class MainApp(wx.App): #IGNORE:R0902
                 self.spillFrame = SpillFrame(spill, markers)
                 self.spillFrame.Show()
 
-    def OnImportDir(self, event): #IGNORE:W0613 
+    def OnImportFCSDir(self, event): #IGNORE:W0613 
         """Import all fcs files in directory."""
         dlg = wx.DirDialog(None,
                            "Choose a directory with .fcs files:",
@@ -188,6 +190,19 @@ class MainApp(wx.App): #IGNORE:R0902
             fs = glob.glob(dir + '/*.fcs')
             for f in fs:
                 self.io.ReadFCS(f)
+                self.model.SelectRoot()
+        dlg.Destroy()
+
+    def OnImportCSVDir(self, event): #IGNORE:W0613 
+        """Import all csv files in directory."""
+        dlg = wx.DirDialog(None,
+                           "Choose a directory with .out and .txt files:",
+                           style=wx.DD_DEFAULT_STYLE)
+        if dlg.ShowModal() == wx.ID_OK:
+            dir = dlg.GetPath()
+            fs = glob.glob(dir + '/*.out')
+            for f in fs:
+                self.io.ReadCSV(f)
                 self.model.SelectRoot()
         dlg.Destroy()
 
