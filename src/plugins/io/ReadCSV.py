@@ -1,4 +1,4 @@
-from io import Io
+from flowio import Io
 import numpy
 import os
 

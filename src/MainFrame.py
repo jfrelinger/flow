@@ -1,6 +1,6 @@
 import wx
 import os
-from io import Io
+from flowio import Io
 from VizFrame import VizFrame
 from EditTable import EditFrame, Table
 from dialogs import ParameterDialog, ChoiceDialog, RemoteProcessDialog

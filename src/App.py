@@ -19,7 +19,7 @@ sys.path.append('plugins/projections'.replace("/", os.path.sep))
 from plugin import loadFrames, loadstatistics, loadprojections
 from MainFrame import MainFrame
 from Model import FlowModel
-from io import Io
+from flowio import Io
 from dialogs import SaveDialog
 from compensation import CompensationFrame
 from EditTable import SpillFrame
