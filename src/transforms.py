@@ -45,16 +45,16 @@ def BiexponentialOp(data, indices, inputs):
                                      inputs['c'], inputs['d'], inputs['f'])
 
 def LogicleOp(data, indices, inputs):
-    m = inputs['M'] * log(10) # convert from log10 to log 
+    m = inputs['M'] * log(10) # convert from log10 to log
     for i in indices:
         d = data[:, i]
         r = quantile(d[d<0], inputs['r'])
         data[:, i] = logicle(data[:, i], inputs['T'], m, r)
-    
+
 def HyperlogOp(data, indices, inputs):
     for i in indices:
         data[:, i] = hyperlog(data[:, i], inputs['b'], inputs['d'], inputs['r'])
-    
+
 def ArcsinhOp(data, indices, inputs):
     for i in indices:
         data[:, i] = arcsinh(inputs['a']+inputs['b']*data[:, i]) + inputs['c']
