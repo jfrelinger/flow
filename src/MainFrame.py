@@ -1,6 +1,6 @@
 import wx
 import os
-from io import Io
+from my_io import Io
 from VizFrame import VizFrame
 from EditTable import EditFrame, Table
 from dialogs import ParameterDialog, ChoiceDialog, RemoteProcessDialog
@@ -32,9 +32,9 @@ class MainFrame(VizFrame):
                                        style=wx.TE_RICH|wx.TE_MULTILINE|wx.TE_READONLY, size=(200,100))
         # current server URL
         self.server = 'http://localhost/'
-        
+
         menubar = wx.MenuBar()
-        
+
 
         transforms = {}
         transforms['clip'] = (self.OnClip, "Clip transform")
@@ -79,10 +79,10 @@ class MainFrame(VizFrame):
         submit_batch = self.remoteProcessMenu.Append(-1, "Submit batch jobs to remote process")
         self.Bind(wx.EVT_MENU, self.OnSubmitJob, submit_job)
         self.Bind(wx.EVT_MENU, self.OnSubmitBatch, submit_batch)
-        
+
         self.SetMenuBar(menubar)
         #statusbar = self.CreateStatusBar()
-        # createEdit needs to be called before CreatePopup 
+        # createEdit needs to be called before CreatePopup
         # to ensure menu's wx.IDs are consistent
         self.edit = self.CreateEdit()
         self.popup = self.CreatePopup()
@@ -99,7 +99,7 @@ class MainFrame(VizFrame):
     def DoLayout(self):
         # layout code
         self.box = wx.BoxSizer(wx.VERTICAL)
-        
+
         panelsizer = wx.BoxSizer(wx.VERTICAL)
         box1 = wx.BoxSizer(wx.VERTICAL)
         box2 = wx.BoxSizer(wx.VERTICAL)
@@ -120,7 +120,7 @@ class MainFrame(VizFrame):
     # Ontology
     def OnLoadOntology(self, event):
         """Load an ontology in OBO format"""
-        dlg = wx.FileDialog(self, 
+        dlg = wx.FileDialog(self,
                             wildcard="OBO files (*.obo)|*.obo|All files (*.*)|*.*",
                             defaultDir=self.defaultOBOdir,
                             style=wx.OPEN)
@@ -130,7 +130,7 @@ class MainFrame(VizFrame):
             self.model.obofile = file
 
         dlg.Destroy()
-        
+
     # Remote process
     def OnSubmitJob(self, event):
         """Job submission dialog."""
@@ -141,7 +141,7 @@ class MainFrame(VizFrame):
             filename = self.model.savedAs
         else:
             wx.MessageBox("No data found")
-            return            
+            return
 
         dlg = RemoteProcessDialog(self.server, filename, data_path, data.shape)
         if dlg.ShowModal() == wx.ID_OK:
@@ -151,7 +151,7 @@ class MainFrame(VizFrame):
             self.filename = dlg.file_ctrl.GetValue()
             self.data = dlg.data_ctrl.GetValue()
             self.job = dlg.job_ctrl.GetValue()
-            
+
             print self.server, self.user, self.password, self.filename, self.data, self.job
             session = connect(self.server, self.user, self.password)
             session.send_data(self.data)
@@ -161,7 +161,7 @@ class MainFrame(VizFrame):
             print job_def
             session.send_job(job_def)
         dlg.Destroy()
-    
+
 
     def OnSubmitBatch(self, event):
         """Batch job submission dialog."""
@@ -170,14 +170,14 @@ class MainFrame(VizFrame):
 #             data = self.model.GetCurrentData()[:]
 #         else:
 #             wx.MessageBox("No data found")
-#             return            
+#             return
 
 #         dlg = RemoteProcessDialog(self.model.server)
 #         if dlg.ShowModal() == wx.ID_OK:
 #             job = dlg.job
 #             self.model.server = dlg.server_ctrl.GetValue()
 #             print data.shape, job, self.model.server
-        
+
 #         dlg.Destroy()
 
 
@@ -263,17 +263,17 @@ class MainFrame(VizFrame):
 
     def OnClip(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([('lower', 'FloatValidator', str(0.0)), 
-                                ('upper', 'FloatValidator', str(1024.0))], 
+        dlg2 = ParameterDialog([('lower', 'FloatValidator', str(0.0)),
+                                ('upper', 'FloatValidator', str(1024.0))],
                                inputs,
                                'f(x) = clip(x, lower, upper)')
         indices = self.GetIndices(dlg2)
         self.model.ClipTransform(indices, inputs)
-        
+
     def OnScale(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([('lower', 'FloatValidator', str(0.0)), 
-                                ('upper', 'FloatValidator', str(1024.0))], 
+        dlg2 = ParameterDialog([('lower', 'FloatValidator', str(0.0)),
+                                ('upper', 'FloatValidator', str(1024.0))],
                                inputs,
                                'f(x) = lower + (upper-lower)*(x - min(x))/(max(x)-min(x))')
         indices = self.GetIndices(dlg2)
@@ -281,7 +281,7 @@ class MainFrame(VizFrame):
 
     def OnNormalScale(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([], 
+        dlg2 = ParameterDialog([],
                                inputs,
                                'f(x) = (x - mean(x))/std(x)')
         indices = self.GetIndices(dlg2)
@@ -289,8 +289,8 @@ class MainFrame(VizFrame):
 
     def OnLinear(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([('a', 'FloatValidator', str(0)), 
-                                ('b', 'FloatValidator', str(1))], 
+        dlg2 = ParameterDialog([('a', 'FloatValidator', str(0)),
+                                ('b', 'FloatValidator', str(1))],
                                inputs,
                                'f(x) = a + b*x')
         indices = self.GetIndices(dlg2)
@@ -298,9 +298,9 @@ class MainFrame(VizFrame):
 
     def OnQuadratic(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([('a', 'FloatValidator', str(0)), 
+        dlg2 = ParameterDialog([('a', 'FloatValidator', str(0)),
                                 ('b', 'FloatValidator', str(1)),
-                                ('c', 'FloatValidator', str(0))], 
+                                ('c', 'FloatValidator', str(0))],
                                inputs,
                                'f(x) = a*x^2 + b*x + c')
         indices = self.GetIndices(dlg2)
@@ -308,9 +308,9 @@ class MainFrame(VizFrame):
 
     def OnLog(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([('l', 'FloatValidator', str(1)), 
+        dlg2 = ParameterDialog([('l', 'FloatValidator', str(1)),
                                 ('r', 'FloatValidator', str(1)),
-                                ('d', 'FloatValidator', str(1))], 
+                                ('d', 'FloatValidator', str(1))],
                                inputs,
                                'f(x) = r/d * log10(x) for x>l, 0 otherwise')
         indices = self.GetIndices(dlg2)
@@ -318,9 +318,9 @@ class MainFrame(VizFrame):
 
     def OnLogn(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([('l', 'FloatValidator', str(1)), 
+        dlg2 = ParameterDialog([('l', 'FloatValidator', str(1)),
                                 ('r', 'FloatValidator', str(1)),
-                                ('d', 'FloatValidator', str(1))], 
+                                ('d', 'FloatValidator', str(1))],
                                inputs,
                                'f(x) = r/d * log(x) for x>l, 0 otherwise')
         indices = self.GetIndices(dlg2)
@@ -328,11 +328,11 @@ class MainFrame(VizFrame):
 
     def OnBiexponential(self, event):
         inputs = {}
-        dlg2 = ParameterDialog([('a', 'FloatValidator', str(0.5)), 
+        dlg2 = ParameterDialog([('a', 'FloatValidator', str(0.5)),
                                 ('b', 'FloatValidator', str(1.0)),
                                 ('c', 'FloatValidator', str(0.5)),
                                 ('d', 'FloatValidator', str(1.0)),
-                                ('f', 'FloatValidator', str(0))], 
+                                ('f', 'FloatValidator', str(0))],
                                inputs,
                                'finv(x) = a*exp(b*x) - c*exp(d*x) + f')
         indices = self.GetIndices(dlg2)
@@ -346,7 +346,7 @@ class MainFrame(VizFrame):
         r = 0.05
         dlg2 = ParameterDialog([('T', 'FloatValidator', str(T)),
                                 ('M', 'FloatValidator', str(4.5)),
-                                ('r', 'FloatValidator', str(r))], 
+                                ('r', 'FloatValidator', str(r))],
                                inputs,
                                'finv(x) = T*exp(-(m-w))*(exp(x-w)-p^2*exp(-(x-w)/p)+p^2-1')
         indices = self.GetIndices(dlg2)
@@ -356,7 +356,7 @@ class MainFrame(VizFrame):
         inputs = {}
         dlg2 = ParameterDialog([('b', 'FloatValidator', str(100.0)),
                                 ('d', 'FloatValidator', str(5.0)),
-                                ('r', 'FloatValidator', str(1024.0))], 
+                                ('r', 'FloatValidator', str(1024.0))],
                                inputs,
                                'finv(x) = sgn(x)*10^(x*sgn(x)*d/r) + b*(d/r)*y - sgn(x)')
         indices = self.GetIndices(dlg2)
@@ -366,7 +366,7 @@ class MainFrame(VizFrame):
         inputs = {}
         dlg2 = ParameterDialog([('a', 'FloatValidator', str(1.0)),
                                 ('b', 'FloatValidator', str(1.0)),
-                                ('c', 'FloatValidator', str(0.0))], 
+                                ('c', 'FloatValidator', str(0.0))],
                                inputs,
                                'x = arcsinh(a+b*x) + c')
         indices = self.GetIndices(dlg2)
@@ -404,8 +404,8 @@ class MainFrame(VizFrame):
             self.tree.SetItemTextColour(item, 'black')
             self.TreeItemsDefaultColor(item)
             item, cookie = self.tree.GetNextChild(parent, cookie)
-       
-    
+
+
     def UpdateTree(self, newH5Group, curTreeGroup, data = None):
         self.curData = data
         newTreeGroup = self.tree.AppendItem(curTreeGroup, newH5Group._v_name)
@@ -421,7 +421,7 @@ class MainFrame(VizFrame):
             self.tree.SetItemPyData(item,newH5Group._v_leaves[leaf])
         for subGroup in newH5Group._v_groups.keys():
             self.UpdateTree(newH5Group._v_groups[subGroup],newTreeGroup, self.curData)
-            
+
     def OnTreeActivated(self,event):
         self.log.Clear()
         obj = self.tree.GetItemPyData(event.GetItem())
@@ -440,7 +440,7 @@ class MainFrame(VizFrame):
                 self.Unbind(wx.EVT_MENU, self.zPopMenuItem)
                 self.zPopMenuItem.Destroy()
                 self.zPopMenuItem = None
-        
+
     def OnTreeRightClick(self,event):
         if self.tree.GetItemPyData(event.GetItem())._c_classId == "GROUP":
             pass
@@ -455,11 +455,11 @@ class MainFrame(VizFrame):
             label = event.GetLabel()
             if label:
                 item._f_rename(label)
-        
+
     def OnZEdit(self, event):
         self.obo = OboTreeFrame(self.model, self)
         self.obo.Show()
-        
+
     def CreateEdit(self):
         try:
             return self.edit
@@ -470,7 +470,7 @@ class MainFrame(VizFrame):
             for str in ['Edit','Cut','Copy','Paste', 'New Group', 'Rename', 'Delete', 'Export', 'Annotate', 'Batch', 'Remote Process']:
                 self.popupItems[str] = menu.Append(-1, str)
                 self.Bind(wx.EVT_MENU, self.OnPopupSelected, self.popupItems[str])
-            
+
             self.popupItems['Paste'].Enable(False)
             return menu
 
@@ -483,13 +483,13 @@ class MainFrame(VizFrame):
         menu = self.CreateEdit()
         self.io = Io(self.model, self)
         self.io.LoadPlugins()
-        
+
         self.openMenu = menu.AppendMenu(-1,
                                          "Import...",
                                          self.io.BuildOpenMenu())
-        
+
         return menu
-    
+
     def OnShowPopup(self, event):
         if self.tree.GetItemPyData(event.GetItem())._c_classId == "GROUP":
             self.popupItems['Edit'].Enable(False)
@@ -502,11 +502,11 @@ class MainFrame(VizFrame):
         else:
             self.popupItems['Batch'].Enable(False)
         self.tree.PopupMenu(self.popup)
-        
+
     def OnPopupSelected(self, event):
         item = self.popup.FindItemById(event.GetId())
         self.OnMenuSelect(item)
-    
+
     def OnMenuSelect(self, item):
         text = item.GetText()
         if text == 'Edit':
@@ -534,9 +534,9 @@ class MainFrame(VizFrame):
             self.OnSubmitJob(None)
         else:
             wx.MessageBox(text)
-            
+
     def OnBatch(self):
-        
+
         source = self.model.GetCurrentData()
         choices = self.model.GetDataGroups()
         #print source._v_pathname
@@ -558,8 +558,8 @@ class MainFrame(VizFrame):
                       'logicle': self.model.LogicleTransform,
                       'heyerlog': self.model.HyperlogTransform,
                       'arcsin': self.model.ArcsinhTransform }
-                      
-                      
+
+
         if dialog.ShowModal() == wx.ID_OK:
             print [choices[i] for i in dialog.GetSelections()]
             if batchOp[0] == 'gate':
@@ -572,7 +572,7 @@ class MainFrame(VizFrame):
                     transforms[batchOp[0]](batchOp[1], batchOp[2])
             else:
                 print source.getAttr('batch')[0]
-            
+
     def OnBatchGate(self, source, dest, quad=False):
         x,y = source.getAttr('batch')[1]
         if quad:
@@ -623,7 +623,7 @@ class MainFrame(VizFrame):
             notes = None
         annotate = annotateFrame(item, self.model, txt, notes)
         annotate.Show()
-        
+
     def OnRename(self):
         selection = self.tree.GetSelection()
         if selection != self.root:
@@ -636,15 +636,15 @@ class MainFrame(VizFrame):
     def OnDelete(self):
         self.model.deleteNode(self.tree.GetItemPyData(self.tree.GetSelection()))
         self.model.update()
-         
+
     def OnCut(self):
         self.OnCopy(cut=True)
-    
+
     def OnCopy(self, cut=False):
         self._cut = cut
         self._source = self.tree.GetItemPyData(self.tree.GetSelection())
         self.popupItems['Paste'].Enable(True)
-    
+
     def OnPaste(self):
         self.model.copyNode(self._source, self.model.GetCurrentGroup())
         if self._cut:
@@ -652,14 +652,14 @@ class MainFrame(VizFrame):
             self._cut = False
             self.popupItems['Paste'].Enable(False)
         self.model.update()
-        
+
     def OnNewGroup(self):
         name = wx.GetTextFromUser('Name for new group', caption='Create New Group', default_value='',
                                   parent = None)
         if name is not '':
             self.model.NewGroup(name)
             self.model.update()
- 
+
     def OnExport(self):
         # window = DBDialog(self.model)
         # window.Show()
@@ -670,7 +670,7 @@ class MainFrame(VizFrame):
             print cs
         else:
             wx.MessageBox("No data found")
-            return            
+            return
 
         dlg = ChoiceDialog(cs)
         if dlg.ShowModal() == wx.ID_OK:
@@ -678,12 +678,12 @@ class MainFrame(VizFrame):
         dlg.Destroy()
 
         wildcard = "Tab-delimited (*.out)|*.out"
-        dialog = wx.FileDialog(parent=self, 
+        dialog = wx.FileDialog(parent=self,
                                wildcard=wildcard,
-                               message="Export Data", 
+                               message="Export Data",
                                defaultDir=self.exportDir,
                                style=wx.SAVE|wx.OVERWRITE_PROMPT)
-        
+
         if dialog.ShowModal() == wx.ID_OK:
             path = dialog.GetPath()
 
@@ -693,14 +693,14 @@ class MainFrame(VizFrame):
                 ext = ''
             else:
                 ext = '.out'
-                
+
             datafile = path + ext
             savetxt(datafile, x[:,indices], delimiter='\t')
-            savetxt(datafile.replace('out', 'txt'), 
+            savetxt(datafile.replace('out', 'txt'),
                     array(cs)[indices], fmt='%s')
-            
+
 #             fo = open(path + ext, 'w')
-#             fo.write('\n'.join(['\t'.join(map(str, item)) 
+#             fo.write('\n'.join(['\t'.join(map(str, item))
 #                                 for item in x[:,indices]]))
 #             fo.close()
 
@@ -710,7 +710,7 @@ class MainFrame(VizFrame):
 #             fo.close()
 
         dialog.Destroy()
-        
+
 def parsejob(jobfile):
     results = []
     file = open(jobfile, 'r')
@@ -728,6 +728,6 @@ def parsejob(jobfile):
 def strip_quotes(str):
     # gotta be a more sane way to do this...
     return str.replace("'",'').replace('"','')
-      
+
 if __name__ == '__main__':
-    print parsejob('/home/jolly/foo.txt')   
+    print parsejob('/home/jolly/foo.txt')

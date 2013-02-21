@@ -19,7 +19,7 @@ sys.path.append('plugins/projections'.replace("/", os.path.sep))
 from plugin import loadFrames, loadstatistics, loadprojections
 from MainFrame import MainFrame
 from Model import FlowModel
-from io import Io
+from my_io import Io
 from dialogs import SaveDialog
 from compensation import CompensationFrame
 from EditTable import SpillFrame
@@ -35,7 +35,7 @@ class MainApp(wx.App): #IGNORE:R0902
         """
         self.model = FlowModel()
         self.model.addListener(self.OnModelUpdate)
-        
+
         self.controlFrame = MainFrame(pos=(50, 50))
         self.controlFrame.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
         self.controlFrame.Show()
@@ -44,7 +44,7 @@ class MainApp(wx.App): #IGNORE:R0902
 
         self.io = Io(self.model, self.controlFrame)
         self.io.LoadPlugins()
-        
+
         self.fileMenu = wx.Menu()
         self.io.BuildOpenMenu(self.fileMenu)
         self.fileMenu.AppendSeparator()
@@ -79,14 +79,14 @@ class MainApp(wx.App): #IGNORE:R0902
         for key in self.statistics.keys():
             menuid = self.statisticsMenu.Append(-1, key)
             self.controlFrame.Bind(wx.EVT_MENU, self.Onstatistics, menuid)
-        
+
         self.projectionsMenu = wx.Menu()
         self.projections = loadprojections("plugins/projections")
         for key in self.projections.keys():
             menuid = self.projectionsMenu.Append(-1, key)
             self.controlFrame.Bind(wx.EVT_MENU, self.Onprojections, menuid)
-        
-        menuItems = [(self.fileMenu, 'File'), 
+
+        menuItems = [(self.fileMenu, 'File'),
                      (self.controlFrame.edit, 'Tree'),
                      (self.compensateMenu, 'Compensation'),
                      (self.controlFrame.filterMenu, 'Sub-Sample'),
@@ -98,7 +98,7 @@ class MainApp(wx.App): #IGNORE:R0902
                      (self.controlFrame.remoteProcessMenu, 'Server')]
         for item in menuItems:
             self.controlFrame.GetMenuBar().Append(*item)
-        
+
         # help menu
         self.helpMenu = wx.Menu()
         self.about = self.helpMenu.Append(wx.ID_ABOUT, "&About Flow")
@@ -110,7 +110,7 @@ class MainApp(wx.App): #IGNORE:R0902
         self.bugs = self.helpMenu.Append(-1, "Report bugs")
         self.helpMenu.AppendSeparator()
         # self.update = self.helpMenu.Append(-1, "Check for updates")
-        
+
         self.controlFrame.GetMenuBar().Append(self.helpMenu, "&Help")
 
         self.Bind(wx.EVT_MENU, self.OnAbout, self.about)
@@ -121,11 +121,11 @@ class MainApp(wx.App): #IGNORE:R0902
         self.Bind(wx.EVT_MENU, self.OnBugs, self.bugs)
         # self.Bind(wx.EVT_MENU, self.OnUpdate, self.update)
 
-        
+
         global Visual
         self.controlFrame.DoLayout()
         self.SetTopWindow(self.controlFrame)
-        
+
         return True
 
     def OnCompensate(self, event): #IGNORE:W0613
@@ -143,20 +143,20 @@ class MainApp(wx.App): #IGNORE:R0902
 
     def OnLoadCompensate(self, event): #IGNORE:W0613
         """Loads a compensation file in ASCII format with following structure
-        n,h_1,...,h_n,a_11,...,a_nn 
+        n,h_1,...,h_n,a_11,...,a_nn
         where n is the number of marker columns requiring compensation
-        h_i is the header column name and 
+        h_i is the header column name and
         a_ij are the entries in the spillover matrix
         just like 'SPILL' entry in FACSDiva 'SPILL'"""
 
         overwrite = True
         if self.model.getSpill():
             overwrite = False
-            dlg = wx.MessageDialog(None, 
+            dlg = wx.MessageDialog(None,
                                    'Overwrite existing matrix?',
-                                   'Load spillover matrix', 
-                                   style=wx.OK|wx.CANCEL) 
-            if dlg.ShowModal() == wx.ID_OK: 
+                                   'Load spillover matrix',
+                                   style=wx.OK|wx.CANCEL)
+            if dlg.ShowModal() == wx.ID_OK:
                 overwrite = True
             dlg.Destroy()
         if overwrite:
@@ -180,7 +180,7 @@ class MainApp(wx.App): #IGNORE:R0902
                 self.spillFrame = SpillFrame(spill, markers)
                 self.spillFrame.Show()
 
-    def OnImportFCSDir(self, event): #IGNORE:W0613 
+    def OnImportFCSDir(self, event): #IGNORE:W0613
         """Import all fcs files in directory."""
         dlg = wx.DirDialog(None,
                            "Choose a directory with .fcs files:",
@@ -193,7 +193,7 @@ class MainApp(wx.App): #IGNORE:R0902
                 self.model.SelectRoot()
         dlg.Destroy()
 
-    def OnImportCSVDir(self, event): #IGNORE:W0613 
+    def OnImportCSVDir(self, event): #IGNORE:W0613
         """Import all csv files in directory."""
         dlg = wx.DirDialog(None,
                            "Choose a directory with .out and .txt files:",
@@ -208,7 +208,7 @@ class MainApp(wx.App): #IGNORE:R0902
 
     def OnQuit(self, event): #IGNORE:W0613
         """Handle quit event"""
-        try: 
+        try:
             if not self.model.isChanged:
                 self.Exit()
             elif self.model.isOpen():
@@ -224,7 +224,7 @@ class MainApp(wx.App): #IGNORE:R0902
                 dialog.Destroy()
         except AttributeError:
             self.Exit()
-        
+
     def OnSave(self, event): #IGNORE:W0613
         """Save the hdf5 file"""
 
@@ -246,7 +246,7 @@ class MainApp(wx.App): #IGNORE:R0902
                 self.model.isChanged = False
         dialog.Destroy()
 
-        
+
     def OnAddWindow(self, event):
         """add a new window frame"""
         newWindowType = self.controlFrame.GetMenuBar().FindItemById(event.GetId()).GetLabel() #IGNORE:C0301
@@ -261,11 +261,11 @@ class MainApp(wx.App): #IGNORE:R0902
         self.controlFrame.Bind(wx.EVT_MENU, self.OnWindowSelect, newId)
         newWindow.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
         newWindow.Plot()
-        
+
     def OnWindowSelect(self, event):
         """handle selecting a window from the list of windows"""
         menuItem = self.controlFrame.GetMenuBar().FindItemById(event.GetId())
-        
+
         for windowId, menuId, window in self.framelist: #IGNORE:W0612
             if menuItem.GetId() == menuId:
                 if menuItem.IsChecked():
@@ -273,25 +273,25 @@ class MainApp(wx.App): #IGNORE:R0902
                     window.SetFocus()
                 else:
                     window.Show(False)
-      
-    
+
+
     def OnCloseWindow(self, event):
         """on window close event destroy all windows"""
         if event.GetId() == self.controlFrame.GetId():
             self.OnQuit(event)
-            
+
         else:
             for windowId, menuId, window in self.framelist:
                 if event.GetId() == windowId:
-                    
+
                     window.Destroy()
                     self.graphicsMenu.Remove(menuId)
                     self.framelist.remove((windowId, menuId, window))
-            
+
     def OnModelUpdate(self, model): #IGNORE:W0613
         """on model update do something"""
         #print "Model Update Called"
-    
+
     def Onstatistics(self, event):
         """When Statistics menu events are called"""
         Name = self.controlFrame.GetMenuBar().FindItemById(event.GetId()).GetLabel() #IGNORE:C0301
@@ -303,7 +303,7 @@ class MainApp(wx.App): #IGNORE:R0902
         Name = self.controlFrame.GetMenuBar().FindItemById(event.GetId()).GetLabel() #IGNORE:C0301
         projections = self.projections[Name]()
         projections.Main(self.model)
-        
+
     def OnAbout(self, event):
         """About screen."""
         dlg = about.FlowAbout(self.controlFrame)

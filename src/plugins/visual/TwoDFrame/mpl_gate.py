@@ -13,8 +13,10 @@ try:
 except ImportError:
     from matplotlib.lines import Line2D
 from matplotlib.patches import Polygon, Rectangle #, Line2D
-from matplotlib.numerix import sqrt, nonzero, equal, array, dot, Float, take
-from matplotlib.numerix.mlab import amin
+# from matplotlib.numerix.mlab import amin
+# from matplotlib.numerix import sqrt, nonzero, equal, array, dot, float as Float, take
+from numpy import sqrt, nonzero, equal, array, dot, float as Float, take
+from numpy import amin
 from matplotlib.mlab import dist_point_to_segment
 from scipy import vectorize
 from numpy import logical_not, logical_xor, logical_and, transpose

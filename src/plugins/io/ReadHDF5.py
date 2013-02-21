@@ -1,4 +1,4 @@
-from io import Io
+from flowio import Io
 
 class ReadHDF5(Io):
     newMethods=('ReadHDF5','Load HDF5 data file')

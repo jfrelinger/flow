@@ -71,7 +71,7 @@ def loadOpen(dir):
                     pass
                 else:
                     if a.__dict__[b].__class__ == type:
-                        if str(a.__dict__[b].__base__) == "<class 'io.Io'>":
+                        if str(a.__dict__[b].__base__) == "<class 'flowio.Io'>":
                             if a.__dict__[b].type in ('Read', 'Write'):
                                 name, desc =  a.__dict__[b].newMethods
                                 filters[name] = a.__dict__[b].supported

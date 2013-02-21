@@ -1,5 +1,5 @@
 from Model import FlowModel
-from io import Io
+from flowio import Io
 import numpy
 import fcs
 import os
